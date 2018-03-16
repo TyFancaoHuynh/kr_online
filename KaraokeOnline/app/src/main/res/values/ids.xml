@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Search Video Screen-->
+    <item name="search_video_screen_edt_input" type="id" />
+    <item name="search_video_adapter_img_video" type="id"/>
+    <item name="search_video_adapter_tv_duratiion_time_video" type="id"/>
+    <item name="search_video_adapter_tv_quantity_video" type="id"/>
+    <item name="search_video_adapter_name_video" type="id"/>
+    <item name="search_video_adapter_description_video" type="id"/>
+    <item name="search_video_adapter_channel_video" type="id"/>
+    <item name="search_video_adapter_quantity_view_video" type="id"/>
+    <item name="search_video_adapter_tv_day_publish_video" type="id"/>
+    <item name="search_video_adapter_tv_name_channel" type="id" />
+    <item name="search_video_adapter_tv_person_register_channel" type="id" />
+    <item name="search_video_adapter_tv_channel" type="id" />
+    <item name="play_activity_framelayout_play" type="id" />
+    <item name="play_activity_relativeLayout_show_info_video" type="id" />
+    <item name="play_activity_tv_name_video" type="id" />
+    <item name="play_activity_tv_title_video" type="id" />
+    <item name="play_activity_tv_name_channel" type="id" />
+    <item name="play_activity_img_thumnail" type="id" />
+    <item name="play_activity_tv_view_count" type="id" />
+    <item name="play_activity_tv_like" type="id" />
+    <item name="play_activity_img_like" type="id" />
+    <item name="play_activity_img_unlike" type="id" />
+    <item name="play_activity_tv_unlike" type="id" />
+    <item name="play_activity_tv_day_publish" type="id" />
+    <item name="fabImgMain" type="id" />
+    <item name="floating_btn_menu_img_btn_search" type="id" />
+    <item name="floating_btn_menu_img_btn_group" type="id" />
+    <item name="floating_btn_menu_img_btn_feed" type="id">Feed</item>
+    <item name="floating_btn_menu_img_btn_record" type="id" />
+    <item name="floating_btn_menu_img_btn_profile" type="id" />
+    <item name="floating_btn_menu_img_btn_download" type="id" />
+    <item name="floating_btn_menu" type="id" />
+    <item name="feedFragmentImgLike" type="id" />
+    <item name="feedFragmentImgUnLike" type="id" />
+    <item name="mainViewPager" type="id" />
+    <item name="mainTabLayout" type="id" />
+    <item name="feedFragmentLikeArea" type="id" />
+    <item name="feedFragmentAreaCaption" type="id" />
+    <item name="feedFragmentAreaEdtCaption" type="id" />
+    <item name="feedFragmentAreaEdt" type="id" />
+    <item name="profileFragmentViewBackground" type="id" />
+    <item name="profileFragmentTvAccount" type="id" />
+    <item name="profileFragmentTvRecord" type="id" />
+</resources>

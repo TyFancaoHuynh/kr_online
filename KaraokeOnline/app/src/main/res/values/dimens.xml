@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="play_activity_tv_name_video_text_size">15dp</dimen>
+    <dimen name="play_activity_tv_channel_video_text_size">13dp</dimen>
+    <dimen name="play_activity_tv_view_count_video_text_size">13dp</dimen>
+    <dimen name="play_activity_tv_day_publish_video_text_size">10dp</dimen>
+    <dimen name="play_activity_tv_like_video_text_size">12dp</dimen>
+
+    <!--Floating Button Horizontal-->
+    <dimen name="width_height_image_button">50dp</dimen>
+    <dimen name="width_relative_layout">150dp</dimen>
+    <dimen name="margin_right_image_button">5dp</dimen>
+    <dimen name="height_text_view">30dp</dimen>
+    <dimen name="margin_right_text_view">10dp</dimen>
+    <dimen name="width_height_image_button_menu">60dp</dimen>
+    <dimen name="top_bot_margin_image_button_menu">10dp</dimen>
+    <dimen name="padding_floating">10dp</dimen>
+
+    <!--Custom floating menu-->
+    <dimen name="custom_menu_text_size">11dp</dimen>
+    <dimen name="feedTitleTextSize">13sp</dimen>
+    <dimen name="tabLayoutIndicatorHeight">2dp</dimen>
+    <dimen name="tabLayoutHeight">50dp</dimen>
+    <dimen name="tabLayoutItemExternalMargin">40dp</dimen>
+    <dimen name="tabLayoutItemHorizontalMargin">29dp</dimen>
+    <dimen name="tabLayoutItemWidth">35dp</dimen>
+
+    <dimen name="feedCommentTextSize">11dp</dimen>
+    <dimen name="feedCaptionTextSize">12dp</dimen>
+    <dimen name="textSize15">15dp</dimen>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">KaraokeOnline</string>
+    <string name="progress_dialog_message">processing…</string>
+    <string name="progress_dialog_title">notification</string>
+    <string name="video_count">%s +</string>
+    <string name="video_view_count">%s lượt xem</string>
+    <string name="custom_floating_menu_search_title">Search</string>
+    <string name="custom_floating_menu_feed_title">Feed</string>
+    <string name="custom_floating_menu_record_title">Record</string>
+    <string name="custom_floating_menu_profile_title">Profile</string>
+    <string name="custom_floating_menu_download_title">Download</string>
+</resources>
