@@ -6,7 +6,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.ResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,35 +14,44 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- *  Copyright © 2017 AsianTech inc.
- *  Created by hoavot on 10/12/2017.
- */
-object ApiClient {
-    private val BASE_URL = "https://www.googleapis.com"
-    private val TIMEOUT = 20_000L //20 seconds
+ *
+ *
+ *
+ * */
 
-    val instance: OnGetYoutubeService by lazy {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+open class ApiClient private constructor(url: String? = null) {
+
+    internal var token: String? = null
+    //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
+    private var baseUrl: String = if (url == null || url.isEmpty()) "" else url
+
+    companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
+        private const val API_TIMEOUT = 10L // 10 minutes
+    }
+
+    val service: ApiService
+        get() {
+            return createService()
+        }
+
+    private fun createService(): ApiService {
         val httpClientBuilder = OkHttpClient.Builder()
         httpClientBuilder.interceptors().add(Interceptor { chain ->
             val original = chain.request()
             // Request customization: add request headers
             val requestBuilder = original.newBuilder()
                     .method(original.method(), original.body())
-//            if (token != null) {
-//                requestBuilder.addHeader("Authorization", "Bearer $token")
-//            }
+            if (token != null) {
+                requestBuilder.addHeader("Authorization", "Bearer $token")
+            }
             val request = requestBuilder.build()
             chain.proceed(request)
         })
-
         val client = httpClientBuilder
-                .connectTimeout(TIMEOUT, TimeUnit.MINUTES)
-                .writeTimeout(TIMEOUT, TimeUnit.MINUTES)
-                .readTimeout(TIMEOUT, TimeUnit.MINUTES)
+                .connectTimeout(API_TIMEOUT, TimeUnit.MINUTES)
+                .writeTimeout(API_TIMEOUT, TimeUnit.MINUTES)
+                .readTimeout(API_TIMEOUT, TimeUnit.MINUTES)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                .addInterceptor(interceptor)
                 .build()
         val gson = GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -58,13 +66,48 @@ object ApiClient {
             }
         }
         val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(nullOnEmptyConverterFactory)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(CustomCallAdapterFactory.create())
                 .client(client)
                 .build()
+        return retrofit.create(ApiService::class.java)
+    }
+}
 
-        retrofit.create(OnGetYoutubeService::class.java)
+/**
+ * Use this class to create singleton object with argument
+ */
+open class SingletonHolder<out T, in A>(private var creator: (A?) -> T) {
+    @kotlin.jvm.Volatile
+    private var instance: T? = null
+
+    /**
+     * Generate instance for T class with argument A
+     */
+    fun getInstance(arg: A?): T {
+        val i = instance
+        if (i != null) {
+            return i
+        }
+
+        return synchronized(this) {
+            val i2 = instance
+            if (i2 != null) {
+                i2
+            } else {
+                val created = creator(arg)
+                instance = created
+                created
+            }
+        }
+    }
+
+    /**
+     * Clear current instance
+     */
+    fun clearInstance() {
+        instance = null
     }
 }

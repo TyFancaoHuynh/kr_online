@@ -22,7 +22,7 @@ class SearchVideoViewModel {
 
     internal var items = mutableListOf<Item>()
     internal val triggerSearchObserver = PublishSubject.create<String>()
-    internal val itemsObserver = PublishSubject.create<MutableList<Item>>()
+    internal val itemsObserver = BehaviorSubject.create<MutableList<Item>>()
     internal val queryObserver = SingleSubject.create<String>()
     internal val progressDialogObserverable = BehaviorSubject.create<Notification<Boolean>>()
     private val karaRepository = KaraRepository()
@@ -31,7 +31,7 @@ class SearchVideoViewModel {
         triggerOnSearchButtonClick()
     }
 
-    private fun loadMoreVideo(part: String, q: String, page: Int = 1): Observable<Item> {
+    private fun loadMoreVideo(part: String, q: String, page: Int = 1): Observable<MutableList<Item>> {
         return karaRepository
                 .getVideoSearchFromApi(part, q)
                 .observeOn(Schedulers.io())
@@ -55,6 +55,13 @@ class SearchVideoViewModel {
                                     "", ResourceId(""), 0),
                             null, null, null)
                 }
+                .filter {
+                    it.video.id.videoId != "" ||
+                            it.video.id.playlistId != "" ||
+                            it.video.id.channelId != ""
+                }
+                .toList()
+                .toObservable()
     }
 
     private fun searchDetailVideo(part: String, video: Video): Observable<Item> {
@@ -110,15 +117,10 @@ class SearchVideoViewModel {
                     queryObserver.onSuccess(it)
                     loadMoreVideo("snippet", it)
                 }
-                .filter {
-                    it.video.id.videoId != "" ||
-                            it.video.id.playlistId != "" ||
-                            it.video.id.channelId != ""
-                }
                 .subscribe({
                     progressDialogObserverable.onNext(Notification.createOnNext(false))
-                    items.add(it)
-                    itemsObserver.onNext(items)
+//                    items.add(it)
+                    itemsObserver.onNext(it)
                 }, {})
     }
 }

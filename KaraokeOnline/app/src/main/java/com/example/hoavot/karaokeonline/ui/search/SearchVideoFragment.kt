@@ -66,6 +66,7 @@ class SearchVideoFragment : BaseFragment() {
         items.clear()
         items.addAll(itemVideos)
         ui.adapterSearch.notifyDataSetChanged()
+        ui.recyclerView.scrollToPosition(0)
     }
 
     private fun handleWhenSearchError(throwable: Throwable) {

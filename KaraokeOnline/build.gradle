@@ -24,6 +24,10 @@ allprojects {
         maven {
             url "http://dl.bintray.com/kotlin/kotlin-dev"
         }
+
+        maven {
+            url  "http://dl.bintray.com/piasy/maven"
+        }
         google()
         jcenter()
     }

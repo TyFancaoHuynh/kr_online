@@ -56,7 +56,7 @@ class VideoViewHolderUI(private val colorText: Int) : AnkoComponent<ViewGroup> {
                 tvQuantityVideo = textView {
                     id = R.id.search_video_adapter_tv_quantity_video
                     textSize = px2dip(65)
-                    gravity=Gravity.CENTER_VERTICAL
+                    gravity = Gravity.CENTER_VERTICAL
                     textAlignment = View.TEXT_ALIGNMENT_CENTER
                     textColor = Color.WHITE
                     backgroundColor = ContextCompat.getColor(context, R.color.colorBlackTransparent)
@@ -72,7 +72,7 @@ class VideoViewHolderUI(private val colorText: Int) : AnkoComponent<ViewGroup> {
             verticalLayout {
                 lparams(dip(0), matchParent) {
                     rightPadding = dip(10)
-                    topMargin = dip(5)
+                    topMargin = dip(3)
                     weight = 1f
                 }
 
@@ -80,8 +80,8 @@ class VideoViewHolderUI(private val colorText: Int) : AnkoComponent<ViewGroup> {
                     id = R.id.search_video_adapter_name_video
                     textColor = colorText
                     typeface = Typeface.DEFAULT_BOLD
-                    textSize = px2dip(30)
-                    maxLines = 3
+                    textSize = px2dip(dimen(R.dimen.textSize13))
+                    maxLines = 2
                     ellipsize = TextUtils.TruncateAt.END
 
                 }.lparams {
@@ -90,19 +90,23 @@ class VideoViewHolderUI(private val colorText: Int) : AnkoComponent<ViewGroup> {
 
                 tvChannelVideo = textView {
                     id = R.id.search_video_adapter_channel_video
-                    textSize = px2dip(25)
+                    textSize = px2dip(dimen(R.dimen.textSize12))
                     textColor = colorText
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
                 }
 
                 tvViewCount = textView {
                     id = R.id.search_video_adapter_quantity_view_video
-                    textSize = px2dip(20)
+                    textSize = px2dip(dimen(R.dimen.textSize12))
                     textColor = colorText
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
                 }
 
                 tvDayPublish = textView {
                     id = R.id.search_video_adapter_tv_day_publish_video
-                    textSize = px2dip(25)
+                    textSize = px2dip(dimen(R.dimen.textSize12))
                     textColor = colorText
                 }
 

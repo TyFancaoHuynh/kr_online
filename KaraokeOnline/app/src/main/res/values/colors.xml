@@ -20,4 +20,12 @@
     <color name="colorBlack">#111111</color>
     <color name="colorItemFeed">#e5e8e9</color>
     <color name="colorBackground">#5b5b5b</color>
+    <color name="colorButton">#20252B</color>
+    <color name="colorBlackBold">#090909</color>
+    <color name="colorBlackBoldBold">#383737</color>
+    <color name="colorBackGroundPlay">#211A2A</color>
+    <color name="colorDate">#786971</color>
+    <color name="colorStartPlay">#693E4E</color>
+    <color name="colorEndPlay">#53424B</color>
+    <color name="colorCenterPlay">#3E223C</color>
 </resources>

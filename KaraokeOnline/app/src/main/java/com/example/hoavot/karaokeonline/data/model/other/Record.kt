@@ -8,4 +8,7 @@ import com.google.gson.annotations.SerializedName
  */
 data class Record(@SerializedName("id") val id: String,
                   @SerializedName("fileRecord") val fileRecord: String,
-                  @SerializedName("idUser") val idUser: String)
+                  @SerializedName("idUser") val idUser: String,
+                  @SerializedName("nameRecord") val nameRecord: String,
+                  @SerializedName("timeRecord") val timeRecord: Long,
+                  @SerializedName("dateRecord") val dateRecord: String)

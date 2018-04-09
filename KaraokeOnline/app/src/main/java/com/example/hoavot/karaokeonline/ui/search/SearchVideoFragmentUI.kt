@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -21,6 +22,7 @@ import org.jetbrains.anko.sdk25.coroutines.onEditorAction
 class SearchVideoFragmentUI(private val items: MutableList<Item>, private val context: Context) : AnkoComponent<SearchVideoFragment> {
     internal lateinit var edtInput: EditText
     internal var adapterSearch = ShowVideoAdapter(context, items, Color.BLACK)
+    internal lateinit var recyclerView: RecyclerView
 
     override fun createView(ui: AnkoContext<SearchVideoFragment>): View = with(ui) {
         verticalLayout {
@@ -52,7 +54,7 @@ class SearchVideoFragmentUI(private val items: MutableList<Item>, private val co
                 }
             }
 
-            recyclerView {
+            recyclerView = recyclerView {
                 layoutManager = LinearLayoutManager(context)
                 adapter = adapterSearch
             }.lparams(matchParent, matchParent) {

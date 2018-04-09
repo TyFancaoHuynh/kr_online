@@ -49,7 +49,7 @@ class PlaylistViewHolderUI : AnkoComponent<ViewGroup> {
                     id = R.id.search_video_adapter_name_video
                     textColor = Color.BLACK
                     typeface = Typeface.DEFAULT_BOLD
-                    textSize = px2dip(15)
+                    textSize = px2dip(dimen(R.dimen.textSize15))
                 }
 
                 tvChannelPlaylist = textView {

@@ -9,7 +9,7 @@ import retrofit2.http.Query
  *  Copyright © 2017 AsianTech inc.
  *  Created by hoavot on 10/12/2017.
  */
-interface OnGetYoutubeService {
+interface ApiService {
     companion object {
         const val URL_SEARCH_VIDEO = "/youtube/v3/search"
         const val URL_SEARCH_DETAIL_VIDEO = "/youtube/v3/videos"
@@ -64,4 +64,6 @@ interface OnGetYoutubeService {
             @Query("key") key: String = KEY_BROWSER
     )
             : Single<VideoSearchFromApi>
+
+
 }

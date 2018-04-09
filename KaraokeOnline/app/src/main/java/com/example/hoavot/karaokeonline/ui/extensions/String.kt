@@ -28,3 +28,19 @@ internal class UnderlineStringSpan(private val value: String, @ColorInt private 
         ds?.color = textColor
     }
 }
+
+internal fun Int.toTimer(seconds: Int): String {
+    var minutes = ""
+    var second = ""
+    when (this) {
+        0 -> minutes = "00:"
+        in 1..9 -> minutes = "0" + this + ":"
+        else -> minutes += this
+    }
+    when (seconds) {
+        0 -> second = "00"
+        in 1..9 -> second = "0" + seconds
+        else -> second += seconds
+    }
+    return minutes + second
+}

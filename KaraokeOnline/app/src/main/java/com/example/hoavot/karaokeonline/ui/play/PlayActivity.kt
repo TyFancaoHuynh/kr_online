@@ -1,14 +1,17 @@
 package com.example.hoavot.karaokeonline.ui.play
 
 import android.os.Bundle
+import android.util.Log.d
 import android.view.View
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
+import com.example.hoavot.karaokeonline.ui.extensions.addFragment
+import com.example.hoavot.karaokeonline.ui.extensions.animSlideInBottomSlideOutBottom
 import com.example.hoavot.karaokeonline.ui.extensions.getDayPublish
 import com.example.hoavot.karaokeonline.ui.extensions.toViewCountVideo
+import com.example.hoavot.karaokeonline.ui.play.record.RecordFragment
 import com.example.hoavot.karaokeonline.ui.utils.ShowVideoAdapter
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
@@ -32,6 +35,7 @@ class PlayActivity : BaseActivity() {
     private lateinit var ui: PlayActivityUI
     private val items = mutableListOf<Item>()
     private lateinit var viewModel: PlayActivityViewModel
+    internal lateinit var youtubeProvider: YouTubePlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +64,30 @@ class PlayActivity : BaseActivity() {
         )
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        ui.recyclerviewListVideo.visibility = View.VISIBLE
+    }
+
     internal fun eventOnClickItemMenu(view: View) {
         when (view) {
-//            ui.fabMenuGroup.imgBtnDownload -> startActivity<RegisterActivity>()
-//            ui.fabMenuGroup.imgBtnRecord -> startActivity<GroupActivity>()
-//            ui.fabMenuGroup.imgBtnSearch -> startActivity<SearchActivity>()
+            ui.fabMenuGroup.rlRecord -> {
+                ui.recyclerviewListVideo.visibility = View.GONE
+
+                addFragment(R.id.playActivityContainer, RecordFragment(), {
+                    it.animSlideInBottomSlideOutBottom()
+                }, RecordFragment::javaClass.name)
+            }
+            ui.fabMenuGroup.rlSearch -> onBackPressed()
+        }
+    }
+
+    internal fun eventOnClickMenu(isExpand: Boolean) {
+        val count = supportFragmentManager.backStackEntryCount
+        if (count > 0) {
+            if (isExpand) {
+                onBackPressed()
+            }
         }
     }
 
@@ -76,6 +99,7 @@ class PlayActivity : BaseActivity() {
                 if (!a2) {
                     a1?.setShowFullscreenButton(true)
                     a1?.loadVideo(videoId)
+                    youtubeProvider = a1!!
                 }
             }
 

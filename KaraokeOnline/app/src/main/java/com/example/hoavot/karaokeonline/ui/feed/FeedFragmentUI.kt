@@ -1,9 +1,9 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
-import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ImageView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import org.jetbrains.anko.*
@@ -14,6 +14,7 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
  * @author at-hoavo.
  */
 class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedFragment> {
+    internal lateinit var add: ImageView
     override fun createView(ui: AnkoContext<FeedFragment>): View {
         return with(ui) {
             relativeLayout {
@@ -38,9 +39,7 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedF
                             rightMargin = dip(10)
                         }
 
-                        button("Add") {
-//                            textColor=ContextCompat.getColor(context,R.color.colorItemFeed)
-                        }
+                        add = imageView(R.drawable.ic_plus).lparams(dip(35), dip(35))
                     }.lparams(matchParent, dip(40)) {
                         topMargin = dip(10)
                     }

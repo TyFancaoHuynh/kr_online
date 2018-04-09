@@ -9,4 +9,10 @@
     <string name="custom_floating_menu_record_title">Record</string>
     <string name="custom_floating_menu_profile_title">Profile</string>
     <string name="custom_floating_menu_download_title">Download</string>
+    <string name="voice_msg_input_hint_speaking">Saying …</string>
+    <string name="voice_msg_input_hint_time_limited_formatter" formatted="false">%d s left</string>
+    <string name="recordFragmentTitleMessage">full memory, please delete some unnecessary files...</string>
+    <string name="recordFragmentMesageLessMemory">ERROR</string>
+    <string name="recordFragmentMesageAlertError">error occurred, please try again!</string>
+    <string name="errorAlertTitle">ERROR</string>
 </resources>

@@ -24,12 +24,12 @@ import vn.asiantech.way.extension.setAnimation
 class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
                          context: Context, attrs: AttributeSet? = null) :
         LinearLayout(context, attrs) {
-    internal lateinit var imgBtnSearch: ImageButton
-    internal lateinit var imgBtnRecord: ImageButton
-    internal lateinit var imgBtnDownload: ImageButton
-    private lateinit var rlSearch: RelativeLayout
-    private lateinit var rlRecord: RelativeLayout
-    private lateinit var rlDownload: RelativeLayout
+    private lateinit var imgBtnSearch: ImageButton
+    private lateinit var imgBtnRecord: ImageButton
+    private lateinit var imgBtnDownload: ImageButton
+    internal lateinit var rlSearch: RelativeLayout
+    internal lateinit var rlRecord: RelativeLayout
+    internal lateinit var rlDownload: RelativeLayout
     private lateinit var imgBtnMenu: ImageButton
     private lateinit var frOverlay: FrameLayout
     private var isExpand = false
@@ -37,7 +37,7 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
     init {
         AnkoContext.createDelegate(this).apply {
             relativeLayout {
-                lparams(matchParent, matchParent)
+                lparams(matchParent, dip(300))
                 frOverlay = frameLayout {
                     lparams(matchParent, matchParent)
                     visibility = View.GONE
@@ -59,11 +59,11 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
                     imgBtnSearch = rlSearch.find(R.id.floating_btn_menu_img_btn_search)
                     rlRecord = itemFloatingButton(R.id.floating_btn_menu_img_btn_record,
                             R.drawable.custom_bg_item_record_button,
-                            R.mipmap.ic_search, R.string.custom_floating_menu_record_title)
+                            R.mipmap.ic_record, R.string.custom_floating_menu_record_title)
                     imgBtnRecord = rlRecord.find(R.id.floating_btn_menu_img_btn_record)
                     rlDownload = itemFloatingButton(R.id.floating_btn_menu_img_btn_download,
                             R.drawable.custom_bg_item_download_button,
-                            R.mipmap.ic_search, R.string.custom_floating_menu_download_title)
+                            R.mipmap.ic_dislike, R.string.custom_floating_menu_download_title)
                     imgBtnDownload = rlDownload.find(R.id.floating_btn_menu_img_btn_download)
                     imgBtnMenu = imageButton {
                         id = R.id.floating_btn_menu
@@ -80,16 +80,19 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
                         is RelativeLayout -> {
                             view.gravity = Gravity.END
                             view.visibility = View.INVISIBLE
+                            view.onClick {
+                                setGoneOverLay()
+                                visibilityAllChildView(View.INVISIBLE)
+                                onMenuClickListener.eventItemMenuClicked(view)
+                            }
                         }
                         is TextView -> view.gravity = Gravity.CENTER
                         is ImageButton -> view.onClick {
                             if (view.id == R.id.floating_btn_menu) {
-                                onMenuClick()
-                                frOverlay.visibility = if (isExpand) View.VISIBLE else View.GONE
-                            } else {
                                 setGoneOverLay()
-                                visibilityAllChildView(View.INVISIBLE)
-                                onMenuClickListener.eventItemMenuClicked(view)
+                                onMenuClick()
+                                frOverlay.visibility = View.GONE
+                                onMenuClickListener.eventMenuClicked(isExpand)
                             }
                         }
                     }
@@ -176,6 +179,11 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
          * Event when Item button menu Click
          */
         fun eventItemMenuClicked(view: View)
+
+        /**
+         * Event when menu click listener
+         */
+        fun eventMenuClicked(isExpand: Boolean)
     }
 }
 

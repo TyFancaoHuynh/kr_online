@@ -28,4 +28,14 @@
     <dimen name="feedCommentTextSize">11dp</dimen>
     <dimen name="feedCaptionTextSize">12dp</dimen>
     <dimen name="textSize15">15dp</dimen>
+
+    <dimen name="bubbleSize">25dp</dimen>
+    <dimen name="waveHeight">60dp</dimen>
+    <dimen name="footerHeight">170dp</dimen>
+    <dimen name="textSize14">14dp</dimen>
+    <dimen name="textSize13">13dp</dimen>
+    <dimen name="textSize12">12dp</dimen>
+    <dimen name="textSize18">18dp</dimen>
+    <dimen name="textSize25">25dp</dimen>
+    <dimen name="textSize21">21dp</dimen>
 </resources>

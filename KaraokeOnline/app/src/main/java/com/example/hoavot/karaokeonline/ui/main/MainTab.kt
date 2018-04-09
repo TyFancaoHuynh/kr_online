@@ -4,7 +4,9 @@ import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
-import com.example.hoavot.karaokeonline.ui.home.HomeFragment
+import com.example.hoavot.karaokeonline.ui.play.record.RecordFragment
+import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
+import com.example.hoavot.karaokeonline.ui.records.RecordsFragment
 import com.example.hoavot.karaokeonline.ui.search.SearchVideoFragment
 
 /**
@@ -16,26 +18,26 @@ class MainTab(val itemType: TabItemType) {
     /**
      * TabItemType
      */
-    enum class TabItemType(@DrawableRes val icon: Int, @DrawableRes val iconSelected: Int) {
+    enum class TabItemType(@DrawableRes val icon: Int) {
         /**
          * First Item On Tab
          */
-        ITEM_HOME(R.drawable.ic_home_black_24dp, R.drawable.ic_home_pink),
+        ITEM_HOME(R.drawable.ic_home_black_24dp),
 
         /**
          * Second Item On Tab
          */
-        ITEM_USER(R.drawable.ic_perm_identity_black_24dp, R.drawable.ic_perm_identity_pink_800_24dp),
+        ITEM_USER(R.drawable.ic_perm_identity_black_24dp),
 
         /**
          * Third Item On Tab
          */
-        ITEM_SEARCH(R.drawable.ic_search_black_24dp, R.drawable.ic_search_pink_800_24dp),
+        ITEM_SEARCH(R.drawable.ic_search_black_24dp),
 
         /**
          * Fourth Item On Tab
          */
-        ITEM_VOICE(R.drawable.ic_settings_voice_black_24dp, R.drawable.ic_settings_voice_pink_800_24dp)
+        ITEM_VOICE(R.drawable.ic_settings_voice_black_24dp)
     }
 
     /**
@@ -46,8 +48,8 @@ class MainTab(val itemType: TabItemType) {
 
     fun getItem(): Fragment? = when (itemType) {
         TabItemType.ITEM_HOME -> FeedFragment()
-//        TabItemType.ITEM_USER -> FeedFragment.newInstance()
+        TabItemType.ITEM_USER -> ProfileFragment()
         TabItemType.ITEM_SEARCH -> SearchVideoFragment()
-        else -> HomeFragment()
+        else -> RecordsFragment()
     }
 }

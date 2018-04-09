@@ -2,7 +2,6 @@ package com.example.hoavot.karaokeonline.ui.feed
 
 import android.graphics.Color
 import android.graphics.Typeface
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
@@ -76,10 +75,6 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 pauseRecord = imageButton { }.lparams(dip(20), dip(20))
             }
 
-            view {
-                backgroundColor = ContextCompat.getColor(context, R.color.grayLight)
-            }.lparams(matchParent, dip(1))
-
             relativeLayout {
                 lparams(matchParent, dip(20))
                 relativeLayout {
@@ -130,9 +125,6 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     alignParentRight()
                 }
             }
-            view {
-                backgroundColor = ContextCompat.getColor(context, R.color.grayLight)
-            }.lparams(matchParent, dip(1))
 
             countComment = textView {
                 typeface = Typeface.MONOSPACE

@@ -44,4 +44,18 @@
     <item name="profileFragmentViewBackground" type="id" />
     <item name="profileFragmentTvAccount" type="id" />
     <item name="profileFragmentTvRecord" type="id" />
+    <item name="profileFragmentExpandleLayout" type="id" />
+    <item name="recordBottomSheetWave" type="id" />
+    <item name="recordBottomSheetPlay" type="id" />
+    <item name="playActivityContainer" type="id" />
+    <item name="recordBottomSheet" type="id" />
+    <item name="recordUIName" type="id" />
+    <item name="recordUITime" type="id" />
+    <item name="recordUIDate" type="id" />
+    <item name="recordsFragmentImgMusic" type="id" />
+    <item name="recordsFragmentNameMusic" type="id" />
+    <item name="recordsFragmentProgressBarMusic" type="id" />
+    <item name="recordsFragmentDateMusic" type="id" />
+    <item name="recordsFragmentImgShareMusic" type="id" />
+    <item name="recordPlayButton" type="id" />
 </resources>

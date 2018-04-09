@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -51,6 +52,8 @@ class PlayActivityUI(private val items: MutableList<Item>, private val context: 
                     textSize = px2dip(dimen(R.dimen.play_activity_tv_name_video_text_size))
                     textColor = Color.WHITE
                     typeface = Typeface.DEFAULT_BOLD
+                    maxLines = 2
+                    ellipsize = TextUtils.TruncateAt.END
                 }
 
                 thumnailVideo = imageView {
@@ -63,6 +66,8 @@ class PlayActivityUI(private val items: MutableList<Item>, private val context: 
                     id = R.id.play_activity_tv_name_channel
                     textSize = px2dip(dimen(R.dimen.play_activity_tv_channel_video_text_size))
                     textColor = Color.WHITE
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
                 }.lparams {
                     leftMargin = dip(10)
                     below(R.id.play_activity_tv_name_video)
@@ -137,10 +142,21 @@ class PlayActivityUI(private val items: MutableList<Item>, private val context: 
                 below(R.id.play_activity_relativeLayout_show_info_video)
             }
 
+            frameLayout {
+                id = R.id.playActivityContainer
+            }.lparams(matchParent, matchParent) {
+                below(R.id.play_activity_relativeLayout_show_info_video)
+            }
+
             fabMenuGroup = floatingButton(object : FloatingMenuButton.OnMenuClickListener {
+                override fun eventMenuClicked(isExpand: Boolean) {
+                    owner.eventOnClickMenu(isExpand)
+                }
+
                 override fun eventItemMenuClicked(view: View) {
                     owner.eventOnClickItemMenu(view)
                 }
+
             }) {
             }.lparams {
                 alignParentBottom()
