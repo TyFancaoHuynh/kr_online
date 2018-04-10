@@ -1,6 +1,5 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +18,10 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  *
  * @author at-hoavo.
  */
-class FeedAdapter(private val feeds: MutableList<Feed>, private var updateCommentsAdapter: (DiffUtil.DiffResult) -> Unit) : RecyclerView.Adapter<FeedAdapter.FeedHolder>() {
+class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<FeedAdapter.FeedHolder>() {
     internal var likeListener: (Int) -> Unit = {}
     internal var unLikeListener: (Int) -> Unit = {}
-    internal var commentListener: (Int, String) -> Unit = { _, _ -> }
+    internal var commentListener: (Int) -> Unit = { }
 
     override fun onBindViewHolder(holder: FeedHolder?, position: Int) {
         holder?.onBind()
@@ -43,11 +42,8 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private var updateCommen
             ui.unlike.onClick {
                 unLikeListener(layoutPosition)
             }
-            ui.countComment.onClick {
-
-            }
-            updateCommentsAdapter = {
-                it.dispatchUpdatesTo(ui.commentsAdapter)
+            ui.comment.onClick {
+                commentListener(layoutPosition)
             }
         }
 

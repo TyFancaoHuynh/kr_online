@@ -1,12 +1,10 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
 import android.support.v4.content.ContextCompat
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.ImageView
 import com.example.hoavot.karaokeonline.R
-import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -15,9 +13,9 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
  *
  * @author at-hoavo.
  */
-class FeedFragmentUI(private val feeds: MutableList<Feed>, private var updateCommentsAdapter: (DiffUtil.DiffResult) -> Unit) : AnkoComponent<FeedFragment> {
+class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedFragment> {
     internal lateinit var add: ImageView
-    internal val feedsAdapter = FeedAdapter(feeds, updateCommentsAdapter)
+    internal val feedsAdapter = FeedAdapter(feeds)
     override fun createView(ui: AnkoContext<FeedFragment>): View {
         return with(ui) {
             relativeLayout {
@@ -66,5 +64,4 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, private var updateCom
             }
         }
     }
-
 }
