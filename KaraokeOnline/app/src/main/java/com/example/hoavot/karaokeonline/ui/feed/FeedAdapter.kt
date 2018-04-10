@@ -63,14 +63,18 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
             }
             Glide.with(item)
                     .asBitmap()
-                    .load(feeds[layoutPosition].avatar)
+//                    .load(feeds[layoutPosition].avatar)
+                    .load(R.drawable.ic_avatar_feed)
                     .apply(option)
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)
-            ui.userName.text = feeds[layoutPosition].userName
+//            ui.userName.text = feeds[layoutPosition].userName
+            ui.userName.text = "User Name"
             ui.countLike.text = feeds[layoutPosition].likeCount.toInt().toString()
             ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment").underlineText {}
-            ui.captionArea.text = feeds[layoutPosition].caption
+//            ui.captionArea.text = feeds[layoutPosition].caption
+            ui.captionArea.text = "This is a caption of user. This is a caption of user. This is a caption of user"
+            ui.seekbar.progress = 100
         }
     }
 }
