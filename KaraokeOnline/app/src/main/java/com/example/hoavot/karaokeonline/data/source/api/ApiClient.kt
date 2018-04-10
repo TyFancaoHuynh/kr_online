@@ -23,7 +23,7 @@ open class ApiClient private constructor(url: String? = null) {
 
     internal var token: String? = null
     //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
-    private var baseUrl: String = if (url == null || url.isEmpty()) "" else url
+    private var baseUrl: String = if (url == null || url.isEmpty()) "http://localhost:3000/api/" else url
 
     companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
         private const val API_TIMEOUT = 10L // 10 minutes

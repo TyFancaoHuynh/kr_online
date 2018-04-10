@@ -118,3 +118,13 @@ internal fun Context.showAlertError(throwable: Throwable) {
         yesButton {}
     }.show()
 }
+
+internal fun Context.showAlertNotification(tt: String, content: String, onYesClick: () -> Unit) {
+    alert {
+        title = tt
+        message = content
+        yesButton {
+            onYesClick()
+        }
+    }
+}

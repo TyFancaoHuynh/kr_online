@@ -31,15 +31,12 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var captionArea: TextView
     internal lateinit var comment: ImageView
     internal lateinit var share: ImageView
-    internal lateinit var tvComment: TextView
-    internal lateinit var btnComment: ImageView
-    internal lateinit var areaComment: LinearLayout
     internal var comments: MutableList<Comment> = mutableListOf()
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
         verticalLayout {
             lparams(matchParent, wrapContent) {
-                margin = dip(10)
+                topMargin = dip(10)
             }
             backgroundResource = R.drawable.custom_item_feed
             linearLayout {
@@ -130,21 +127,8 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 typeface = Typeface.MONOSPACE
                 textSize = px2dip(dimen(R.dimen.feedCommentTextSize))
             }.lparams {
-                topMargin = dip(5)
+                verticalMargin = dip(10)
                 leftMargin = dip(5)
-            }
-
-            recyclerView {
-                layoutManager = LinearLayoutManager(context)
-                adapter = CommentAdapter(comments)
-            }
-
-            areaComment = linearLayout {
-                tvComment = editText {
-
-                }
-
-                btnComment = imageView { }
             }
         }
     }

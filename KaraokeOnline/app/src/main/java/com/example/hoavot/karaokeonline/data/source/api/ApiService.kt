@@ -1,9 +1,12 @@
 package com.example.hoavot.karaokeonline.data.source.api
 
 import com.example.hoavot.karaokeonline.data.model.remote.*
+import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.Query
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.*
 
 /**
  *  Copyright © 2017 AsianTech inc.
@@ -16,6 +19,10 @@ interface ApiService {
         const val URL_SEARCH_CHANNEL = "/youtube/v3/channels"
         const val URL_SEARCH_PLAYLIST = "youtube/v3/playlists"
         const val URL_SEARCH_DETAIL_PLAYLIST = "/youtube/v3/playlistItems"
+        const val URL_GET_FEED = "/feeds"
+        const val URL_GET_FEED_ME = "/feed/me"
+        const val URL_GET_COMMENT = "/feed/comments"
+        const val URL_POST_FEED = "/feed"
         const val KEY_BROWSER = "AIzaSyATxFUmJOzuagSH_qs9jVZza7p6-Ycpo4k"
     }
 
@@ -65,5 +72,36 @@ interface ApiService {
     )
             : Single<VideoSearchFromApi>
 
+    @GET("/about/me")
+    fun getInforUser(
+            @Query("id") id: Int
+    ): Single<UserInforResponse>
 
+    @POST("/about/me")
+    fun updateInforUser(
+            @Body userBody: UpdateUserBody
+    ): Single<UserInforResponse>
+
+    @GET(URL_GET_FEED)
+    fun getFeeds(): Single<FeedsResponse>
+
+    @GET(URL_GET_FEED_ME)
+    fun getFeedMe(@Query("id") id: Int): Single<FeedsResponse>
+
+    @POST("/feed/{id}/comment")
+    fun postComment(@Part("id") feedId: Int, @Field("comment") comment: String): Single<CommentResponse>
+
+    @POST("/feed/{id}/like")
+    fun postLike(@Part("id") feedId: Int): Single<LikeResponse>
+
+    @DELETE("/feed/{id}/like")
+    fun postUnLike(@Part("id") feedId: Int): Single<LikeResponse>
+
+    @GET(URL_GET_COMMENT)
+    fun getComments(@Query("id_feed") feedId: Int): Single<FeedsResponse>
+
+    @POST(URL_POST_FEED)
+    fun postFeed(@Part imageFile: MultipartBody.Part,
+                 @Part("result_limit") resultLimitRequestBody: RequestBody)
+            : Single<FeedResponse>
 }

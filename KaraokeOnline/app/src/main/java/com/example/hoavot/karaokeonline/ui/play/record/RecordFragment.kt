@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
-import com.example.hoavot.karaokeonline.ui.extensions.showAlert
+import com.example.hoavot.karaokeonline.ui.extensions.showAlertNotification
 import com.example.hoavot.karaokeonline.ui.play.PlayActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.jetbrains.anko.AnkoContext
@@ -55,8 +55,7 @@ class RecordFragment : BaseFragment() {
                 viewModel.errorWhenRecordObserver
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            context.showAlert(getString(R.string.recordFragmentTitleMessage),
-                                    getString(R.string.recordFragmentMesageAlertError)) {}
+                            context.showAlertNotification(getString(R.string.recordFragmentMesageAlertError), getString(R.string.recordFragmentTitleMessage)) {}
                         })
         )
     }
@@ -123,7 +122,7 @@ class RecordFragment : BaseFragment() {
 
     private fun handleLessMemorySuccess(less: Boolean) {
         normalVisibleButton()
-        context.showAlert(getString(R.string.recordFragmentMesageLessMemory), getString(R.string.recordFragmentTitleMessage)) {
+        context.showAlertNotification(getString(R.string.recordFragmentMesageLessMemory), getString(R.string.recordFragmentTitleMessage)) {
         }
     }
 

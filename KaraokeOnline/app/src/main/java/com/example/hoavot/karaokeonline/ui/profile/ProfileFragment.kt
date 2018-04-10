@@ -18,14 +18,6 @@ class ProfileFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val feeds = mutableListOf<Feed>()
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
-        feeds.add(Feed("", "sjhha", "", "vchcahcxhx", "", 1436.0, 86.0, mutableListOf()))
         ui = ProfileFragmentUI(feeds)
         return ui.createView(AnkoContext.Companion.create(context, this))
     }

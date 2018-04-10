@@ -1,6 +1,7 @@
 package com.example.hoavot.karaokeonline.ui.feed.comment
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log.d
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -40,6 +41,7 @@ class CommentAdapter(private val comments: MutableList<Comment>) : RecyclerView.
                     .apply(option)
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)
+            d("TAGGG", "comment: ${comments[layoutPosition].comment}")
             ui.comment.text = comments[layoutPosition].comment
         }
     }

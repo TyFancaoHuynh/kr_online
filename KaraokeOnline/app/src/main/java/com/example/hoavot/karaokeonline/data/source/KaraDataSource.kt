@@ -5,8 +5,12 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
+import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /**
  *  Copyright © 2017 AsianTech inc.
@@ -62,4 +66,23 @@ interface KaraDataSource {
      *  @param type:
      */
     fun getMoreVideos(part: String, eventType: String, maxResults: String, relatedToVideoId: String, type: String): Single<MutableList<Video>>
+
+    fun getInforUser(id: Int): Single<UserInforResponse>
+
+    fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse>
+
+    fun getFeeds(): Single<FeedsResponse>
+
+    fun getFeedMe(id: Int): Single<FeedsResponse>
+
+    fun postComment(feedId: Int, comment: String): Single<CommentResponse>
+
+    fun postLike(feedId: Int): Single<LikeResponse>
+
+    fun postUnLike(feedId: Int): Single<LikeResponse>
+
+    fun getComments(feedId: Int): Single<FeedsResponse>
+
+    fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody)
+            : Single<FeedResponse>
 }

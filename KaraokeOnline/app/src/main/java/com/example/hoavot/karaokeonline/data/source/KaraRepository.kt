@@ -1,21 +1,44 @@
 package com.example.hoavot.karaokeonline.data.source
 
-import android.util.Log
-import android.util.Log.d
 import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.remote.KaraRemoteDataSource
+import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /**
  *  Copyright © 2017 AsianTech inc.
  *  Created by hoavot on 10/12/2017.
  */
 class KaraRepository : KaraDataSource {
+
+    override fun getInforUser(id: Int): Single<UserInforResponse> = karaRemoteDataSource.getInforUser(id)
+
+    override fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse> = karaRemoteDataSource.updateInforUser(userBody)
+
+    override fun getFeeds(): Single<FeedsResponse> = karaRemoteDataSource.getFeeds()
+
+    override fun getFeedMe(id: Int): Single<FeedsResponse> = karaRemoteDataSource.getFeedMe(id)
+
+    override fun postComment(feedId: Int, comment: String): Single<CommentResponse>
+            = karaRemoteDataSource.postComment(feedId, comment)
+
+    override fun postLike(feedId: Int): Single<LikeResponse> = karaRemoteDataSource.postLike(feedId)
+
+    override fun postUnLike(feedId: Int): Single<LikeResponse> = karaRemoteDataSource.postUnLike(feedId)
+
+    override fun getComments(feedId: Int): Single<FeedsResponse> = karaRemoteDataSource.getComments(feedId)
+
+    override fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(imageFile, resultLimitRequestBody)
+
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)
     }

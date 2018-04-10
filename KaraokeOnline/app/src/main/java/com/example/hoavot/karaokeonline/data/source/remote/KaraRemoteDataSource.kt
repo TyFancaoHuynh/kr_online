@@ -7,36 +7,64 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Video
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.KaraDataSource
 import com.example.hoavot.karaokeonline.data.source.api.ApiClient
+import com.example.hoavot.karaokeonline.data.source.api.ApiService
+import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /**
  *  Copyright © 2017 AsianTech inc.
  *  Created by hoavot on 10/12/2017.
  */
-class KaraRemoteDataSource : KaraDataSource {
+class KaraRemoteDataSource(private val api: ApiService) : KaraDataSource {
+
+    constructor() : this(ApiClient.getInstance(null).service)
+
+    override fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse>
+            = api.updateInforUser(userBody)
+
+    override fun getFeeds(): Single<FeedsResponse> = api.getFeeds()
+
+    override fun getFeedMe(id: Int): Single<FeedsResponse> = api.getFeedMe(id)
+
+    override fun postComment(feedId: Int, comment: String): Single<CommentResponse> = api.postComment(feedId, comment)
+
+    override fun postLike(feedId: Int): Single<LikeResponse> = api.postLike(feedId)
+
+    override fun postUnLike(feedId: Int): Single<LikeResponse> = api.postUnLike(feedId)
+
+    override fun getComments(feedId: Int): Single<FeedsResponse> = api.getComments(feedId)
+
+    override fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody): Single<FeedResponse>
+            = api.postFeed(imageFile, resultLimitRequestBody)
+
+    override fun getInforUser(id: Int): Single<UserInforResponse> = api.getInforUser(id)
+
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
-        return ApiClient.instance.getChannelDetail("snippet", id).toObservable().map { it.items.toMutableList() }
+        return api.getChannelDetail("snippet", id).toObservable().map { it.items.toMutableList() }
     }
 
     override fun getPlaylistDetails(part: String, playlistId: String): Observable<PlaylistDetailFromApi> {
-        return ApiClient.instance.getPlaylistDetails(part, playlistId).toObservable()
+        return api.getPlaylistDetails(part, playlistId).toObservable()
     }
 
     override fun getVideoSearchFromApi(part: String, q: String, maxResult: Int): Observable<MutableList<Video>> {
-        return ApiClient.instance.getVideoSearch(part, q, maxResult).toObservable().map { it.items }
+        return api.getVideoSearch(part, q, maxResult).toObservable().map { it.items }
     }
 
     override fun getVideoDetail(part: String, id: String, maxResult: Int): Observable<Item> {
-        return ApiClient.instance.getVideoDetail(part, id, maxResult).toObservable().map { it.items[0] }
+        return api.getVideoDetail(part, id, maxResult).toObservable().map { it.items[0] }
     }
 
     override fun getPlaylistSearch(part: String, id: String): Observable<MutableList<Playlist>> {
-        return ApiClient.instance.getPlaylistSearch(part, id).toObservable().map { it.playlists }
+        return api.getPlaylistSearch(part, id).toObservable().map { it.playlists }
     }
 
     override fun getMoreVideos(part: String, eventType: String, maxResults: String, relatedToVideoId: String, type: String): Single<MutableList<Video>> {
-        return ApiClient.instance.getMoreVideos(part, eventType, maxResults, relatedToVideoId, type).map {
+        return api.getMoreVideos(part, eventType, maxResults, relatedToVideoId, type).map {
             it.items
         }
     }

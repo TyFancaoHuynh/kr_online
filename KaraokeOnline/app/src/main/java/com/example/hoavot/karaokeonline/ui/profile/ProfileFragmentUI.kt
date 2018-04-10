@@ -174,7 +174,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
 
                 recyclerView {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = FeedAdapter(feeds)
+                    adapter = FeedAdapter(feeds, {})
                 }.lparams(matchParent, matchParent) {
                     below(R.id.profileFragmentTvRecord)
                     topMargin = dip(10)

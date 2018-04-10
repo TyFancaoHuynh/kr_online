@@ -6,8 +6,7 @@ import com.google.gson.annotations.SerializedName
  *
  * @author at-hoavo.
  */
-data class Comment(@SerializedName("id") val id: String,
-                   @SerializedName("idUserComment") val idUserComment: String,
+data class Comment(@SerializedName("id") val id: Int,
                    @SerializedName("avatarUser") val avatarUser: String,
                    @SerializedName("comment") val comment: String,
-                   @SerializedName("idFeed") val idFeed: String)
+                   @SerializedName("idFeed") val idFeed: Int)
