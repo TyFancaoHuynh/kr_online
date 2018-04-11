@@ -5,20 +5,23 @@ import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Comment
+import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.ankoView
 
 /**
  *
  * @author at-hoavo.
  */
 class FeedHolderUI : AnkoComponent<ViewGroup> {
-    internal lateinit var avatar: ImageView
+    internal lateinit var avatar: CircleImageView
     internal lateinit var userName: TextView
     internal lateinit var recordArea: LinearLayout
     internal lateinit var playRecord: ImageView
@@ -35,13 +38,15 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
         verticalLayout {
+            backgroundColor = Color.WHITE
             lparams(matchParent, wrapContent) {
                 topMargin = dip(10)
             }
-            backgroundResource = R.drawable.custom_item_feed
             linearLayout {
                 lparams(matchParent, dip(50))
-                avatar = imageView {
+                avatar = circleImageView {
+                    borderWidth = dip(0.4f)
+                    borderColor = Color.GRAY
                 }.lparams(dip(40), dip(40)) {
                     leftMargin = dip(3)
                     topMargin = dip(3)
@@ -70,7 +75,8 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
             recordArea = linearLayout {
                 orientation = LinearLayout.HORIZONTAL
                 lparams(matchParent, dip(50)) {
-                    margin = dip(5)
+                    horizontalMargin = dip(20)
+                    verticalMargin = dip(10)
                 }
                 relativeLayout {
                     playRecord = imageView(R.drawable.ic_play_song_feed) {
@@ -80,7 +86,9 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     }.lparams(dip(30), dip(30))
                 }
 
-                seekbar = seekBar { }.lparams(matchParent, wrapContent) {
+                seekbar = seekBar {
+
+                }.lparams(matchParent, wrapContent) {
                     topMargin = dip(7)
                 }
 
@@ -106,7 +114,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
                 countComment = textView {
                     id = R.id.tvComment
-                    textSize = px2dip(dimen(R.dimen.feedCommentTextSize))
+                    textSize = px2dip(dimen(R.dimen.feedCaptionTextSize))
                 }.lparams {
                     leftOf(R.id.tvCountLike)
                     alignParentRight()
@@ -114,9 +122,10 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
             }
 
             view {
-                backgroundColor = Color.GRAY
-            }.lparams(matchParent, dip(1)) {
-                margin = dip(20)
+                backgroundColor = R.color.colorLineFeedScreen
+            }.lparams(matchParent, dip(0.5f)) {
+                horizontalMargin = dip(20)
+                topMargin = dip(10)
             }
 
             linearLayout {
@@ -158,4 +167,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
         }
 
     }
+
+    inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView
+            = ankoView({ CircleImageView(it) }, 0, init)
 }

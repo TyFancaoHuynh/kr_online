@@ -9,7 +9,6 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
-import com.example.hoavot.karaokeonline.ui.extensions.underlineText
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -66,12 +65,11 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
 //                    .load(feeds[layoutPosition].avatar)
                     .load(R.drawable.ic_avatar_feed)
                     .apply(option)
-                    .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)
 //            ui.userName.text = feeds[layoutPosition].userName
             ui.userName.text = "User Name"
             ui.countLike.text = feeds[layoutPosition].likeCount.toInt().toString()
-            ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment").underlineText {}
+            ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment")
 //            ui.captionArea.text = feeds[layoutPosition].caption
             ui.captionArea.text = "This is a caption of user. This is a caption of user. This is a caption of user"
             ui.seekbar.progress = 100

@@ -7,12 +7,16 @@ import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.feed.comment.BottomSheetCommentUI
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.support.v4.ctx
+import org.jetbrains.anko.support.v4.toast
 
 /**
  *
@@ -40,6 +44,12 @@ class FeedFragment : BaseFragment() {
         ui.feedsAdapter.likeListener = this::eventWhenLikeclicked
         ui.feedsAdapter.unLikeListener = this::eventWhenUnLikeclicked
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
+        //load acc avatar
+        Glide.with(ctx)
+                .asBitmap()
+                .load(R.drawable.ic_avatar_feed)
+                .into(ui.circleImgAvatarStatus)
+
         viewModel = FeedViewModel(feeds)
     }
 
@@ -85,6 +95,10 @@ class FeedFragment : BaseFragment() {
         } else {
             // Todo: Handle later
         }
+    }
+
+    internal fun eventWhenClickedAddFileRecord() {
+        toast("add file")
     }
 
     private fun eventWhenLikeclicked(position: Int) {
