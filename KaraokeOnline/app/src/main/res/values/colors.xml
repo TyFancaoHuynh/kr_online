@@ -20,6 +20,7 @@
     <color name="colorBlack">#111111</color>
     <color name="colorItemFeed">#e5e8e9</color>
     <color name="colorBackground">#5b5b5b</color>
+    <color name="colorLineFeedScreen">#f5f0f0</color>
     <color name="colorButton">#20252B</color>
     <color name="colorBlackBold">#090909</color>
     <color name="colorBlackBoldBold">#383737</color>

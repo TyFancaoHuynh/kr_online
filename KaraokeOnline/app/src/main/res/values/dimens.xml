@@ -25,7 +25,7 @@
     <dimen name="tabLayoutItemHorizontalMargin">29dp</dimen>
     <dimen name="tabLayoutItemWidth">35dp</dimen>
 
-    <dimen name="feedCommentTextSize">11dp</dimen>
+    <dimen name="feedCommentTextSize">14dp</dimen>
     <dimen name="feedCaptionTextSize">12dp</dimen>
     <dimen name="textSize15">15dp</dimen>
 
