@@ -58,4 +58,9 @@
     <item name="recordsFragmentDateMusic" type="id" />
     <item name="recordsFragmentImgShareMusic" type="id" />
     <item name="recordPlayButton" type="id" />
+    <item name="feedFragmentBase" type="id" />
+    <item name="captionFragmentToolBarBack" type="id" />
+    <item name="captionFragmentToolBarTitle" type="id" />
+    <item name="captionFragmentToolBarUpload" type="id" />
+    <item name="captionFragmentEdtCaption" type="id" />
 </resources>

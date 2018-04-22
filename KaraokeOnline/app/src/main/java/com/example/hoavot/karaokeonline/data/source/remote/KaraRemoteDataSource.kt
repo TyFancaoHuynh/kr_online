@@ -4,6 +4,7 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.KaraDataSource
 import com.example.hoavot.karaokeonline.data.source.api.ApiClient
@@ -23,8 +24,8 @@ class KaraRemoteDataSource(private val api: ApiService) : KaraDataSource {
 
     constructor() : this(ApiClient.getInstance(null).service)
 
-    override fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse>
-            = api.updateInforUser(userBody)
+    override fun updateInforUser(avatar:MultipartBody.Part,age:RequestBody,gender:RequestBody): Single<User>
+            = api.updateInforUser(avatar,age,gender)
 
     override fun getFeeds(): Single<FeedsResponse> = api.getFeeds()
 
@@ -41,7 +42,7 @@ class KaraRemoteDataSource(private val api: ApiService) : KaraDataSource {
     override fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody): Single<FeedResponse>
             = api.postFeed(imageFile, resultLimitRequestBody)
 
-    override fun getInforUser(id: Int): Single<UserInforResponse> = api.getInforUser(id)
+    override fun getInforUser(id: Int): Single<User> = api.getInforUser(id)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return api.getChannelDetail("snippet", id).toObservable().map { it.items.toMutableList() }

@@ -18,15 +18,18 @@ class CommentUI : AnkoComponent<ViewGroup> {
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
         linearLayout {
             backgroundColor = Color.CYAN
-            lparams(matchParent, dip(150)) {
+            lparams(matchParent, dip(30)) {
                 horizontalMargin = dip(20)
+                topMargin = dip(10)
             }
             avatar = imageView {
 
-            }.lparams(dip(20), dip(20))
+            }.lparams(dip(25), dip(25))
 
             comment = textView {
 
+            }.lparams(matchParent, wrapContent) {
+                leftMargin = dip(10)
             }
         }
     }

@@ -2,13 +2,12 @@ package com.example.hoavot.karaokeonline.ui.base
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.network.UnAuthorizeEvent
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.api.RxBus
-import com.example.hoavot.karaokeonline.ui.extensions.getCurrentFragment
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertUnAuthorized
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
@@ -27,6 +26,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private val subscription: CompositeDisposable = CompositeDisposable()
     private lateinit var viewModel: BaseVMContract
+    internal lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

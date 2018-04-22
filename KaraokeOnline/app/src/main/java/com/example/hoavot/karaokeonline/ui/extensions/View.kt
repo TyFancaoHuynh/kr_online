@@ -1,13 +1,18 @@
 package com.example.hoavot.karaokeonline.ui.extensions
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.EditText
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.ui.utils.AvoidRapidAction
 import com.github.siyamed.shapeimageview.CircularImageView
 import net.cachapa.expandablelayout.ExpandableLayout
 import org.jetbrains.anko.custom.ankoView
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
  *
@@ -34,4 +39,29 @@ internal fun View.enableHighLightWhenClicked() {
         }
         false
     }
+}
+
+internal fun View.onClickWithAvoidRapidAction(delayTime: Int, click: () -> Unit) {
+    onClick {
+        AvoidRapidAction.action(delayTime, click)
+    }
+}
+
+fun EditText.onTextChangeListener(beforeTextChanged: (CharSequence?) -> Unit = {},
+                                  onTextChanged: (CharSequence?) -> Unit = {},
+                                  afterTextChanged: (Editable?) -> Unit = {}) {
+    addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            beforeTextChanged.invoke(p0)
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            onTextChanged.invoke(p0)
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+            afterTextChanged.invoke(p0)
+        }
+    })
+
 }

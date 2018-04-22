@@ -15,4 +15,6 @@
     <string name="recordFragmentMesageLessMemory">ERROR</string>
     <string name="recordFragmentMesageAlertError">error occurred, please try again!</string>
     <string name="errorAlertTitle">ERROR</string>
+    <string name="uploadReviewFragmentToolbarTitle">Add Caption</string>
+    <string name="uploadReviewFragmentEdtCaptionHint">Add caption</string>
 </resources>

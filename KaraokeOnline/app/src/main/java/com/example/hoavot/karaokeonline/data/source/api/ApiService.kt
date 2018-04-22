@@ -1,7 +1,7 @@
 package com.example.hoavot.karaokeonline.data.source.api
 
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.*
-import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
 import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -72,36 +72,39 @@ interface ApiService {
     )
             : Single<VideoSearchFromApi>
 
-    @GET("/about/me")
+    @GET("/user/me")
     fun getInforUser(
             @Query("id") id: Int
-    ): Single<UserInforResponse>
+    ): Single<User>
 
-    @POST("/about/me")
+    @PUT("/user/update")
     fun updateInforUser(
-            @Body userBody: UpdateUserBody
-    ): Single<UserInforResponse>
+            @Part("avatar") avatar: MultipartBody.Part,
+            @Part("age") age: RequestBody,
+            @Part("gender") gender: RequestBody
+    ): Single<User>
 
-    @GET(URL_GET_FEED)
+    @GET("/feeds")
     fun getFeeds(): Single<FeedsResponse>
 
-    @GET(URL_GET_FEED_ME)
+    @GET("/feed/me")
     fun getFeedMe(@Query("id") id: Int): Single<FeedsResponse>
 
+    @FormUrlEncoded
     @POST("/feed/{id}/comment")
-    fun postComment(@Part("id") feedId: Int, @Field("comment") comment: String): Single<CommentResponse>
+    fun postComment(@Path("id") feedId: Int, @Field("comment") comment: String): Single<CommentResponse>
 
     @POST("/feed/{id}/like")
-    fun postLike(@Part("id") feedId: Int): Single<LikeResponse>
+    fun postLike(@Path("id") feedId: Int): Single<LikeResponse>
 
     @DELETE("/feed/{id}/like")
-    fun postUnLike(@Part("id") feedId: Int): Single<LikeResponse>
+    fun postUnLike(@Path("id") feedId: Int): Single<LikeResponse>
 
-    @GET(URL_GET_COMMENT)
+    @GET("/feed/comments")
     fun getComments(@Query("id_feed") feedId: Int): Single<FeedsResponse>
 
-    @POST(URL_POST_FEED)
-    fun postFeed(@Part imageFile: MultipartBody.Part,
-                 @Part("result_limit") resultLimitRequestBody: RequestBody)
+    @Multipart
+    @POST("/feed/create")
+    fun postFeed(@Part audio: MultipartBody.Part, @Part caption: RequestBody)
             : Single<FeedResponse>
 }

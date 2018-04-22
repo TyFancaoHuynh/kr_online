@@ -23,19 +23,14 @@ class FeedViewModel(private val feeds: MutableList<Feed>) {
 
     init {
         val comments = mutableListOf<Comment>()
-        comments.add(Comment(1, "", "bfjavabkakbc", 1))
-        comments.add(Comment(1, "", "bfjavabkakbc", 1))
-        comments.add(Comment(1, "", "bfjavabkakbc", 1))
-        comments.add(Comment(1, "", "bfjavabkakbc", 1))
+        for (i in 1..100) {
+            comments.add(Comment(1, 123456L, "bfjavabkakbc", "132",12))
+        }
         val feeds = mutableListOf<Feed>()
-        feeds.add(Feed(0, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false))
-        feeds.add(Feed(1, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false))
-        feeds.add(Feed(2, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, true))
-        feeds.add(Feed(3, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false))
-        feeds.add(Feed(4, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, true))
-        feeds.add(Feed(5, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false))
-        feeds.add(Feed(6, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, true))
-        feeds.add(Feed(7, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false))
+        for (i in 1..100) {
+            feeds.add(Feed(0, "sjhha", "", "vchcahcxhx", "", 1436, 86, comments, false,12573L))
+
+        }
         feedsObserverable.onNext(Notification.createOnNext(updateFeedList(feeds)))
 //        getFeeds()
     }
@@ -94,16 +89,6 @@ class FeedViewModel(private val feeds: MutableList<Feed>) {
                 })
     }
 
-    internal fun addComment(position: Int, comment: String) {
-        karaRepository.postComment(feeds[position].id, comment)
-                .observeOnUiThread()
-                .subscribe({
-                    feedsCommentObserverable.onNext(Notification.createOnNext(updateCommentList(position, it.comments)))
-                }, {
-                    feedsCommentObserverable.onNext(Notification.createOnError(it))
-                })
-    }
-
     private fun updateFeedDiff(position: Int, response: LikeResponse): DiffUtil.DiffResult {
         val newList = mutableListOf<Feed>()
         newList.addAll(feeds)
@@ -120,17 +105,6 @@ class FeedViewModel(private val feeds: MutableList<Feed>) {
                 .calculateDiff()
         feeds.clear()
         feeds.addAll(newList)
-        return diff
-    }
-
-    private fun updateCommentList(position: Int, newList: List<Comment>): DiffUtil.DiffResult {
-        val diff = Diff(feeds[position].comments, newList)
-                .areItemsTheSame { oldItem, newItem ->
-                    oldItem.id == newItem.id
-                }
-                .calculateDiff()
-        feeds[position].comments.clear()
-        feeds[position].comments.addAll(newList)
         return diff
     }
 }

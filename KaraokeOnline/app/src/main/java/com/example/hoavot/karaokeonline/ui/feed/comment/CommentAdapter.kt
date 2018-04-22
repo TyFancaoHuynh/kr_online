@@ -37,7 +37,8 @@ class CommentAdapter(private val comments: MutableList<Comment>) : RecyclerView.
         internal fun onBind() {
             Glide.with(item)
                     .asBitmap()
-                    .load(comments[layoutPosition].avatarUser)
+//                    .load(comments[layoutPosition].avatarUser)
+                    .load(R.drawable.user)
                     .apply(option)
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)

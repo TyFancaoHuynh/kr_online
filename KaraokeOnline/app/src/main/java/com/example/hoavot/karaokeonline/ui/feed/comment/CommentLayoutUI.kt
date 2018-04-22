@@ -8,22 +8,25 @@ import android.widget.LinearLayout
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
+import com.example.hoavot.karaokeonline.ui.utils.AvoidRapidAction
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
  *
  * @author at-hoavo.
  */
-class BottomSheetCommentUI : AnkoComponent<FeedFragment> {
-    internal var comments = mutableListOf<Comment>()
+class CommentLayoutUI(private var comments: MutableList<Comment>) : AnkoComponent<CommentFragment> {
     internal var commentsAdapter = CommentAdapter(comments)
+    internal var position = -1
     internal lateinit var areaComment: LinearLayout
     internal lateinit var edtComment: EditText
     internal lateinit var btnComment: ImageView
 
-    override fun createView(ui: AnkoContext<FeedFragment>): View = with(ui) {
+    override fun createView(ui: AnkoContext<CommentFragment>): View = with(ui) {
         relativeLayout {
+            lparams(matchParent, dip(300))
             recyclerView {
                 layoutManager = LinearLayoutManager(context)
                 adapter = commentsAdapter
@@ -31,10 +34,21 @@ class BottomSheetCommentUI : AnkoComponent<FeedFragment> {
             areaComment = linearLayout {
                 edtComment = editText {
 
+                }.lparams(dip(0), matchParent) {
+                    weight = 6f
                 }
 
-                btnComment = imageView(R.drawable.ic_plus) { }
-            }.lparams(matchParent, wrapContent) {
+                btnComment = imageView(R.drawable.ic_plus) {
+                    onClick {
+                        AvoidRapidAction.action(400) {
+                            owner.eventWhenAddCommentClicked(edtComment.text.toString())
+                        }
+                    }
+
+                }.lparams(dip(0), matchParent) {
+                    weight = 1f
+                }
+            }.lparams(matchParent, dip(50)) {
                 alignParentBottom()
             }
         }

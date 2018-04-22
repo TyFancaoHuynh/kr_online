@@ -7,4 +7,6 @@ import com.google.gson.annotations.SerializedName
  *
  * @author at-hoavo.
  */
-class FeedResponse(@SerializedName("feed") val feed: Feed)
+class FeedResponse(
+        @SerializedName("feed") val feed: Feed
+)

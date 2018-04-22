@@ -4,10 +4,13 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.remote.KaraRemoteDataSource
-import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
-import com.example.hoavot.karaokeonline.data.source.response.*
+import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
+import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -19,9 +22,9 @@ import okhttp3.RequestBody
  */
 class KaraRepository : KaraDataSource {
 
-    override fun getInforUser(id: Int): Single<UserInforResponse> = karaRemoteDataSource.getInforUser(id)
+    override fun getInforUser(id: Int): Single<User> = karaRemoteDataSource.getInforUser(id)
 
-    override fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse> = karaRemoteDataSource.updateInforUser(userBody)
+    override fun updateInforUser(avatar: MultipartBody.Part, age: RequestBody, gender: RequestBody): Single<User> = karaRemoteDataSource.updateInforUser(avatar, age, gender)
 
     override fun getFeeds(): Single<FeedsResponse> = karaRemoteDataSource.getFeeds()
 

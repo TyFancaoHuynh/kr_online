@@ -9,7 +9,8 @@ import com.google.gson.annotations.SerializedName
 data class User(@SerializedName("id") val id: String,
                 @SerializedName("username") val username: String,
                 @SerializedName("password") val password: String,
+                @SerializedName("create_at") val createdAt: String,
+                @SerializedName("update_at") val updatedAt: String,
                 @SerializedName("avatar") val avatar: String,
-                @SerializedName("address") val address: String,
                 @SerializedName("age") val age: Int,
-                @SerializedName("email") val email: String)
+                @SerializedName("gender") val gender: Int)

@@ -40,7 +40,9 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedF
                             rightMargin = dip(10)
                         }
 
-                        add = imageView(R.drawable.ic_plus)
+                        add = imageView(R.drawable.ic_plus) {
+                            owner.eventOnAddCaptionClicked()
+                        }
                     }.lparams(matchParent, dip(40)) {
                         topMargin = dip(10)
                     }

@@ -4,9 +4,12 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
-import com.example.hoavot.karaokeonline.data.source.request.UpdateUserBody
-import com.example.hoavot.karaokeonline.data.source.response.*
+import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
+import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -67,9 +70,9 @@ interface KaraDataSource {
      */
     fun getMoreVideos(part: String, eventType: String, maxResults: String, relatedToVideoId: String, type: String): Single<MutableList<Video>>
 
-    fun getInforUser(id: Int): Single<UserInforResponse>
+    fun getInforUser(id: Int): Single<User>
 
-    fun updateInforUser(userBody: UpdateUserBody): Single<UserInforResponse>
+    fun updateInforUser(avatar: MultipartBody.Part, age: RequestBody, gender: RequestBody): Single<User>
 
     fun getFeeds(): Single<FeedsResponse>
 

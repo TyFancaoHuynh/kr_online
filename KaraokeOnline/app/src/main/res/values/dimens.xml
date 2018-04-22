@@ -38,4 +38,12 @@
     <dimen name="textSize18">18dp</dimen>
     <dimen name="textSize25">25dp</dimen>
     <dimen name="textSize21">21dp</dimen>
+    <dimen name="toolBarHeight">52dp</dimen>
+    <dimen name="toolBarLeftRightIconTopPadding">15dp</dimen>
+    <dimen name="toolBarLeftRightIconBottomPadding">15dp</dimen>
+    <dimen name="toolBarPadding">15dp</dimen>
+    <dimen name="toolBarMiddleTitleTextSize">15dp</dimen>
+    <dimen name="uploadReviewFragmentToolBarTitleTopPadding">15dp</dimen>
+    <dimen name="captionFragmentEdtCaptionTextSize">14dp</dimen>
+    <dimen name="captionFragmentEdtHorizontalPadding">15dp</dimen>
 </resources>
