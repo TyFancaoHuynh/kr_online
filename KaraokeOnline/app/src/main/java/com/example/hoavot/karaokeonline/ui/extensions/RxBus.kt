@@ -1,7 +1,9 @@
 package com.example.hoavot.karaokeonline.ui.extensions
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.SingleSubject
 
 /**
  *

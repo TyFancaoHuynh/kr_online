@@ -2,14 +2,14 @@
 <resources>
     <!--Search Video Screen-->
     <item name="search_video_screen_edt_input" type="id" />
-    <item name="search_video_adapter_img_video" type="id"/>
-    <item name="search_video_adapter_tv_duratiion_time_video" type="id"/>
-    <item name="search_video_adapter_tv_quantity_video" type="id"/>
-    <item name="search_video_adapter_name_video" type="id"/>
-    <item name="search_video_adapter_description_video" type="id"/>
-    <item name="search_video_adapter_channel_video" type="id"/>
-    <item name="search_video_adapter_quantity_view_video" type="id"/>
-    <item name="search_video_adapter_tv_day_publish_video" type="id"/>
+    <item name="search_video_adapter_img_video" type="id" />
+    <item name="search_video_adapter_tv_duratiion_time_video" type="id" />
+    <item name="search_video_adapter_tv_quantity_video" type="id" />
+    <item name="search_video_adapter_name_video" type="id" />
+    <item name="search_video_adapter_description_video" type="id" />
+    <item name="search_video_adapter_channel_video" type="id" />
+    <item name="search_video_adapter_quantity_view_video" type="id" />
+    <item name="search_video_adapter_tv_day_publish_video" type="id" />
     <item name="search_video_adapter_tv_name_channel" type="id" />
     <item name="search_video_adapter_tv_person_register_channel" type="id" />
     <item name="search_video_adapter_tv_channel" type="id" />
@@ -34,6 +34,7 @@
     <item name="floating_btn_menu_img_btn_download" type="id" />
     <item name="floating_btn_menu" type="id" />
     <item name="feedFragmentImgLike" type="id" />
+    <item name="feedFragmentImgComment" type="id" />
     <item name="feedFragmentImgUnLike" type="id" />
     <item name="mainViewPager" type="id" />
     <item name="mainTabLayout" type="id" />
@@ -43,7 +44,7 @@
     <item name="feedFragmentAreaEdt" type="id" />
     <item name="profileFragmentViewBackground" type="id" />
     <item name="profileFragmentTvAccount" type="id" />
-    <item name="profileFragmentTvRecord" type="id" />
+    <item name="profileFragmentTvUsername" type="id" />
     <item name="profileFragmentExpandleLayout" type="id" />
     <item name="recordBottomSheetWave" type="id" />
     <item name="recordBottomSheetPlay" type="id" />
@@ -58,9 +59,30 @@
     <item name="recordsFragmentDateMusic" type="id" />
     <item name="recordsFragmentImgShareMusic" type="id" />
     <item name="recordPlayButton" type="id" />
+    <!--Feed Holder UI-->
+    <item name="imgCountLike" type="id" />
+    <item name="tvCountLike" type="id" />
+    <item name="tvComment" type="id" />
     <item name="feedFragmentBase" type="id" />
     <item name="captionFragmentToolBarBack" type="id" />
     <item name="captionFragmentToolBarTitle" type="id" />
     <item name="captionFragmentToolBarUpload" type="id" />
     <item name="captionFragmentEdtCaption" type="id" />
+    <item name="homeFragmentContainer" type="id" />
+    <item name="toolBarCaption" type="id" />
+    <item name="captionFragmentAvartar" type="id" />
+    <item name="commentFragmentEditComment" type="id" />
+    <item name="commentFragmentAvatar" type="id" />
+    <item name="commentFragmentToolBarLike" type="id" />
+    <item name="commentFragmentTvCountLike" type="id" />
+    <item name="commentFragmentAreaLike" type="id" />
+    <item name="commentFragmentRecyclerViewComment" type="id" />
+    <item name="commentFragmentUsername" type="id" />
+    <item name="captionFragmenttvUsername" type="id" />
+    <item name="captionFragmenttvFileRecordImage" type="id" />
+    <item name="captionFragmenttvFileName" type="id" />
+    <item name="profileFragmenAvatar" type="id" />
+    <item name="profileFragmentTvCountFeed" type="id" />
+    <item name="profileFragmenMore" type="id" />
+    <item name="profileFragmentContainer" type="id" />
 </resources>

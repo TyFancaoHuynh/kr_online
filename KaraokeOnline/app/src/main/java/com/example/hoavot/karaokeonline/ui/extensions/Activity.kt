@@ -2,17 +2,21 @@ package com.example.hoavot.karaokeonline.ui.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentTransaction
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.source.api.ApiException
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
 import io.reactivex.Notification
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.dimen
 import org.jetbrains.anko.yesButton
 import java.net.HttpURLConnection
 
@@ -127,4 +131,34 @@ internal fun Context.showAlertNotification(tt: String, content: String, onYesCli
             onYesClick()
         }
     }
+}
+
+internal fun Context.getStatusBarHeight(): Int {
+    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+    return if (resourceId > 0)
+        dimen(resourceId)
+    else
+        Math.ceil((if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            resources.getInteger(R.integer.defaultStatusBarLowerAndroidM)
+        else R.integer.defaultStatusBarHigherAndroidM) * resources.displayMetrics.density.toDouble()).toInt()
+}
+
+internal fun Context.getNavigationBarHeight(): Int {
+    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        return resources.getDimensionPixelSize(resourceId)
+    }
+    return 0
+}
+
+internal fun Context.hasNavBar(): Boolean {
+    val id = resources.getIdentifier("config_showNavigationBar", "bool", "android")
+    return id > 0 && resources.getBoolean(id)
+}
+
+internal fun Context.getHeightScreen(): Int {
+    val wm = getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    val dimension = DisplayMetrics()
+    wm?.defaultDisplay?.getMetrics(dimension)
+    return dimension.heightPixels
 }

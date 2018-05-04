@@ -1,5 +1,6 @@
 package com.example.hoavot.karaokeonline.data.source
 
+import com.example.hoavot.karaokeonline.data.model.other.User
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 
@@ -33,4 +34,14 @@ interface LocalDataSource {
      *  Check memory usage
      */
     fun checkMemoryUsage(): BehaviorSubject<Boolean>
+
+    /**
+     * Get User
+     */
+    fun getMeInfor(): User
+
+    /**
+     * Save User
+     */
+    fun saveMeInfor(user: User): Boolean
 }

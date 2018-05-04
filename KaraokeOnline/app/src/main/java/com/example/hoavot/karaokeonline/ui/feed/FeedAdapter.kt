@@ -5,11 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
-import com.example.hoavot.karaokeonline.ui.extensions.underlineText
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -38,9 +36,11 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
         init {
             ui.like.onClick {
                 likeListener(layoutPosition)
+                ui.like.isEnabled = false
             }
             ui.unlike.onClick {
                 unLikeListener(layoutPosition)
+                ui.unlike.isEnabled = false
             }
             ui.comment.onClick {
                 commentListener(layoutPosition)
@@ -54,23 +54,24 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
                 .placeholder(R.drawable.bg_item_place_holder)
 
         internal fun onBind() {
-            if (feeds[layoutPosition].likeFlag) {
+            if (feeds[layoutPosition].likeFlag == 1) {
                 ui.like.visibility = View.INVISIBLE
                 ui.unlike.visibility = View.VISIBLE
+                ui.unlike.isEnabled = true
             } else {
                 ui.like.visibility = View.VISIBLE
                 ui.unlike.visibility = View.INVISIBLE
+                ui.like.isEnabled = true
             }
             Glide.with(item)
-                    .asBitmap()
                     .load(feeds[layoutPosition].avatar)
                     .apply(option)
-                    .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)
-            ui.userName.text = feeds[layoutPosition].userName
+            ui.userName.text = feeds[layoutPosition].username
             ui.countLike.text = feeds[layoutPosition].likeCount.toInt().toString()
-            ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment").underlineText {}
+            ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment")
             ui.captionArea.text = feeds[layoutPosition].caption
+            ui.seekbar.progress = 100
         }
     }
 }

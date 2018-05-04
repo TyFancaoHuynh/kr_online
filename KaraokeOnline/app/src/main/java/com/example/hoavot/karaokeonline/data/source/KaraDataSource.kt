@@ -14,6 +14,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.File
 
 /**
  *  Copyright © 2017 AsianTech inc.
@@ -76,7 +77,7 @@ interface KaraDataSource {
 
     fun getFeeds(): Single<FeedsResponse>
 
-    fun getFeedMe(id: Int): Single<FeedsResponse>
+    fun getFeedMe(): Single<FeedsResponse>
 
     fun postComment(feedId: Int, comment: String): Single<CommentResponse>
 
@@ -84,8 +85,8 @@ interface KaraDataSource {
 
     fun postUnLike(feedId: Int): Single<LikeResponse>
 
-    fun getComments(feedId: Int): Single<FeedsResponse>
+    fun getComments(feedId: Int): Single<CommentResponse>
 
-    fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody)
+    fun postFeed(audioFile: File? = null, caption: String)
             : Single<FeedResponse>
 }

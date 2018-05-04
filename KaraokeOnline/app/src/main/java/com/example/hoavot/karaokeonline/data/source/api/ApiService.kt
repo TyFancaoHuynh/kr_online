@@ -2,7 +2,10 @@ package com.example.hoavot.karaokeonline.data.source.api
 
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.*
-import com.example.hoavot.karaokeonline.data.source.response.*
+import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
+import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
+import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,10 +22,6 @@ interface ApiService {
         const val URL_SEARCH_CHANNEL = "/youtube/v3/channels"
         const val URL_SEARCH_PLAYLIST = "youtube/v3/playlists"
         const val URL_SEARCH_DETAIL_PLAYLIST = "/youtube/v3/playlistItems"
-        const val URL_GET_FEED = "/feeds"
-        const val URL_GET_FEED_ME = "/feed/me"
-        const val URL_GET_COMMENT = "/feed/comments"
-        const val URL_POST_FEED = "/feed"
         const val KEY_BROWSER = "AIzaSyATxFUmJOzuagSH_qs9jVZza7p6-Ycpo4k"
     }
 
@@ -72,39 +71,42 @@ interface ApiService {
     )
             : Single<VideoSearchFromApi>
 
-    @GET("/user/me")
+    @GET("/api/user/me")
     fun getInforUser(
             @Query("id") id: Int
     ): Single<User>
 
-    @PUT("/user/update")
+    @PUT("/api/user/update")
     fun updateInforUser(
             @Part("avatar") avatar: MultipartBody.Part,
             @Part("age") age: RequestBody,
             @Part("gender") gender: RequestBody
     ): Single<User>
 
-    @GET("/feeds")
+    @GET("/api/feeds")
     fun getFeeds(): Single<FeedsResponse>
 
-    @GET("/feed/me")
-    fun getFeedMe(@Query("id") id: Int): Single<FeedsResponse>
+    @GET("/api/feed/me")
+    fun getFeedMe(): Single<FeedsResponse>
 
+    /**
+     *  Function for me comment to feed
+     */
     @FormUrlEncoded
-    @POST("/feed/{id}/comment")
+    @POST("/api/feed/{id}/comment")
     fun postComment(@Path("id") feedId: Int, @Field("comment") comment: String): Single<CommentResponse>
 
-    @POST("/feed/{id}/like")
+    @POST("/api/feed/{id}/like")
     fun postLike(@Path("id") feedId: Int): Single<LikeResponse>
 
-    @DELETE("/feed/{id}/like")
+    @DELETE("/api/feed/{id}/like")
     fun postUnLike(@Path("id") feedId: Int): Single<LikeResponse>
 
-    @GET("/feed/comments")
-    fun getComments(@Query("id_feed") feedId: Int): Single<FeedsResponse>
+    @GET("/api/feed/{id}/comments")
+    fun getComments(@Path("id") feedId: Int): Single<CommentResponse>
 
     @Multipart
-    @POST("/feed/create")
-    fun postFeed(@Part audio: MultipartBody.Part, @Part caption: RequestBody)
+    @POST("/api/feed/create")
+    fun postFeed(@Part audio: MultipartBody.Part?, @Part("caption") caption: RequestBody)
             : Single<FeedResponse>
 }

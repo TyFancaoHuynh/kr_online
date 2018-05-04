@@ -13,13 +13,14 @@
     <color name="light_orange">#FC6400</color>
     <color name="grayLight">#bdbdbd</color>
     <color name="white">#FFFFFF</color>
-    <color name="blue">#c7d6cb</color>
+    <color name="blue">#b7b9b7</color>
     <color name="colorGrayLight">#a39e9e</color>
     <color name="colorsearchEdittext">#838383</color>
     <color name="colorTextSearch">#7b7474</color>
     <color name="colorBlack">#111111</color>
     <color name="colorItemFeed">#e5e8e9</color>
-    <color name="colorBackground">#5b5b5b</color>
+    <color name="colorBackgroundEditprofile">#e4e0e0</color>
+    <color name="colorLineFeedScreen">#f5f0f0</color>
     <color name="colorButton">#20252B</color>
     <color name="colorBlackBold">#090909</color>
     <color name="colorBlackBoldBold">#383737</color>
@@ -28,4 +29,10 @@
     <color name="colorStartPlay">#693E4E</color>
     <color name="colorEndPlay">#53424B</color>
     <color name="colorCenterPlay">#3E223C</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorGrayBold">#3e4853</color>
+    <color name="colorPurpose">#d6d6d7</color>
+    <color name="colorSetting">#e2dbdb</color>
+    <color name="colorProfileAvatar">#50fcf7f7</color>
+
 </resources>

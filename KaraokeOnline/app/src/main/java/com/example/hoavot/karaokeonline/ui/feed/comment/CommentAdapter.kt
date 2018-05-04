@@ -1,12 +1,10 @@
 package com.example.hoavot.karaokeonline.ui.feed.comment
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log.d
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Comment
@@ -32,18 +30,15 @@ class CommentAdapter(private val comments: MutableList<Comment>) : RecyclerView.
                 .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.bg_item_place_holder)
+                .placeholder(R.drawable.user)
 
         internal fun onBind() {
             Glide.with(item)
-                    .asBitmap()
-//                    .load(comments[layoutPosition].avatarUser)
-                    .load(R.drawable.user)
+                    .load(comments[layoutPosition].avatarUser)
                     .apply(option)
-                    .transition(BitmapTransitionOptions.withCrossFade())
                     .into(ui.avatar)
-            d("TAGGG", "comment: ${comments[layoutPosition].comment}")
             ui.comment.text = comments[layoutPosition].comment
+            ui.username.text = comments[layoutPosition].username
         }
     }
 }

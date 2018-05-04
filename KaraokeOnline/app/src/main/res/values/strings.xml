@@ -16,5 +16,6 @@
     <string name="recordFragmentMesageAlertError">error occurred, please try again!</string>
     <string name="errorAlertTitle">ERROR</string>
     <string name="uploadReviewFragmentToolbarTitle">Add Caption</string>
-    <string name="uploadReviewFragmentEdtCaptionHint">Add caption</string>
+    <string name="uploadReviewFragmentEdtCaptionHint">What do you think...?</string>
+    <string name="select_audio_file_title">SELECT AUDIO</string>
 </resources>

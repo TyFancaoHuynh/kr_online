@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log.d
 import com.bumptech.glide.Glide
 import com.example.hoavot.karaokeonline.BuildConfig
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.LocalDataSource
 import com.example.hoavot.karaokeonline.data.source.api.ApiClient
 import io.reactivex.Single
@@ -17,8 +18,11 @@ import java.io.*
  * @author at-hoavo.
  */
 class LocalRepository(private val context: Context) : LocalDataSource {
+
     companion object {
         private const val KEY_API_TOKEN = "KEY_API_TOKEN"
+        private const val KEY_USERNAME = "KEY_USERNAME"
+        private const val KEY_AVATAR = "KEY_AVATAR"
     }
 
     private val pref by lazy {
@@ -59,6 +63,18 @@ class LocalRepository(private val context: Context) : LocalDataSource {
         return SingleSubject.fromCallable {
             deleteCache()
         }
+    }
+
+    override fun getMeInfor(): User {
+        val username = pref.getString(KEY_USERNAME, "")
+        val avatar = pref.getString(KEY_AVATAR, "")
+        return User(username = username, avatar = avatar)
+    }
+
+    override fun saveMeInfor(user: User): Boolean {
+        pref.edit().putString(KEY_USERNAME, user.username).apply()
+        pref.edit().putString(KEY_AVATAR, user.avatar).apply()
+        return true
     }
 
     private val checkMemoryObserver = BehaviorSubject.create<Boolean>()

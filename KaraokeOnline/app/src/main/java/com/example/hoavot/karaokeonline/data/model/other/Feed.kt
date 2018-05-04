@@ -10,13 +10,13 @@ import com.google.gson.annotations.SerializedName
  */
 data class Feed(@SerializedName("id") val id: Int,
                 @SerializedName("caption") val caption: String,
-                @SerializedName("avatar") val avatar: String,
-                @SerializedName("userName") val userName: String,
-                @SerializedName("name_music") var musicName: String,
-                @SerializedName("likeCount") var likeCount: Long,
-                @SerializedName("commentCount") var commentCount: Long,
-                @SerializedName("comments") val comments: MutableList<Comment>,
-                @SerializedName("like_flag") var likeFlag: Boolean,
+                @SerializedName("avatar") val avatar: String?,
+                @SerializedName("username") val username: String,
+                @SerializedName("file_music") var fileMusic: String,
+                @SerializedName("like_count") var likeCount: Long,
+                @SerializedName("comment_count") var commentCount: Long,
+                @SerializedName("comments") var comments: MutableList<Comment>,
+                @SerializedName("like_flag") var likeFlag: Int,
                 @SerializedName("time") var time: Long) : Parcelable {
     internal var isRequesting = false
 
@@ -28,8 +28,10 @@ data class Feed(@SerializedName("id") val id: Int,
             parcel.readString(),
             parcel.readLong(),
             parcel.readLong(),
-            TODO("comments"),
-            parcel.readByte() != 0.toByte(),
+            arrayListOf<Comment>().apply {
+                parcel.readList(this, Comment::class.java.classLoader)
+            },
+            parcel.readInt(),
             parcel.readLong()) {
         isRequesting = parcel.readByte() != 0.toByte()
     }
@@ -38,11 +40,12 @@ data class Feed(@SerializedName("id") val id: Int,
         parcel.writeInt(id)
         parcel.writeString(caption)
         parcel.writeString(avatar)
-        parcel.writeString(userName)
-        parcel.writeString(musicName)
+        parcel.writeString(username)
+        parcel.writeString(fileMusic)
         parcel.writeLong(likeCount)
         parcel.writeLong(commentCount)
-        parcel.writeByte(if (likeFlag) 1 else 0)
+        parcel.writeInt(likeFlag)
+        parcel.writeTypedList(comments)
         parcel.writeLong(time)
         parcel.writeByte(if (isRequesting) 1 else 0)
     }
@@ -60,5 +63,4 @@ data class Feed(@SerializedName("id") val id: Int,
             return arrayOfNulls(size)
         }
     }
-
 }

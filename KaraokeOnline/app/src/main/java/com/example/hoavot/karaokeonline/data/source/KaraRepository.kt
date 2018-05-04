@@ -13,14 +13,17 @@ import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Observable
 import io.reactivex.Single
+import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.File
 
 /**
  *  Copyright © 2017 AsianTech inc.
  *  Created by hoavot on 10/12/2017.
  */
 class KaraRepository : KaraDataSource {
+    private val karaRemoteDataSource = KaraRemoteDataSource()
 
     override fun getInforUser(id: Int): Single<User> = karaRemoteDataSource.getInforUser(id)
 
@@ -28,7 +31,7 @@ class KaraRepository : KaraDataSource {
 
     override fun getFeeds(): Single<FeedsResponse> = karaRemoteDataSource.getFeeds()
 
-    override fun getFeedMe(id: Int): Single<FeedsResponse> = karaRemoteDataSource.getFeedMe(id)
+    override fun getFeedMe(): Single<FeedsResponse> = karaRemoteDataSource.getFeedMe()
 
     override fun postComment(feedId: Int, comment: String): Single<CommentResponse>
             = karaRemoteDataSource.postComment(feedId, comment)
@@ -37,10 +40,10 @@ class KaraRepository : KaraDataSource {
 
     override fun postUnLike(feedId: Int): Single<LikeResponse> = karaRemoteDataSource.postUnLike(feedId)
 
-    override fun getComments(feedId: Int): Single<FeedsResponse> = karaRemoteDataSource.getComments(feedId)
+    override fun getComments(feedId: Int): Single<CommentResponse> = karaRemoteDataSource.getComments(feedId)
 
-    override fun postFeed(imageFile: MultipartBody.Part, resultLimitRequestBody: RequestBody): Single<FeedResponse>
-            = karaRemoteDataSource.postFeed(imageFile, resultLimitRequestBody)
+    override fun postFeed(imageFile: File?, caption: String): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(imageFile, caption)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)
@@ -53,8 +56,6 @@ class KaraRepository : KaraDataSource {
     override fun getMoreVideos(part: String, eventType: String, maxResults: String, relatedToVideoId: String, type: String): Single<MutableList<Video>> {
         return karaRemoteDataSource.getMoreVideos(part, eventType, maxResults, relatedToVideoId, type)
     }
-
-    private val karaRemoteDataSource = KaraRemoteDataSource()
 
     override fun getVideoSearchFromApi(part: String, q: String, maxResult: Int): Observable<MutableList<Video>> {
         return karaRemoteDataSource.getVideoSearchFromApi(part, q, maxResult)

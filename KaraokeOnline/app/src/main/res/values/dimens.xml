@@ -25,7 +25,7 @@
     <dimen name="tabLayoutItemHorizontalMargin">29dp</dimen>
     <dimen name="tabLayoutItemWidth">35dp</dimen>
 
-    <dimen name="feedCommentTextSize">11dp</dimen>
+    <dimen name="feedCommentTextSize">14dp</dimen>
     <dimen name="feedCaptionTextSize">12dp</dimen>
     <dimen name="textSize15">15dp</dimen>
 
@@ -41,9 +41,9 @@
     <dimen name="toolBarHeight">52dp</dimen>
     <dimen name="toolBarLeftRightIconTopPadding">15dp</dimen>
     <dimen name="toolBarLeftRightIconBottomPadding">15dp</dimen>
-    <dimen name="toolBarPadding">15dp</dimen>
-    <dimen name="toolBarMiddleTitleTextSize">15dp</dimen>
+    <dimen name="toolBarPadding">5dp</dimen>
+    <dimen name="toolBarMiddleTitleTextSize">18sp</dimen>
     <dimen name="uploadReviewFragmentToolBarTitleTopPadding">15dp</dimen>
     <dimen name="captionFragmentEdtCaptionTextSize">14dp</dimen>
-    <dimen name="captionFragmentEdtHorizontalPadding">15dp</dimen>
+    <dimen name="captionFragmentEdtHorizontalPadding">5dp</dimen>
 </resources>

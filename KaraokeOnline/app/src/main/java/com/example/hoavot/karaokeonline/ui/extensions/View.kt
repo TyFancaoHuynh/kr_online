@@ -1,15 +1,17 @@
 package com.example.hoavot.karaokeonline.ui.extensions
 
+import android.graphics.Rect
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.util.TypedValue
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.utils.AvoidRapidAction
 import com.github.siyamed.shapeimageview.CircularImageView
+import de.hdodenhof.circleimageview.CircleImageView
 import net.cachapa.expandablelayout.ExpandableLayout
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -65,3 +67,48 @@ fun EditText.onTextChangeListener(beforeTextChanged: (CharSequence?) -> Unit = {
     })
 
 }
+
+
+internal fun View.setOnVisibilityChangeListener(onVisibilityChangeListener: OnVisibilityChangeListener) {
+    this.viewTreeObserver.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener {
+        val rectContainer = Rect()
+        // R will be populated with the coordinates of your view that area still visible.
+        this.getWindowVisibleDisplayFrame(rectContainer)
+        val heightDiff = this.rootView.height - (rectContainer.bottom - rectContainer.top)
+        val res = this.resources
+        // The status bar is 25dp, use 50dp for assurance
+        var maxDiff = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f, res.displayMetrics)
+        // Lollipop includes button bar in the root. Add height of button bar (48dp) to maxDiff
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val heightButtonBar = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, res.displayMetrics)
+            maxDiff += heightButtonBar
+        }
+        // If more than 100 pixels, its probably a keyboard.
+        if (heightDiff > maxDiff) {
+            onVisibilityChangeListener.onShowKeyboard(heightDiff)
+        } else {
+            onVisibilityChangeListener.onHideKeyboard()
+        }
+    })
+}
+
+inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView
+        = ankoView({ CircleImageView(it) }, 0, init)
+
+/**
+ *
+ * Interface on visibility keyboard listener
+ */
+interface OnVisibilityChangeListener {
+    /**
+     * On show keyboard
+     */
+    fun onShowKeyboard(keyboardHeight: Int)
+
+    /**
+     * On hide keyboard
+     */
+    fun onHideKeyboard()
+}
+
+
