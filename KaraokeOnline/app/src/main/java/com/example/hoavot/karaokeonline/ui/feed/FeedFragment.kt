@@ -87,7 +87,7 @@ class FeedFragment : BaseFragment() {
             notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
         } else {
             // Todo: Handle later
-            d("TAGGGG", "on error feeds")
+            d("TAGGGG", "on error feeds ${notification.error?.message}")
         }
     }
 

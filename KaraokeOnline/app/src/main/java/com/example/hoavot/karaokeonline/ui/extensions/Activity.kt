@@ -162,3 +162,23 @@ internal fun Context.getHeightScreen(): Int {
     wm?.defaultDisplay?.getMetrics(dimension)
     return dimension.heightPixels
 }
+
+internal fun Context.showKeyboard(view: View) {
+    if (view.requestFocus()) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        view.postDelayed({
+            imm?.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        }, 100)
+    }
+}
+
+internal fun Context.showSettingPermissionAlert(onSettingClicked: () -> Unit) {
+    alert {
+        message = getString(R.string.permissionSettingAlertTitle)
+        isCancelable = false
+        negativeButton("Cancel", {})
+        positiveButton("Settings", {
+            onSettingClicked.invoke()
+        })
+    }.show()
+}

@@ -29,8 +29,21 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
 
     constructor() : this(ApiClient.getInstance(null).youtTubeService, ApiClient.getInstance(null).karaService)
 
-    override fun updateInforUser(avatar: MultipartBody.Part, age: RequestBody, gender: RequestBody): Single<User>
-            = karaApi.updateInforUser(avatar, age, gender)
+    override fun updateInforUser(user: User): Single<User> {
+        val username = createNonNullPartFromString(user.username)
+        val password = createNonNullPartFromString(user.password)
+        val email = createNonNullPartFromString(user.email)
+        val age = createPartFromString(user.age.toString())
+        val gender = createPartFromString(user.gender.toString())
+        return karaApi.updateInforUser(username, password, email, age, gender)
+    }
+
+    override fun updateAvatarUser(avatarFile: File): Single<User> {
+        val requestFile = RequestBody.create(MediaType.parse("image/*"), avatarFile)
+        d("TAGGG", "file name:${avatarFile.name} ")
+        val requestFileBody = MultipartBody.Part.createFormData("audio", avatarFile.name!!, requestFile)
+        return karaApi.updateAvatarUser(requestFileBody)
+    }
 
     override fun getFeeds(): Single<FeedsResponse> = karaApi.getFeeds()
 

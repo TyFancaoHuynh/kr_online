@@ -85,4 +85,7 @@
     <item name="profileFragmentTvCountFeed" type="id" />
     <item name="profileFragmenMore" type="id" />
     <item name="profileFragmentContainer" type="id" />
+    <item name="profileFragmentToolBarTitleEdit" type="id" />
+    <item name="profileFragmentToolBarTitleEditNext" type="id" />
+    <item name="profileFragmentToolBarBack" type="id" />
 </resources>

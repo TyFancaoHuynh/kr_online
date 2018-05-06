@@ -3,8 +3,10 @@ package com.example.hoavot.karaokeonline.ui.extensions
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.util.Log.d
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
+import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragment
 
 /**
  *
@@ -18,7 +20,11 @@ internal fun Fragment.addChildFragment(@IdRes containerId: Int, fragment: BaseFr
         t.invoke(transaction)
         transaction.add(containerId, fragment, fragment.javaClass.simpleName)
         if (backStack != null) {
+            d("TAGGGG", "add backstack ${backStack}")
             transaction.addToBackStack(backStack)
+
+            val count = (parentFragment as? BaseProfileFragment)?.childFragmentManager?.backStackEntryCount
+            d("TAGGGG", "edit click 000 ${count}")
         }
         transaction.commit()
         childFragmentManager.executePendingTransactions()

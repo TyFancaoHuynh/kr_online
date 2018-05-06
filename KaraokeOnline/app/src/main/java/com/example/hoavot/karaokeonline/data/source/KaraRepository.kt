@@ -13,9 +13,6 @@ import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Observable
 import io.reactivex.Single
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
 
 /**
@@ -27,7 +24,10 @@ class KaraRepository : KaraDataSource {
 
     override fun getInforUser(id: Int): Single<User> = karaRemoteDataSource.getInforUser(id)
 
-    override fun updateInforUser(avatar: MultipartBody.Part, age: RequestBody, gender: RequestBody): Single<User> = karaRemoteDataSource.updateInforUser(avatar, age, gender)
+    override fun updateInforUser(user: User): Single<User> = karaRemoteDataSource.updateInforUser(user)
+
+    override fun updateAvatarUser(avatarFile: File): Single<User>
+            = karaRemoteDataSource.updateAvatarUser(avatarFile)
 
     override fun getFeeds(): Single<FeedsResponse> = karaRemoteDataSource.getFeeds()
 
@@ -42,8 +42,8 @@ class KaraRepository : KaraDataSource {
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaRemoteDataSource.getComments(feedId)
 
-    override fun postFeed(imageFile: File?, caption: String): Single<FeedResponse>
-            = karaRemoteDataSource.postFeed(imageFile, caption)
+    override fun postFeed(audioFile: File?, caption: String): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(audioFile, caption)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)

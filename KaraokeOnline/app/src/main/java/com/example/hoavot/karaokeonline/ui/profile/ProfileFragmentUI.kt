@@ -27,6 +27,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
     internal lateinit var username: TextView
     internal lateinit var countFeed: TextView
     internal lateinit var editProfile: TextView
+    internal lateinit var age: TextView
 
     override fun createView(ui: AnkoContext<ProfileFragment>): View {
         return with(ui) {
@@ -62,6 +63,10 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                         }.lparams {
                             centerInParent()
                         }
+                        enableHighLightWhenClicked()
+                        onClick {
+                            owner.eventOnCameraClick()
+                        }
                     }.lparams(dip(150), dip(40)) {
                         alignParentBottom()
                         alignParentRight()
@@ -76,6 +81,16 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                 }.lparams {
                     below(R.id.profileFragmenAvatar)
                     topMargin = dip(10)
+                    centerHorizontally()
+                }
+
+                age = textView {
+                    textSize = px2dip(dimen(R.dimen.textSize15))
+                    textColor = Color.DKGRAY
+                }.lparams {
+                    rightOf(R.id.profileFragmentTvUsername)
+                    sameTop(R.id.profileFragmentTvUsername)
+                    leftMargin = dip(10)
                     centerHorizontally()
                 }
 

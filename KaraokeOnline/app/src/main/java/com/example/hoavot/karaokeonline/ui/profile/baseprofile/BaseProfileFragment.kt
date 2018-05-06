@@ -33,5 +33,7 @@ class BaseProfileFragment : BaseFragment() {
         // todo:
     }
 
-
+    internal fun gotoPreviousScreen() {
+        childFragmentManager.popBackStack()
+    }
 }

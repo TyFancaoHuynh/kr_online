@@ -34,5 +34,6 @@
     <color name="colorPurpose">#d6d6d7</color>
     <color name="colorSetting">#e2dbdb</color>
     <color name="colorProfileAvatar">#50fcf7f7</color>
+    <color name="colorRed">#ec5656</color>
 
 </resources>

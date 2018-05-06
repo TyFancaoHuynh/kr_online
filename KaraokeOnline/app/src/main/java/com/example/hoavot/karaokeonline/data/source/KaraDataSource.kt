@@ -13,7 +13,6 @@ import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
 
 /**
@@ -73,7 +72,9 @@ interface KaraDataSource {
 
     fun getInforUser(id: Int): Single<User>
 
-    fun updateInforUser(avatar: MultipartBody.Part, age: RequestBody, gender: RequestBody): Single<User>
+    fun updateInforUser(user: User): Single<User>
+
+    fun updateAvatarUser(avatarFile: File): Single<User>
 
     fun getFeeds(): Single<FeedsResponse>
 

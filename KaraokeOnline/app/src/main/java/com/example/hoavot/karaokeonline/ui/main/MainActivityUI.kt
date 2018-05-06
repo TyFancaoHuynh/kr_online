@@ -25,14 +25,15 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
 
     internal lateinit var viewPager: ViewPager
     internal lateinit var tabLayout: TabLayout
+    internal lateinit var mainPagerAdapter: MainPagerAdapter
 
     override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
-        val mainPagerAdapter = MainPagerAdapter(owner.supportFragmentManager, mainTabs)
+        mainPagerAdapter = MainPagerAdapter(owner.supportFragmentManager, mainTabs)
         relativeLayout {
             lparams(matchParent, matchParent)
             backgroundColor = Color.WHITE
             tabLayout = tabLayout {
-                backgroundColor=ContextCompat.getColor(context,R.color.colorFooter)
+                backgroundColor = ContextCompat.getColor(context, R.color.colorFooter)
                 rotationX = ROTATION_X
                 id = R.id.mainTabLayout
                 addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

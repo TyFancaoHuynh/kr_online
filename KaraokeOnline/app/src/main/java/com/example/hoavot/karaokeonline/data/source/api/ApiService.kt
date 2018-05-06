@@ -78,9 +78,16 @@ interface ApiService {
 
     @PUT("/api/user/update")
     fun updateInforUser(
-            @Part("avatar") avatar: MultipartBody.Part,
-            @Part("age") age: RequestBody,
-            @Part("gender") gender: RequestBody
+            @Part("username") username: RequestBody,
+            @Part("password") password: RequestBody,
+            @Part("email") email: RequestBody,
+            @Part("age") age: RequestBody?,
+            @Part("gender") gender: RequestBody?
+    ): Single<User>
+
+    @PUT("/api/user/update/avatar")
+    fun updateAvatarUser(
+            @Part("avatar") avatar: MultipartBody.Part
     ): Single<User>
 
     @GET("/api/feeds")
