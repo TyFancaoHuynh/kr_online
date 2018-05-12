@@ -96,9 +96,6 @@ dependencies {
     //facebook
     implementation ('com.facebook.android:facebook-android-sdk:4.26.0')
 
-    // blur background
-    implementation 'jp.wasabeef:blurry:2.1.1'
-
 }
 repositories {
     mavenCentral()
