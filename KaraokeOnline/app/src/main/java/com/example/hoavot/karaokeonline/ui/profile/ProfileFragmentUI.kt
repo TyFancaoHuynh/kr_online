@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
+import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import com.example.hoavot.karaokeonline.ui.feed.FeedAdapter
 import org.jetbrains.anko.*
@@ -21,13 +22,14 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  *
  * @author at-hoavo.
  */
-class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<ProfileFragment> {
+class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoComponent<ProfileFragment> {
     internal lateinit var avatar: ImageView
     internal lateinit var pickImage: ImageView
     internal lateinit var username: TextView
     internal lateinit var countFeed: TextView
     internal lateinit var editProfile: TextView
     internal lateinit var age: TextView
+    internal var feedAdapter = FeedAdapter(feeds,user)
 
     override fun createView(ui: AnkoContext<ProfileFragment>): View {
         return with(ui) {
@@ -106,8 +108,9 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                 }
 
                 recyclerView {
+                    backgroundColor = ContextCompat.getColor(context, R.color.colorItemFeed)
                     layoutManager = LinearLayoutManager(context)
-                    adapter = FeedAdapter(feeds)
+                    adapter = feedAdapter
                 }.lparams(matchParent, matchParent) {
                     below(R.id.profileFragmentTvCountFeed)
                     topMargin = dip(20)

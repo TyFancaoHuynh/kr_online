@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
@@ -57,17 +58,19 @@ class FeedFragment : BaseFragment() {
     private lateinit var bottomSheetDialogComment: CommentFragment
     private var isLikeFromCommentScreen = false
     private lateinit var animationRotate: Animation
-    private var mCurrentPlay: Int = 0
     private var myBroadcastFeed = MyBroadcastFeed()
     private var mSongs = mutableListOf<Song>()
+    internal var isPlaying = false
+    private lateinit var user: User
     private val option = RequestOptions()
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-            .placeholder(R.drawable.bg_item_place_holder)
+            .placeholder(R.drawable.user_default)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        ui = FeedFragmentUI(feeds)
+        user = LocalRepository(context).getMeInfor()
+        ui = FeedFragmentUI(feeds, user)
         return ui.createView(AnkoContext.Companion.create(context, this))
     }
 
@@ -89,7 +92,8 @@ class FeedFragment : BaseFragment() {
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateUnLike)
         val intentFilter = IntentFilter()
-        intentFilter.addAction(Action.SEND_POSITION.value)
+        intentFilter.addAction(Action.PAUSE.value)
+        intentFilter.addAction(Action.AUTO_NEXT.value)
         (activity as? MainActivity)?.registerReceiver(myBroadcastFeed, intentFilter)
     }
 
@@ -115,40 +119,37 @@ class FeedFragment : BaseFragment() {
                         .subscribe(this::handleWhenAddComment))
     }
 
-    internal fun eventOnAddCaptionClicked() {
-        val intent = Intent(context, CaptionActivity::class.java)
-        startActivity(intent)
-    }
-
     internal fun eventOnButtonClicked(view: ImageButton) {
         when (view) {
-            ui.mImgBtnPlay -> {
-                d("TAGGGGG","action play")
+            ui.mImgBtnPause -> {
+                d("TAGGGGG", "action pause ")
                 animationRotate.cancel()
                 ui.avatarPlay.clearAnimation()
-                ui.mImgBtnPlay.visibility = View.INVISIBLE
-                ui.mImgBtnPause.visibility = View.VISIBLE
-                sendIntent(Action.PLAY.value)
-            }
-            ui.mImgBtnPause -> {
-                d("TAGGGGG","action páue")
-                ui.avatarPlay.startAnimation(animationRotate)
                 ui.mImgBtnPlay.visibility = View.VISIBLE
                 ui.mImgBtnPause.visibility = View.INVISIBLE
                 sendIntent(Action.PAUSE.value)
             }
+            ui.mImgBtnPlay -> {
+                isPlaying = true
+                ui.avatarPlay.startAnimation(animationRotate)
+                ui.mImgBtnPlay.visibility = View.INVISIBLE
+                ui.mImgBtnPause.visibility = View.VISIBLE
+                sendIntent(Action.PLAY.value)
+            }
             ui.mImgBtnNext -> {
+                isPlaying = true
+                ui.avatarPlay.startAnimation(animationRotate)
+                ui.mImgBtnPlay.visibility = View.INVISIBLE
+                ui.mImgBtnPause.visibility = View.VISIBLE
                 sendIntent(Action.NEXT.value)
-                ui.mImgBtnPlay.visibility = View.VISIBLE
-                ui.mImgBtnPause.visibility = View.INVISIBLE
-                ui.recyclerView.scrollToPosition(mCurrentPlay)
             }
 
             ui.mImgBtnPrevious -> {
-                ui.mImgBtnPlay.visibility = View.VISIBLE
-                ui.mImgBtnPause.visibility = View.INVISIBLE
+                isPlaying = true
+                ui.avatarPlay.startAnimation(animationRotate)
                 sendIntent(Action.PREVIOUS.value)
-                ui.recyclerView.scrollToPosition(mCurrentPlay)
+                ui.mImgBtnPlay.visibility = View.INVISIBLE
+                ui.mImgBtnPause.visibility = View.VISIBLE
             }
         }
     }
@@ -156,47 +157,43 @@ class FeedFragment : BaseFragment() {
     override fun onDetach() {
         super.onDetach()
         (activity as? MainActivity)?.unregisterReceiver(myBroadcastFeed)
-    }
-
-    /**
-     * Create MyBroadcast
-     */
-    private inner class MyBroadcastFeed : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val s = intent.action
-            if (s == Action.SEND_POSITION.value) {
-                mCurrentPlay = intent.getIntExtra(PlayFragment.TYPE_POSITION, 0)
-            }
-        }
+        sendIntent(Action.STOP_MEDIA.value)
     }
 
     private fun sendListSong() {
         getListSong()
         val intent = Intent(context, SongFeedService::class.java)
         intent.action = Action.SONGS.value
-        intent.putParcelableArrayListExtra(PlayFragment.TYPE_SONGS, mSongs as ArrayList<out Parcelable>)
+        intent.putParcelableArrayListExtra(FeedFragment.TYPE_SONGS, mSongs as ArrayList<out Parcelable>)
         (activity as? MainActivity)?.startService(intent)
     }
 
     private fun getListSong() {
         mSongs.clear()
         feeds.forEach {
-            if (it.fileMusic.isNotBlank()) {
-                val song = Song(it.id, it.fileMusicUserWrite, it.username, it.avatar, it.fileMusic, 0, it.time.toString())
+            if (it.fileMusic?.isNotBlank()!!) {
+                val image = it.avatar ?: ""
+                val song = Song(it.id, it.fileMusicUserWrite!!, it.username, image, it.fileMusic, 0, it.time.toString())
                 mSongs.add(song)
             }
         }
     }
 
-    private fun sendIntent(action: String) {
+    internal fun sendIntent(action: String) {
         val intent = Intent(context, SongFeedService::class.java)
         intent.action = action
         (activity as? MainActivity)?.startService(intent)
     }
 
+    private fun sendIntent(action: String, position: Int) {
+        val intent = Intent(context, SongFeedService::class.java)
+        intent.action = action
+        intent.putExtra(action, position)
+        (activity as? MainActivity)?.startService(intent)
+    }
+
     private fun handleGetFeedsSuccess(notification: Notification<DiffUtil.DiffResult>) {
         if (notification.isOnNext) {
-            d("TAGGGG", "on next feeds")
             sendListSong()
             notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
         } else {
@@ -229,7 +226,6 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun eventWhenShareclicked(position: Int) {
-        d("TAGGG", "on share click ${feeds[position].id}")
         val intent = Intent(context, ShareActivity::class.java)
         intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
         intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
@@ -250,6 +246,17 @@ class FeedFragment : BaseFragment() {
         viewModel.removeLike(position)
     }
 
+
+    internal fun eventOnAddCaptionClicked() {
+        val intent = Intent(context, CaptionActivity::class.java)
+        startActivity(intent)
+    }
+
+    internal fun eventClosePlayFeedClicked() {
+        ui.areaPlay.visibility = View.GONE
+        sendIntent(Action.STOP_MEDIA.value)
+    }
+
     private fun eventWhenFileMusicclicked(position: Int) {
         ui.areaPlay.visibility = View.VISIBLE
         Glide.with(context)
@@ -257,7 +264,12 @@ class FeedFragment : BaseFragment() {
                 .apply(option)
                 .into(ui.avatarPlay)
         ui.usernamePlay.text = feeds[position].username
-        ui.filePlay.text = feeds[position].fileMusicUserWrite.substring(0, feeds[position].fileMusicUserWrite.length - 4)
+        ui.filePlay.text = feeds[position].fileMusicUserWrite
+        ui.avatarPlay.startAnimation(animationRotate)
+        ui.mImgBtnPlay.visibility = View.GONE
+        ui.mImgBtnPause.visibility = View.VISIBLE
+        sendIntent(Action.ID_FEED.value, feeds[position].id)
+        sendIntent(Action.PLAY.value)
     }
 
     private fun initProgressDialog() {
@@ -266,7 +278,6 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun handleWhenAddComment(event: CommentEvent) {
-        d("TAGGGGG", "handle add comment")
         viewModel.addComment(event.position, event.comment)
     }
 
@@ -309,6 +320,26 @@ class FeedFragment : BaseFragment() {
             }
         } else {
             // Todo: Handle later
+        }
+    }
+
+    /**
+     * Create MyBroadcast
+     */
+    internal inner class MyBroadcastFeed : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val s = intent.action
+            if (s == Action.PAUSE.value) {
+                ui.mImgBtnPlay.visibility = View.VISIBLE
+                ui.mImgBtnPause.visibility = View.INVISIBLE
+                ui.avatarPlay.clearAnimation()
+            } else {
+                ui.mImgBtnPlay.visibility = View.INVISIBLE
+                ui.mImgBtnPause.visibility = View.VISIBLE
+                val currentPosition = intent.getIntExtra(Action.AUTO_NEXT.value, 0)
+                ui.usernamePlay.text = mSongs[currentPosition].artist
+                ui.filePlay.text = mSongs[currentPosition].name
+            }
         }
     }
 }

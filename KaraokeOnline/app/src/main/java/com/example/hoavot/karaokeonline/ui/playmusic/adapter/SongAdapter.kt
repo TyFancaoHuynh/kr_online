@@ -55,7 +55,7 @@ class SongAdapter(private val mSongs: List<Song>, private val mContext: Context,
             }
             ui.nameRecord.setText(mSongs[position].name)
             ui.artist.setText(mSongs[position].artist)
-            ui.timeRecord.text=mSongs[position].date.toLong().showDate()
+            ui.timeRecord.text=mSongs[position].date?.toLong()?.showDate()
         }
     }
 }

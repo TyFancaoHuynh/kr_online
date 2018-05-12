@@ -2,14 +2,18 @@ package com.example.hoavot.karaokeonline.ui.main
 
 import android.graphics.Color
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
+import android.util.Log.d
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.custom.nonSwipeAbleViewPager
+import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
+import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.tabLayout
 
@@ -26,6 +30,7 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
     internal lateinit var viewPager: ViewPager
     internal lateinit var tabLayout: TabLayout
     internal lateinit var mainPagerAdapter: MainPagerAdapter
+    private var lastTab = 0
 
     override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
         mainPagerAdapter = MainPagerAdapter(owner.supportFragmentManager, mainTabs)
@@ -45,8 +50,14 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
 
                     override fun onTabSelected(tab: TabLayout.Tab?) {
                         (tab?.tag as? Int)?.let {
+                            val fragment = mainPagerAdapter.instantiateItem(viewPager, 0) as? FeedFragment
+                            d("TAGGGGG", "on tab selected  ${fragment}  ${fragment?.isPlaying}")
+                            if (fragment != null && fragment.isPlaying) {
+                                fragment.sendIntent(Action.STOP_MEDIA.value)
+                            }
                             tab?.customView
                             viewPager.setCurrentItem(it, true)
+                            lastTab = it
                         }
                     }
                 })

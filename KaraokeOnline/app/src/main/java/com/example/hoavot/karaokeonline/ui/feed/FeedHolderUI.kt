@@ -153,6 +153,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
                 share = imageView(R.drawable.ic_share_feed) {
                     id = R.id.feedFragmentImgShare
+                    visibility = View.GONE
                 }.lparams(dip(20), dip(20)) {
                     weight = 1f
                     gravity = Gravity.CENTER

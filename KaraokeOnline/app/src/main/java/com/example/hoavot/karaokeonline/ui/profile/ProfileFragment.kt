@@ -49,13 +49,14 @@ class ProfileFragment : BaseFragment() {
     private lateinit var viewModel: ProfileViewModel
     private lateinit var user: User
     private lateinit var dialogShowCamera: Dialog
+    private var feeds = mutableListOf<Feed>()
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ProfileViewModel(LocalRepository(context))
         user = viewModel.getMeInfor()
-        val feeds = mutableListOf<Feed>()
-        ui = ProfileFragmentUI(feeds)
+        ui = ProfileFragmentUI(feeds, user)
         return ui.createView(AnkoContext.Companion.create(context, this))
     }
 
@@ -65,7 +66,7 @@ class ProfileFragment : BaseFragment() {
                 .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.bg_item_place_holder)
+                .placeholder(R.drawable.user_default)
         d("TAGGGG", "view created profile")
         Glide.with(context)
                 .load(user.avatar)
@@ -76,6 +77,17 @@ class ProfileFragment : BaseFragment() {
     }
 
     override fun onBindViewModel() {
+        viewModel.getMeFeeds()
+        addDisposables(
+                viewModel.feedMeObserver
+                        .observeOnUiThread()
+                        .subscribe({
+                            feeds.clear()
+                            feeds.addAll(it)
+                            ui.feedAdapter.notifyDataSetChanged()
+                            ui.countFeed.text = it.size.toString()
+                        })
+        )
     }
 
     internal fun onMoreClick() {
@@ -105,12 +117,10 @@ class ProfileFragment : BaseFragment() {
                             val intent = Intent(Intent.ACTION_PICK,
                                     MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                             intent.type = "image/*"
-//                            setCropImage(intent)
                             startActivityForResult(intent, TYPE_GALLERY)
                         }
                         else -> try {
                             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//                            setCropImage(cameraIntent)
                             startActivityForResult(cameraIntent, TYPE_CAMERA)
                         } catch (anfe: ActivityNotFoundException) {
                             val toast = Toast

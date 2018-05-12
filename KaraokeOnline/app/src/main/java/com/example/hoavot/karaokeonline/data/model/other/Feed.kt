@@ -9,11 +9,11 @@ import com.google.gson.annotations.SerializedName
  * @author at-hoavo.
  */
 data class Feed(@SerializedName("id") val id: Int,
-                @SerializedName("caption") val caption: String,
+                @SerializedName("caption") val caption: String?,
                 @SerializedName("avatar") val avatar: String?,
                 @SerializedName("username") val username: String,
-                @SerializedName("file_music") var fileMusic: String,
-                @SerializedName("file_music_user_write") var fileMusicUserWrite: String,
+                @SerializedName("file_music") var fileMusic: String?,
+                @SerializedName("file_music_user_write") var fileMusicUserWrite: String?,
                 @SerializedName("like_count") var likeCount: Long,
                 @SerializedName("comment_count") var commentCount: Long,
                 @SerializedName("comments") var comments: MutableList<Comment>,

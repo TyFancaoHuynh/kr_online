@@ -7,14 +7,14 @@ import android.os.Parcelable
  *
  * @author at-hoavo
  */
-data class Song(val id: Int, val name: String, val artist: String, val image: String?, val url: String, val duration: Int, val date: String) : Parcelable {
+data class Song(val id: Int, val name: String, val artist: String?, val image: String?, val url: String?, val duration: Int?, val date: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readInt(),
+            parcel.readValue(Int::class.java.classLoader) as? Int,
             parcel.readString()) {
     }
 
@@ -24,7 +24,7 @@ data class Song(val id: Int, val name: String, val artist: String, val image: St
         parcel.writeString(artist)
         parcel.writeString(image)
         parcel.writeString(url)
-        parcel.writeInt(duration)
+        parcel.writeValue(duration)
         parcel.writeString(date)
     }
 

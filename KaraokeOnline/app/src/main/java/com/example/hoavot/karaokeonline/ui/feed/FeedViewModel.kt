@@ -5,6 +5,7 @@ import android.util.Log.d
 import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.source.KaraRepository
+import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import com.example.hoavot.karaokeonline.ui.base.Diff
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
@@ -36,6 +37,9 @@ class FeedViewModel(internal val feeds: MutableList<Feed>) {
             }
             .doFinally {
                 progressDilogObserverable.onNext(false)
+            }
+            .onErrorReturn {
+                FeedsResponse(mutableListOf())
             }
             .subscribe({
                 feedsObserverable.onNext(Notification.createOnNext(updateFeedList(it.feeds)))

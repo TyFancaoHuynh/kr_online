@@ -56,7 +56,7 @@ class PlayFragment : BaseFragment(), OnChooseSongListener {
         mSongs = getList()
         ui.tvNameMusic.text = mSongs[0].name
         ui.tvArtist.text = mSongs[0].artist
-        ui.dateMusic.text = mSongs[0].date.toLong().showDate()
+        ui.dateMusic.text = mSongs[0].date?.toLong()?.showDate()
 
         // Register Broadcast
         mMyBroadcast = MyBroadcast()
@@ -197,7 +197,7 @@ class PlayFragment : BaseFragment(), OnChooseSongListener {
         ui.mImgBtnPause!!.visibility = View.INVISIBLE
         ui.tvNameMusic.setText(mSongs.get(positon).name)
         ui.tvArtist.setText(mSongs.get(positon).artist)
-        ui.dateMusic.text = mSongs[positon].date.toLong().showDate()
+        ui.dateMusic.text = mSongs[positon].date?.toLong()?.showDate()
         mSongAdapter!!.setPosition(positon)
         mSongAdapter!!.notifyDataSetChanged()
         val intent = Intent(context, SongService::class.java)
@@ -238,7 +238,7 @@ class PlayFragment : BaseFragment(), OnChooseSongListener {
             ui.totalTime.setText(MusicUtil.showTime(length.toLong()))
             ui.tvNameMusic.setText(mSongs.get(mCurrentPlay).name)
             ui.tvArtist.setText(mSongs.get(mCurrentPlay).artist)
-            ui.dateMusic.text = mSongs[mCurrentPlay].date.toLong().showDate()
+            ui.dateMusic.text = mSongs[mCurrentPlay].date?.toLong()?.showDate()
         }
     }
 

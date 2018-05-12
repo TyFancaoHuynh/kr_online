@@ -12,6 +12,8 @@ import android.view.ViewManager
 import android.widget.*
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
+import com.example.hoavot.karaokeonline.data.model.other.User
+import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import com.example.hoavot.karaokeonline.ui.extensions.getWidthScreen
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
@@ -24,8 +26,8 @@ import org.jetbrains.anko.sdk25.coroutines.onTouch
  *
  * @author at-hoavo.
  */
-class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedFragment> {
-    internal val feedsAdapter = FeedAdapter(feeds)
+class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoComponent<FeedFragment> {
+    internal val feedsAdapter = FeedAdapter(feeds, user)
     internal lateinit var circleImgAvatarStatus: CircleImageView
     internal lateinit var areaPlay: RelativeLayout
     internal lateinit var avatarPlay: CircleImageView
@@ -94,75 +96,91 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<FeedF
                     visibility = View.GONE
                     avatarPlay = circleImageView {
                         id = R.id.feedFragmentAvatarPlay
-                    }.lparams(dip(25), dip(25)) {
+                    }.lparams(dip(60), dip(60)) {
                         alignParentLeft()
+                        centerVertically()
                         leftMargin = dip(5)
                     }
 
                     usernamePlay = textView {
                         id = R.id.feedFragmentUsernamePlay
                         textColor = Color.WHITE
-                        textSize = px2dip(dimen(R.dimen.textSize14))
+                        textSize = px2dip(dimen(R.dimen.textSize15))
                     }.lparams {
-                        alignParentTop()
-                        topMargin = dip(7)
+                        topMargin = dip(15)
                         rightOf(R.id.feedFragmentAvatarPlay)
+                        leftMargin = dip(8)
                     }
 
                     filePlay = textView {
+                        id = R.id.feedFragmentFilePlay
                         textColor = Color.WHITE
-                        textSize = px2dip(dimen(R.dimen.textSize12))
+                        textSize = px2dip(dimen(R.dimen.textSize14))
                         ellipsize = TextUtils.TruncateAt.END
-                    }.lparams(wrapContent, dip(context.getWidthScreen() / 2)) {
-                        below(R.id.feedFragmentUsernamePlay)
+                    }.lparams(wrapContent, dip(200)) {
                         sameLeft(R.id.feedFragmentUsernamePlay)
-                        topMargin = dip(5)
+                        below(R.id.feedFragmentUsernamePlay)
                     }
 
                     mImgBtnNext = imageButton(R.drawable.next_feed) {
                         id = R.id.feedFragmentNextPlay
+                        enableHighLightWhenClicked()
                         onClick {
                             owner.eventOnButtonClicked(mImgBtnNext)
                         }
                     }.lparams {
+                        below(R.id.feedFragmentColsePlay)
                         alignParentRight()
                         rightMargin = dip(5)
-                        centerVertically()
+                        topMargin = dip(5)
                     }
 
                     mImgBtnPause = imageButton(R.drawable.pause_feed) {
                         visibility = View.INVISIBLE
                         id = R.id.feedFragmentPreviousPlay
-                        onClick {
-                            owner.eventOnButtonClicked(mImgBtnPlay)
-                        }
-                    }.lparams {
-                        leftOf(R.id.feedFragmentNextPlay)
-                        rightMargin = dip(5)
-                        centerVertically()
-                    }
-
-                    mImgBtnPlay = imageButton(R.drawable.play_feed) {
+                        enableHighLightWhenClicked()
                         onClick {
                             owner.eventOnButtonClicked(mImgBtnPause)
                         }
                     }.lparams {
                         leftOf(R.id.feedFragmentNextPlay)
                         rightMargin = dip(5)
-                        centerVertically()
+                        sameTop(R.id.feedFragmentNextPlay)
+                    }
+
+                    mImgBtnPlay = imageButton(R.drawable.play_feed) {
+                        enableHighLightWhenClicked()
+                        onClick {
+                            owner.eventOnButtonClicked(mImgBtnPlay)
+                        }
+                    }.lparams {
+                        leftOf(R.id.feedFragmentNextPlay)
+                        rightMargin = dip(5)
+                        sameTop(R.id.feedFragmentNextPlay)
                     }
 
                     mImgBtnPrevious = imageButton(R.drawable.previous_feed) {
+                        enableHighLightWhenClicked()
                         onClick {
                             owner.eventOnButtonClicked(mImgBtnPrevious)
                         }
                     }.lparams {
                         leftOf(R.id.feedFragmentPreviousPlay)
                         rightMargin = dip(5)
-                        centerVertically()
+                        sameTop(R.id.feedFragmentNextPlay)
                     }
 
-                }.lparams(matchParent, dip(60)) {
+                    imageView(R.drawable.ic_close_white_36dp) {
+                        id = R.id.feedFragmentColsePlay
+                        padding = dip(5)
+                        onClick {
+                            owner.eventClosePlayFeedClicked()
+                        }
+                    }.lparams(dip(35), dip(35)) {
+                        alignParentRight()
+                        alignParentTop()
+                    }
+                }.lparams(matchParent, dip(80)) {
                     alignParentBottom()
                 }
 

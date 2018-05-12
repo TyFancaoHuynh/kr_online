@@ -104,4 +104,6 @@
     <item name="feedFragmentUsernamePlay" type="id" />
     <item name="feedFragmentNextPlay" type="id" />
     <item name="feedFragmentPreviousPlay" type="id" />
+    <item name="feedFragmentFilePlay" type="id" />
+    <item name="feedFragmentColsePlay" type="id" />
 </resources>

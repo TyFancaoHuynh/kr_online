@@ -19,9 +19,9 @@ import java.util.*
 class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
     private var mMediaPlayer: MediaPlayer? = null
-    private var mSongs: List<Song>? = null
+    private var mSongs: List<Song> = listOf()
     private var mCurrentPosition: Int = 0
-    private var mCheck: Boolean = false
+    private var isPlayed = false
 
     override fun onBind(intent: Intent): IBinder? {
         // No-op
@@ -30,43 +30,50 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            if (intent.action == Action.SONGS.value) {
-                mSongs = intent.getParcelableArrayListExtra<Song>(FeedFragment.TYPE_SONGS).toList()
-                mSongs!!.forEach {
-                    d("TAGGGGG", "mySongs: ${mSongs?.size} first: ${it.url}")
+            when (intent.action) {
+                Action.SONGS.value -> {
+                    mSongs = intent.getParcelableArrayListExtra<Song>(FeedFragment.TYPE_SONGS).toList()
+                    isPlayed = false
                 }
-            } else if (intent.action == Action.PAUSE.value) {
-                d("TAGGGGG", "pause: ${mSongs?.size}")
-                if (!mCheck) {
-                    setSongPlay()
-                    mCheck = true
-                } else {
-                    if (mMediaPlayer != null) {
+                Action.ID_FEED.value -> {
+                    for (i in 0..mSongs.size - 1) {
+                        if (mSongs[i].id == intent.getIntExtra(Action.ID_FEED.value, 0)) {
+                            mCurrentPosition = i
+                        }
+                    }
+                    isPlayed = false
+                }
+                Action.PLAY.value -> {
+                    if (!isPlayed) {
+                        isPlayed = true
+                        setSongPlay()
+                    } else if (mMediaPlayer != null) {
                         mMediaPlayer!!.start()
                     }
                 }
-            } else if (intent.action == Action.PLAY.value) {
-                d("TAGGGGG","Play service")
-                if (mMediaPlayer != null) {
-                    if (mMediaPlayer!!.isPlaying) {
-                        mMediaPlayer!!.pause()
+                Action.PAUSE.value -> {
+                    pauseMedia()
+                }
+                Action.NEXT.value -> {
+                    mCurrentPosition++
+                    if (mCurrentPosition == mSongs.size) {
+                        mCurrentPosition = 0
                     }
+                    setSongPlay()
+                    sendAutoNextToFeed()
                 }
-            } else if (intent.action == Action.NEXT.value) {
-                mCurrentPosition++
-                if (mCurrentPosition == mSongs!!.size) {
-                    mCurrentPosition = 0
-                }
-                setSongPlay()
-                sendPositionToActivity()
-            } else if (intent.action == Action.PREVIOUS.value) {
+                Action.PREVIOUS.value -> {
 
-                mCurrentPosition--
-                if (mCurrentPosition < 0) {
-                    mCurrentPosition = mSongs!!.size - 1
+                    mCurrentPosition--
+                    if (mCurrentPosition < 0) {
+                        mCurrentPosition = mSongs.size - 1
+                    }
+                    setSongPlay()
+                    sendAutoNextToFeed()
                 }
-                setSongPlay()
-                sendPositionToActivity()
+                Action.STOP_MEDIA.value -> {
+                    releaseMedia()
+                }
             }
         }
         return Service.START_STICKY
@@ -74,19 +81,30 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mMediaPlayer != null) {
-            mMediaPlayer!!.release()
-            mMediaPlayer = null
-        }
-//        unregisterReceiver(mNotificationBroadcast)
+        releaseMedia()
     }
 
     override fun onCompletion(mp: MediaPlayer) {
+        if (mCurrentPosition == mSongs.size - 1) {
+            releaseMedia()
+            sendPauseToFeed()
+        } else {
+            mCurrentPosition++
+            setSongPlay()
+            sendAutoNextToFeed()
+        }
     }
 
     override fun onPrepared(mp: MediaPlayer) {
         if (mMediaPlayer != null) {
             mMediaPlayer!!.start()
+        }
+    }
+
+    private fun releaseMedia() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
         }
     }
 
@@ -105,8 +123,8 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         try {
             createSongIfNeed()
             mMediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            d("TAGGGGGG","set Song play: ")
-            mMediaPlayer!!.setDataSource(applicationContext, Uri.parse(mSongs!![mCurrentPosition].url))
+            d("TAGGGGGG", "set Song play: ${mSongs[mCurrentPosition].url}")
+            mMediaPlayer!!.setDataSource(applicationContext, Uri.parse(mSongs[mCurrentPosition].url))
             mMediaPlayer!!.prepare()
         } catch (e: IOException) {
         } catch (e: IllegalFormatException) {
@@ -118,6 +136,28 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         val i = Intent()
         i.action = Action.SEND_POSITION.value
         i.putExtra(FeedFragment.TYPE_POSITION, mCurrentPosition)
+        sendBroadcast(i)
+    }
+
+    private fun pauseMedia() {
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer!!.isPlaying) {
+                mMediaPlayer!!.pause()
+            }
+        }
+    }
+
+    private fun sendPauseToFeed() {
+        val i = Intent()
+        i.action = Action.PAUSE.value
+        sendBroadcast(i)
+    }
+
+    private fun sendAutoNextToFeed() {
+        d("TAGGGGG", "cur servei:${mCurrentPosition}")
+        val i = Intent()
+        i.action = Action.AUTO_NEXT.value
+        i.putExtra(Action.AUTO_NEXT.value, mCurrentPosition)
         sendBroadcast(i)
     }
 }
