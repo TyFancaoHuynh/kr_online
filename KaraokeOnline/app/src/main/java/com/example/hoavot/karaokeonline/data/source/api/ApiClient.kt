@@ -25,7 +25,7 @@ open class ApiClient private constructor(url: String? = null) {
     internal var token: String? = null
     //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
     private var baseYoutbeUrl: String = "https://www.googleapis.com/"
-    private var baseKaraUrl: String = "http://192.168.1.10:3000"
+    private var baseKaraUrl: String = "http://192.168.1.5:3000"
 
     companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
         private const val API_TIMEOUT = 10L // 10 minutes
@@ -88,7 +88,7 @@ open class ApiClient private constructor(url: String? = null) {
             // Request customization: add request headers
             val requestBuilder = original.newBuilder()
                     .method(original.method(), original.body())
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2FzYSIsInBhc3N3b3JkIjoiaG9hIGRlIHRodW9uZyIsImlhdCI6MTUyNTE1MDAxOCwiZXhwIjoxNTI3NzQyMDE4fQ.ic1FnKgOxQsqVBlEUTtWiI14kOfvfq6Dl_kBanwkxco"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJpbW9rYSIsInBhc3N3b3JkIjoiMTIzNDU2Nzg5IiwiaWF0IjoxNTI1ODc5MzQzLCJleHAiOjE1Mjg0NzEzNDN9.1mq3y8p0QnisjVk8C4ZSf8YllmJwb9XeYvOE6ahy5g0"
             if (token != null) {
                 requestBuilder.addHeader("x-access-token", "$token")
             }

@@ -1,18 +1,23 @@
 package com.example.hoavot.karaokeonline.ui.feed.caption
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ContentUris
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.support.v4.content.ContextCompat
 import android.util.Log.d
+import android.widget.EditText
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -21,10 +26,14 @@ import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
+import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
+import com.example.hoavot.karaokeonline.ui.extensions.showAlertNotification
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
-import org.jetbrains.anko.setContentView
-import org.jetbrains.anko.startActivity
+import io.reactivex.Observable
+import io.reactivex.Observer
+import org.jetbrains.anko.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -41,6 +50,8 @@ class CaptionActivity : BaseActivity() {
     private lateinit var viewModel: CaptionViewModel
     private lateinit var progressDialog: ProgressDialog
     private var file: File? = null
+    private var path = ""
+    private var fileName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,9 +96,18 @@ class CaptionActivity : BaseActivity() {
         if (requestCode == REQ_CODE_PICK_SOUNDFILE && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val audioFileUri = data.data
-                val path = getPath(this, audioFileUri)
-                file = File(path)
-                ui.tvFileName.text = path
+                path = getPath(this, audioFileUri)!!
+                alert {
+                    title = "Bạn có muốn đổi tên bài hát?"
+                    yesButton {
+                        showEditSongDialog()
+                    }
+                    noButton {
+                        file=File(path)
+                        ui.tvFileName.text = path
+                        fileName = path
+                    }
+                }.show()
             }
         }
     }
@@ -97,7 +117,12 @@ class CaptionActivity : BaseActivity() {
     }
 
     internal fun eventOnCompleteButtonClicked() {
-        viewModel.postFeed(file, ui.edtCaption.text.toString())
+        d("TAGGGG", "on completed")
+        if (fileName.isBlank()) {
+            showAlertError(Throwable("Bạn phải chọn bài hát"))
+        } else {
+            viewModel.postFeed(fileName, file, ui.edtCaption.text.toString())
+        }
     }
 
     internal fun eventWhenClickedAddFileRecord() {
@@ -232,5 +257,44 @@ class CaptionActivity : BaseActivity() {
      */
     fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.getAuthority()
+    }
+
+
+    fun showEditSongDialog() {
+        file = File(path)
+        Observable
+                .timer(2000, TimeUnit.MILLISECONDS)
+                .observeOnUiThread()
+                .subscribe({
+                    var edtSongName: EditText? = null
+                    alert {
+                        title = "Nhập tên  bài hát..."
+                        customView {
+                            linearLayout {
+                                edtSongName = editText {
+                                    textSize = px2dip(dimen(R.dimen.textSize13))
+                                    hint = "Add name..."
+                                    hintTextColor = ContextCompat.getColor(context, R.color.colorGrayLight)
+                                    horizontalPadding = dip(7)
+                                    maxLines = 5
+                                    backgroundResource = R.drawable.custom_edittext_comment
+                                }.lparams(matchParent, matchParent) {
+                                    horizontalMargin = dip(50)
+                                    topMargin = dip(10)
+                                }
+                            }
+                        }
+                        positiveButton("OK") {
+                            ui.tvFileName.text = edtSongName?.text.toString()
+                            fileName = edtSongName?.text.toString().plus("." + path.substring(path.length - 4, path.length))
+                        }
+
+                        negativeButton("Cancel") {
+                            ui.tvFileName.text = path
+                            fileName = path
+                        }
+                    }.show()
+                })
+
     }
 }

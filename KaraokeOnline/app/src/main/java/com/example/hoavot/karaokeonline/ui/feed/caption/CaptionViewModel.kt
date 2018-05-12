@@ -25,15 +25,16 @@ class CaptionViewModel(private val localRepository: LocalRepository) {
         userInforObserver.onSuccess(localRepository.getMeInfor())
     }
 
-    internal fun postFeed(file: File?, caption: String) {
-        karaRepository.postFeed(file, caption)
+    internal fun postFeed(fileName: String, file: File?, caption: String) {
+        d("TAGGGGG", "post feed")
+        karaRepository.postFeed(fileName,file, caption)
                 .observeOnUiThread()
                 .doOnSubscribe {
                     d("TAGGGG", "do On suscribe")
                     progressObserver.onNext(true)
                 }
                 .doFinally {
-                    d("TAGGGG", "do On suscribe")
+                    d("TAGGGG", "do finally")
                     progressObserver.onNext(false)
                 }
                 .subscribe({

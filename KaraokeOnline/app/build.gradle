@@ -92,6 +92,10 @@ dependencies {
 
     // circle image
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    //facebook
+    implementation ('com.facebook.android:facebook-android-sdk:4.26.0')
+
 }
 repositories {
     mavenCentral()

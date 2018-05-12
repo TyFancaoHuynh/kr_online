@@ -1,6 +1,7 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log.d
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -20,6 +21,8 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
     internal var likeListener: (Int) -> Unit = {}
     internal var unLikeListener: (Int) -> Unit = {}
     internal var commentListener: (Int) -> Unit = { }
+    internal var shareListener: (Int) -> Unit = {}
+    internal var fileMusicListener: (Int) -> Unit = {}
 
     override fun onBindViewHolder(holder: FeedHolder?, position: Int) {
         holder?.onBind()
@@ -44,6 +47,14 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
             }
             ui.comment.onClick {
                 commentListener(layoutPosition)
+            }
+
+            ui.share.onClick {
+                shareListener(layoutPosition)
+            }
+
+            ui.fileMusic.onClick {
+                fileMusicListener(layoutPosition)
             }
         }
 
@@ -71,7 +82,10 @@ class FeedAdapter(private val feeds: MutableList<Feed>) : RecyclerView.Adapter<F
             ui.countLike.text = feeds[layoutPosition].likeCount.toInt().toString()
             ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment")
             ui.captionArea.text = feeds[layoutPosition].caption
-            ui.seekbar.progress = 100
+            if (feeds[layoutPosition].fileMusic.isNotBlank()) {
+                ui.fileMusic.visibility = View.VISIBLE
+                ui.fileMusic.text = feeds[layoutPosition].fileMusicUserWrite
+            }
         }
     }
 }

@@ -182,3 +182,10 @@ internal fun Context.showSettingPermissionAlert(onSettingClicked: () -> Unit) {
         })
     }.show()
 }
+
+internal fun Context.getWidthScreen(): Int {
+    val wm = getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    val dimension = DisplayMetrics()
+    wm?.defaultDisplay?.getMetrics(dimension)
+    return dimension.widthPixels
+}

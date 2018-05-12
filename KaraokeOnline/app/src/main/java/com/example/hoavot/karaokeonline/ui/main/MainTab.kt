@@ -4,8 +4,8 @@ import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.home.HomeFragment
+import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment
 import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragment
-import com.example.hoavot.karaokeonline.ui.records.RecordsFragment
 import com.example.hoavot.karaokeonline.ui.search.SearchVideoFragment
 
 /**
@@ -49,6 +49,6 @@ class MainTab(val itemType: TabItemType) {
         TabItemType.ITEM_HOME -> HomeFragment()
         TabItemType.ITEM_USER -> BaseProfileFragment()
         TabItemType.ITEM_SEARCH -> SearchVideoFragment()
-        else -> RecordsFragment()
+        else -> PlayFragment()
     }
 }

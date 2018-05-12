@@ -13,6 +13,7 @@ data class Feed(@SerializedName("id") val id: Int,
                 @SerializedName("avatar") val avatar: String?,
                 @SerializedName("username") val username: String,
                 @SerializedName("file_music") var fileMusic: String,
+                @SerializedName("file_music_user_write") var fileMusicUserWrite: String,
                 @SerializedName("like_count") var likeCount: Long,
                 @SerializedName("comment_count") var commentCount: Long,
                 @SerializedName("comments") var comments: MutableList<Comment>,
@@ -22,6 +23,7 @@ data class Feed(@SerializedName("id") val id: Int,
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -42,6 +44,7 @@ data class Feed(@SerializedName("id") val id: Int,
         parcel.writeString(avatar)
         parcel.writeString(username)
         parcel.writeString(fileMusic)
+        parcel.writeString(fileMusicUserWrite)
         parcel.writeLong(likeCount)
         parcel.writeLong(commentCount)
         parcel.writeInt(likeFlag)

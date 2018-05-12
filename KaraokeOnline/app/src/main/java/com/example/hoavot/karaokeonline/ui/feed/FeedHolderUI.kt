@@ -1,7 +1,9 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Typeface
+import android.support.v4.content.ContextCompat
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +27,8 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var avatar: CircleImageView
     internal lateinit var userName: TextView
     internal lateinit var recordArea: LinearLayout
-    internal lateinit var playRecord: ImageView
-    internal lateinit var pauseRecord: ImageView
-    internal lateinit var seekbar: SeekBar
+    internal lateinit var yourMusic: TextView
+    internal lateinit var fileMusic: TextView
     internal lateinit var like: ImageView
     internal lateinit var unlike: ImageView
     internal lateinit var countLike: TextView
@@ -53,9 +54,9 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     topMargin = dip(3)
                 }
 
-                userName = textView("bbjds") {
+                userName = textView {
                     typeface = Typeface.DEFAULT_BOLD
-                    textSize = px2dip(dimen(R.dimen.feedTitleTextSize))
+                    textSize = px2dip(dimen(R.dimen.textSize15))
                     textColor = Color.BLACK
                     fontNomal()
                 }.lparams {
@@ -70,34 +71,26 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 textColor = Color.BLACK
                 textSize = px2dip(dimen(R.dimen.feedCaptionTextSize))
             }.lparams(matchParent, wrapContent) {
-                leftMargin = dip(20)
+                horizontalMargin = dip(20)
             }
 
-            recordArea = linearLayout {
-                orientation = LinearLayout.HORIZONTAL
-                lparams(matchParent, dip(50)) {
-                    horizontalMargin = dip(20)
-                    verticalMargin = dip(10)
-                }
-                relativeLayout {
-                    playRecord = imageView(R.drawable.ic_play_song_feed) {
-                    }.lparams(dip(30), dip(30))
-                    pauseRecord = imageView(R.drawable.ic_pause_song_feed) {
-                        visibility = View.INVISIBLE
-                    }.lparams(dip(30), dip(30))
-                }
-
-                seekbar = seekBar {
-
-                }.lparams(matchParent, wrapContent) {
-                    topMargin = dip(7)
-                }
-
+            fileMusic = textView {
+                backgroundColor = ContextCompat.getColor(context, R.color.colorHightLight)
+                textSize = px2dip(dimen(R.dimen.textSize15))
+                visibility = View.GONE
+                paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                typeface = Typeface.DEFAULT_BOLD
+                gravity = Gravity.CENTER
+                enableHighLightWhenClicked()
+            }.lparams(matchParent, dip(40)) {
+                verticalMargin = dip(15)
+                horizontalMargin = dip(30)
             }
 
             relativeLayout {
                 lparams(matchParent, wrapContent) {
                     horizontalPadding = dip(20)
+                    topMargin = dip(10)
                 }
 
                 imageView(R.drawable.ic_count_like) {
@@ -159,7 +152,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 }
 
                 share = imageView(R.drawable.ic_share_feed) {
-
+                    id = R.id.feedFragmentImgShare
                 }.lparams(dip(20), dip(20)) {
                     weight = 1f
                     gravity = Gravity.CENTER

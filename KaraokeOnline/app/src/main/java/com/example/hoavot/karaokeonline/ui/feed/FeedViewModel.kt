@@ -8,6 +8,7 @@ import com.example.hoavot.karaokeonline.data.source.KaraRepository
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import com.example.hoavot.karaokeonline.ui.base.Diff
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
+import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import io.reactivex.Notification
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -16,7 +17,7 @@ import io.reactivex.subjects.PublishSubject
  *
  * @author at-hoavo.
  */
-class FeedViewModel(private val feeds: MutableList<Feed>) {
+class FeedViewModel(internal val feeds: MutableList<Feed>) {
     internal val feedsObserverable = PublishSubject.create<Notification<DiffUtil.DiffResult>>()
     internal val isLikeFromCommentScreenObserver = PublishSubject.create<Notification<Feed>>()
     internal val feedsCommentObserverable = PublishSubject.create<Notification<DiffUtil.DiffResult>>()

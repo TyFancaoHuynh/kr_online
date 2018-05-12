@@ -88,4 +88,20 @@
     <item name="profileFragmentToolBarTitleEdit" type="id" />
     <item name="profileFragmentToolBarTitleEditNext" type="id" />
     <item name="profileFragmentToolBarBack" type="id" />
+    <item name="shareActivityTextMusic" type="id" />
+    <item name="shareActivityTextSong" type="id" />
+    <item name="feedFragmentImgShare" type="id" />
+    <item name="imgBtnPlay" type="id" />
+    <item name="imgBtnPrevious" type="id" />
+    <item name="imgBtnShuffleSelected" type="id" />
+    <item name="imgBtnShuffle" type="id" />
+    <item name="imgBtnPause" type="id" />
+    <item name="imgBtnNext" type="id" />
+    <item name="imgBtnAutoNext" type="id" />
+    <item name="imgBtnAutoNextSelected" type="id" />
+    <item name="recordsFragmentArticsMusic" type="id" />
+    <item name="feedFragmentAvatarPlay" type="id" />
+    <item name="feedFragmentUsernamePlay" type="id" />
+    <item name="feedFragmentNextPlay" type="id" />
+    <item name="feedFragmentPreviousPlay" type="id" />
 </resources>

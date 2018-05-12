@@ -1,5 +1,6 @@
-package com.example.hoavot.karaokeonline.ui.records
+package com.example.hoavot.karaokeonline.ui.playmusic.adapter
 
+import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
@@ -10,16 +11,17 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
  *
- * @author at-hoavo.
+ * @author at-hoavo
  */
-class RecordUI : AnkoComponent<ViewGroup> {
+class SongHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var nameRecord: TextView
     internal lateinit var timeRecord: TextView
-    internal lateinit var dateRecord: TextView
+    internal lateinit var artist: TextView
     internal lateinit var shareAudio: RelativeLayout
-
-    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-        relativeLayout {
+    internal lateinit var mItemView: RelativeLayout
+    override fun createView(ui: AnkoContext<ViewGroup>): View
+            = ui.apply {
+        mItemView = relativeLayout {
             backgroundResource = R.drawable.custom_edittext_search_video
             lparams(matchParent, dip(80)) {
                 horizontalMargin = dip(10)
@@ -28,23 +30,28 @@ class RecordUI : AnkoComponent<ViewGroup> {
 
             nameRecord = textView {
                 id = R.id.recordUIName
+                typeface = Typeface.DEFAULT_BOLD
                 textSize = px2dip(dimen(R.dimen.textSize15))
             }.lparams {
                 topMargin = dip(5)
+                leftMargin = dip(5)
+            }
+
+            artist = textView {
+                id = R.id.recordUIDate
+                textSize = px2dip(dimen(R.dimen.textSize13))
+            }.lparams {
+                below(R.id.recordUIName)
+                leftMargin = dip(5)
             }
 
             timeRecord = textView {
                 id = R.id.recordUITime
-                textSize = px2dip(dimen(R.dimen.feedCommentTextSize))
+                textSize = px2dip(dimen(R.dimen.textSize12))
             }.lparams {
-                below(R.id.recordUIName)
-            }
-
-            dateRecord = textView {
-                id = R.id.recordUIDate
-                textSize = px2dip(dimen(R.dimen.feedCaptionTextSize))
-            }.lparams {
-                below(R.id.recordUITime)
+                topMargin=dip(5)
+                leftMargin = dip(5)
+                below(R.id.recordUIDate)
             }
 
             shareAudio = relativeLayout {
@@ -53,6 +60,7 @@ class RecordUI : AnkoComponent<ViewGroup> {
                     rightOf(R.id.recordUIName)
                     rightMargin = dip(20)
                 }
+                visibility = View.GONE
                 imageView(R.drawable.ic_share_audio) {
                 }.lparams {
                     centerInParent()
@@ -62,6 +70,5 @@ class RecordUI : AnkoComponent<ViewGroup> {
                 }
             }
         }
-    }
-
+    }.view
 }

@@ -57,12 +57,16 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaApi.getComments(feedId)
 
-    override fun postFeed(audioFile: File?, caption: String): Single<FeedResponse> {
-        val requestFile = RequestBody.create(MediaType.parse("audio/x-m4a"), audioFile!!)
-        d("TAGGG", "file name:${audioFile.name} ")
-        val requestFileBody = MultipartBody.Part.createFormData("audio", audioFile.name!!, requestFile)
+    override fun postFeed(fileName: String, audioFile: File?, caption: String): Single<FeedResponse> {
+        var requestFileBody: MultipartBody.Part? = null
+        audioFile?.let {
+            val requestFile = RequestBody.create(MediaType.parse("audio/x-m4a"), audioFile)
+            d("TAGGG", "file name:${fileName} ")
+            requestFileBody = MultipartBody.Part.createFormData("audio", audioFile.name!!, requestFile)
+        }
+        val fileNameRequestBody = createNonNullPartFromString(fileName)
         val captionBody = createNonNullPartFromString(caption)
-        return karaApi.postFeed(requestFileBody, captionBody)
+        return karaApi.postFeed(requestFileBody, fileNameRequestBody, captionBody)
     }
 
     override fun getInforUser(id: Int): Single<User> = karaApi.getInforUser(id)

@@ -114,6 +114,6 @@ interface ApiService {
 
     @Multipart
     @POST("/api/feed/create")
-    fun postFeed(@Part audio: MultipartBody.Part?, @Part("caption") caption: RequestBody)
+    fun postFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody)
             : Single<FeedResponse>
 }

@@ -42,8 +42,8 @@ class KaraRepository : KaraDataSource {
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaRemoteDataSource.getComments(feedId)
 
-    override fun postFeed(audioFile: File?, caption: String): Single<FeedResponse>
-            = karaRemoteDataSource.postFeed(audioFile, caption)
+    override fun postFeed(fileName: String, audioFile: File?, caption: String): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(fileName,audioFile, caption)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)

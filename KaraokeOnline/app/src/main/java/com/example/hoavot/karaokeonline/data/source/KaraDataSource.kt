@@ -88,6 +88,6 @@ interface KaraDataSource {
 
     fun getComments(feedId: Int): Single<CommentResponse>
 
-    fun postFeed(audioFile: File? = null, caption: String)
+    fun postFeed(fileName: String, audioFile: File? = null, caption: String)
             : Single<FeedResponse>
 }

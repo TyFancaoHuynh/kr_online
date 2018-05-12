@@ -35,5 +35,10 @@
     <color name="colorSetting">#e2dbdb</color>
     <color name="colorProfileAvatar">#50fcf7f7</color>
     <color name="colorRed">#ec5656</color>
+    <color name="avatar_bolder">#dbf2f2</color>
+    <color name="colorItemChoosePlay">#c2d4d2</color>
+    <color name="colorItemNoChoosePlay">#eef2f2</color>
+    <color name="colorPlayFeed">#9068b6</color>
+    <color name="colorHightLight">#f7f4f1</color>
 
 </resources>

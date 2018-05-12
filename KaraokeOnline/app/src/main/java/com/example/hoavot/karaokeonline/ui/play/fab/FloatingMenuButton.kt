@@ -133,7 +133,7 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
     }
 
     private fun onMenuClick() {
-        val anim: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_rotate)
+        val anim: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_rotate_start)
         val animVisible: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_visible)
         val animInvisible: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_invisible)
         imgBtnMenu.startAnimation(anim)
