@@ -33,7 +33,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
@@ -73,7 +72,7 @@ dependencies {
 
     implementation 'com.github.siyamed:android-shape-imageview:0.9.3'
     // Retrofit
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
@@ -81,9 +80,7 @@ dependencies {
     implementation 'com.google.http-client:google-http-client-android:1.22.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     implementation 'com.squareup.okhttp3:okhttp:3.8.0'
-    //    wave record
-    implementation 'com.github.piasy:rxandroidaudio:1.5.2'
-    implementation 'com.github.piasy:AudioProcessor:1.5.2'
+
     //Youtube
     implementation 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')

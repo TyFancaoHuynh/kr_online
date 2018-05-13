@@ -3,6 +3,7 @@ package com.example.hoavot.karaokeonline.ui.search
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class SearchVideoFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         ui = SearchVideoFragmentUI(items, context)
         initProgressDialog()
+        d("TAGGGG", "on search create")
         ui.adapterSearch.onItemClick = { item, type -> handleWhenItemVideoClick(item, type) }
         return ui.createView(AnkoContext.Companion.create(context, this))
     }

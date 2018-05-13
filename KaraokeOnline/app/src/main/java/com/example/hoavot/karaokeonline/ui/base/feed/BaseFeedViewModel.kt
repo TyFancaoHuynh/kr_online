@@ -1,11 +1,9 @@
-package com.example.hoavot.karaokeonline.ui.feed
+package com.example.hoavot.karaokeonline.ui.base.feed
 
 import android.support.v7.util.DiffUtil
 import android.util.Log.d
-import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
-import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.KaraRepository
 import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
@@ -15,26 +13,18 @@ import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import io.reactivex.Notification
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-import java.io.File
 
 /**
  *
  * @author at-hoavo.
  */
-class FeedViewModel(private val localRepository: LocalRepository, internal val feeds: MutableList<Feed>) {
+class BaseFeedViewModel(internal val feeds: MutableList<Feed>) {
     internal val feedsObserverable = PublishSubject.create<Notification<DiffUtil.DiffResult>>()
     internal val isLikeFromCommentScreenObserver = PublishSubject.create<Notification<Feed>>()
     internal val commentObserverable = PublishSubject.create<Notification<MutableList<Comment>>>()
     internal val progressDilogObserverable = BehaviorSubject.create<Boolean>()
     private val karaRepository = KaraRepository()
 
-    internal fun getMeInfor() = localRepository.getMeInfor()
-
-    internal fun updateAvatar(avatarFile: File) = karaRepository.updateAvatarUser(avatarFile)
-
-    internal fun saveUser(user: User) {
-        localRepository.saveMeInfor(user)
-    }
 
     internal fun getFeeds() = karaRepository.getFeeds()
             .observeOnUiThread()
@@ -153,6 +143,4 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
         feeds.addAll(newList)
         return diff
     }
-
-
 }

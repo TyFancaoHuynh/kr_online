@@ -106,4 +106,6 @@
     <item name="feedFragmentPreviousPlay" type="id" />
     <item name="feedFragmentFilePlay" type="id" />
     <item name="feedFragmentColsePlay" type="id" />
+    <item name="baseFeedFragmentContainer" type="id" />
+    <item name="profileFragmentBaseFeedContainer" type="id" />
 </resources>

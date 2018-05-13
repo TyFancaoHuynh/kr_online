@@ -1,11 +1,9 @@
 package com.example.hoavot.karaokeonline.data.source.api
 
+import android.util.Log.d
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.ResponseBody
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -25,7 +23,7 @@ open class ApiClient private constructor(url: String? = null) {
     internal var token: String? = null
     //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
     private var baseYoutbeUrl: String = "https://www.googleapis.com/"
-    private var baseKaraUrl: String = "http://192.168.1.5:3000"
+    private var baseKaraUrl: String = "http://192.168.1.4:3000"
 
     companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
         private const val API_TIMEOUT = 10L // 10 minutes
@@ -88,8 +86,10 @@ open class ApiClient private constructor(url: String? = null) {
             // Request customization: add request headers
             val requestBuilder = original.newBuilder()
                     .method(original.method(), original.body())
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJpbW9rYSIsInBhc3N3b3JkIjoiMTIzNDU2Nzg5IiwiaWF0IjoxNTI1ODc5MzQzLCJleHAiOjE1Mjg0NzEzNDN9.1mq3y8p0QnisjVk8C4ZSf8YllmJwb9XeYvOE6ahy5g0"
+            d("TAGGGGGGGG","token:${token}")
             if (token != null) {
+                requestBuilder.addHeader("Accept-Encoding", "identity")
+                requestBuilder.addHeader("Content-Type", "application/json")
                 requestBuilder.addHeader("x-access-token", "$token")
             }
             val request = requestBuilder.build()

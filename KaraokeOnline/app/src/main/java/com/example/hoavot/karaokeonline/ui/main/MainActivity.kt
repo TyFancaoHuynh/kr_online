@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.util.Log.d
+import com.example.hoavot.karaokeonline.data.source.api.ApiClient
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
 import com.example.hoavot.karaokeonline.ui.extensions.showSettingPermissionAlert
@@ -22,7 +24,7 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val REQUEST_GALLERY_PERMISSION_CODE = 10
         private const val REQUEST_CAMERA_PERMISSION_CODE = 11
-        private const val PERMISSION_REQUEST_INTERVAL = 400
+        private const val REQUEST_ACCESS_RECORD_PERMISSION_CODE = 12
     }
 
     private lateinit var ui: MainActivityUI
@@ -31,7 +33,8 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermissionCamera()
+        d("TAGGGG", "on create main")
+        checkPermissionAccessRecord()
         val mainTabs = listOf(MainTab(MainTab.TabItemType.ITEM_HOME),
                 MainTab(MainTab.TabItemType.ITEM_USER),
                 MainTab(MainTab.TabItemType.ITEM_SEARCH),
@@ -45,7 +48,9 @@ class MainActivity : BaseActivity() {
             if (requestCode == REQUEST_CAMERA_PERMISSION_CODE) {
                 checkPermissionGallery()
             }
-
+            if (requestCode == REQUEST_ACCESS_RECORD_PERMISSION_CODE) {
+                checkPermissionCamera()
+            }
         } else {
             showSettingPermissionAlert({
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
@@ -67,6 +72,8 @@ class MainActivity : BaseActivity() {
                 ActivityCompat.requestPermissions(this
                         , arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_GALLERY_PERMISSION_CODE)
             }
+        } else {
+            isAccess = true
         }
     }
 
@@ -82,21 +89,16 @@ class MainActivity : BaseActivity() {
         }
     }
 
-//    private fun checkPermissionAccessMemory() {
-//        val storagePermissions = arrayOf(
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                Manifest.permission.RECORD_AUDIO
-//        )
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-//                ) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                ActivityCompat.requestPermissions(this, storagePermissions, REQUEST_ACCESS_PERMISSION_CODE)
-//            }
-//        } else {
-//            checkPermissionCamera()
-//        }
-//    }
+    private fun checkPermissionAccessRecord() {
+        val storagePermissions = arrayOf(
+                Manifest.permission.RECORD_AUDIO
+        )
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(this, storagePermissions, REQUEST_ACCESS_RECORD_PERMISSION_CODE)
+            }
+        } else {
+            checkPermissionCamera()
+        }
+    }
 }

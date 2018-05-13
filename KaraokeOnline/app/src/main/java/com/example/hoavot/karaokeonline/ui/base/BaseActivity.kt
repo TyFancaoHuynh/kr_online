@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.network.UnAuthorizeEvent
-import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.api.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertUnAuthorized
+import com.example.hoavot.karaokeonline.ui.login.LoginActivity
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.splash.SplashActivity
 import com.example.hoavot.karaokeonline.ui.utils.AvoidRapidAction
@@ -26,7 +26,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private val subscription: CompositeDisposable = CompositeDisposable()
     private lateinit var viewModel: BaseVMContract
-    internal lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,17 +34,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
         if (this !is MainActivity) {
             overridePendingTransition(R.anim.slide_in_right, R.anim.nothing)
-        }
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // Handle change color status bar in term of use fragment
-//                if (getCurrentFragment(R.id.userActivityContainer) is TermOfUseFragment
-//                        || getCurrentFragment(R.id.settingContainer) is TermOfUseFragment) {
-//                    window.statusBarColor = ContextCompat.getColor(this@BaseActivity, R.color.colorGrayVeryLight)
-//                } else {
-//                    window.statusBarColor = ContextCompat.getColor(this@BaseActivity, R.color.colorPrimary)
-//                }
-            }
         }
     }
 
@@ -89,7 +77,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     .observeOnUiThread()
                     .subscribe({
                         finishAffinity()
-                        startActivity<SplashActivity>()
+                        startActivity<LoginActivity>()
                     }, {})
         }
     }

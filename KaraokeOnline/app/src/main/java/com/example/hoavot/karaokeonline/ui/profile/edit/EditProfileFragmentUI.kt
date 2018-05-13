@@ -91,6 +91,7 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
 
                 nameUser = editText(user.username) {
                     backgroundResource = R.drawable.custom_edittext_search_video
+                    textColor=ContextCompat.getColor(context,R.color.colorBlackBold)
                     leftPadding = dip(10)
                 }.lparams(dip(0), matchParent) {
                     weight = 6f
@@ -113,6 +114,7 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
                 passWord = editText(user.password) {
                     inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
                     backgroundResource = R.drawable.custom_edittext_search_video
+                    textColor=ContextCompat.getColor(context,R.color.colorBlackBold)
                     leftPadding = dip(10)
                 }.lparams(dip(0), matchParent) {
                     weight = 6f
@@ -135,6 +137,7 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
                 email = editText(user.email) {
                     backgroundResource = R.drawable.custom_edittext_search_video
                     leftPadding = dip(10)
+                    textColor=ContextCompat.getColor(context,R.color.colorBlackBold)
                 }.lparams(dip(0), matchParent) {
                     weight = 6f
                     leftMargin = dip(7)
@@ -154,7 +157,6 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
                 save = button("Save") {
                     backgroundColor = ContextCompat.getColor(context, R.color.colorRed)
                     textColor = Color.WHITE
-                    visibility = View.INVISIBLE
                     enableHighLightWhenClicked()
                     onClick {
                         owner.eventOnSaveCLicked()

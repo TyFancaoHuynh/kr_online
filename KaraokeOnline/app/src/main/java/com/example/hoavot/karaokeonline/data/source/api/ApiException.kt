@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName
  * Use this file to handle error from api
  */
 data class ApiException(
-        @SerializedName("message") val messageError: String,
-        val errors: MutableList<String>) : Throwable(messageError) {
+        @SerializedName("message") val messageError: String) : Throwable(messageError) {
     var statusCode: Int? = null
 }

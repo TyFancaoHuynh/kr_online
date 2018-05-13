@@ -65,16 +65,16 @@ class RecordFragment : BaseFragment() {
         super.onDetach()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE) {
-                (activity as? PlayActivity)?.youtubeProvider?.play()
-                recordBottomSheetUI.lnPlay.visibility = View.VISIBLE
-                (activity as PlayActivity).youtubeProvider.play()
-            }
-        }
-    }
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+//        if (grantResults.isNotEmpty()
+//                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE) {
+//                (activity as? PlayActivity)?.youtubeProvider?.play()
+//                recordBottomSheetUI.lnPlay.visibility = View.VISIBLE
+//                (activity as PlayActivity).youtubeProvider.play()
+//            }
+//        }
+//    }
 
     private fun requestAudioPermissions() {
         val storagePermissions = arrayOf(
@@ -96,7 +96,7 @@ class RecordFragment : BaseFragment() {
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
 
-            //Go ahead with recording audio now
+            //Go ahead with r     ecording audio now
             recordBottomSheetUI.lnPlay.visibility = View.VISIBLE
         }
         // /If permission is granted, then go ahead recording audio

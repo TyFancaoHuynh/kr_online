@@ -1,4 +1,4 @@
-package com.example.hoavot.karaokeonline.ui.feed
+package com.example.hoavot.karaokeonline.ui.base.feed
 
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v7.util.DiffUtil
+import android.util.Log
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
@@ -24,35 +25,38 @@ import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
-import com.example.hoavot.karaokeonline.ui.feed.caption.CaptionActivity
+import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentLayoutUI
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
-import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
-import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
-import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
-import com.example.hoavot.karaokeonline.ui.playmusic.service.SongService
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.support.v4.startActivity
 import java.util.ArrayList
 
 /**
  *
- * @author at-hoavo.
+ * @author at-hoavo
  */
-class FeedFragment : BaseFragment() {
+class BaseFeedFragment : BaseFragment() {
     companion object {
         val TYPE_SONGS = "Songs"
-        val TYPE_POSITION = "Position"
+        const val TYPE_IS_FEED_ME = "TYPE_IS_FEED"
+        fun newInstance(isFeedMe: Boolean): BaseFeedFragment {
+            return BaseFeedFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(TYPE_IS_FEED_ME, isFeedMe)
+                }
+
+            }
+        }
     }
 
-    private lateinit var ui: FeedFragmentUI
+    internal lateinit var ui: BaseFeedFragmentUI
     private var feeds = mutableListOf<Feed>()
-    private lateinit var viewModel: FeedViewModel
+    private lateinit var viewModel: BaseFeedViewModel
     private lateinit var progressDialog: ProgressDialog
     private lateinit var bottomSheetDialogComment: CommentFragment
     private var isLikeFromCommentScreen = false
@@ -61,6 +65,7 @@ class FeedFragment : BaseFragment() {
     private var mSongs = mutableListOf<Song>()
     internal var isPlaying = false
     private lateinit var user: User
+    private var isFeedMe = false
     private val option = RequestOptions()
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
@@ -68,11 +73,11 @@ class FeedFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        isFeedMe = arguments.getBoolean(TYPE_IS_FEED_ME)
         retainInstance = true
-
-        d("TAGGGG", "on create feed")
+        d("TAGGGG", "on create base")
         user = LocalRepository(context).getMeInfor()
-        ui = FeedFragmentUI(feeds, user)
+        ui = BaseFeedFragmentUI(feeds, user)
         return ui.createView(AnkoContext.Companion.create(context, this))
     }
 
@@ -86,16 +91,13 @@ class FeedFragment : BaseFragment() {
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
         ui.feedsAdapter.shareListener = this::eventWhenShareclicked
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
-        viewModel = FeedViewModel(LocalRepository(context), feeds)
+        viewModel = BaseFeedViewModel(feeds)
         RxBus.listen(LikeEvent::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateLike)
         RxBus.listen(UnlikeEvent::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateUnLike)
-        RxBus.listen(LoadDataFeed::class.java)
-                .observeOnUiThread()
-                .subscribe(this::handleLoadData)
         val intentFilter = IntentFilter()
         intentFilter.addAction(Action.PAUSE.value)
         intentFilter.addAction(Action.AUTO_NEXT.value)
@@ -103,7 +105,17 @@ class FeedFragment : BaseFragment() {
     }
 
     override fun onBindViewModel() {
-        viewModel.getFeeds()
+        RxBus.listen(LoadDataFeed::class.java)
+                .observeOnUiThread()
+                .subscribe(this::handleLoadData)
+        RxBus.listen(CommentEvent::class.java)
+                .observeOnUiThread()
+                .subscribe(this::handleWhenAddComment)
+        if (isFeedMe) {
+            viewModel.getMeFeeds()
+        } else {
+            viewModel.getFeeds()
+        }
         addDisposables(
                 viewModel.feedsObserverable
                         .observeOnUiThread()
@@ -116,10 +128,7 @@ class FeedFragment : BaseFragment() {
                         .subscribe(this::handleUpdateCommentSuccess),
                 viewModel.isLikeFromCommentScreenObserver
                         .observeOnUiThread()
-                        .subscribe(this::handleUpdateLikeFromCommentcreenSuccess),
-                RxBus.listen(CommentEvent::class.java)
-                        .observeOnUiThread()
-                        .subscribe(this::handleWhenAddComment))
+                        .subscribe(this::handleUpdateLikeFromCommentcreenSuccess))
     }
 
     internal fun eventOnButtonClicked(view: ImageButton) {
@@ -166,16 +175,16 @@ class FeedFragment : BaseFragment() {
         getListSong()
         val intent = Intent(context, SongFeedService::class.java)
         intent.action = Action.SONGS.value
-        intent.putParcelableArrayListExtra(FeedFragment.TYPE_SONGS, mSongs as ArrayList<out Parcelable>)
+        intent.putParcelableArrayListExtra(TYPE_SONGS, mSongs as ArrayList<out Parcelable>)
         (activity as? MainActivity)?.startService(intent)
-        d("TAGGGGGG", "handle feeds success ${mSongs.size}")
+        Log.d("TAGGGGGG", "handle feeds success ${mSongs.size}")
     }
 
     private fun getListSong() {
         mSongs.clear()
         feeds.forEach {
             if (it.fileMusic?.isNotBlank()!!) {
-                d("TAGGGGG", "fileMusic: ${it.fileMusicUserWrite}")
+                Log.d("TAGGGGG", "fileMusic: ${it.fileMusicUserWrite}")
                 val image = it.avatar ?: ""
                 val song = Song(it.id, it.fileMusicUserWrite!!, it.username, image, it.fileMusic, 0, it.time.toString())
                 mSongs.add(song)
@@ -184,7 +193,7 @@ class FeedFragment : BaseFragment() {
     }
 
     internal fun sendIntent(action: String) {
-        val intent = Intent(context, SongFeedService::class.java)
+        val intent = Intent(activity, SongFeedService::class.java)
         intent.action = action
         (activity as? MainActivity)?.startService(intent)
     }
@@ -198,12 +207,12 @@ class FeedFragment : BaseFragment() {
 
     private fun handleGetFeedsSuccess(notification: Notification<DiffUtil.DiffResult>) {
         if (notification.isOnNext) {
-            d("TAGGGG", "handle get feed success 1")
+            Log.d("TAGGGG", "handle get feed success 1")
             sendListSong()
             notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
         } else {
             // Todo: Handle later
-            d("TAGGGG", "on error feeds ${notification.error?.message}")
+            Log.d("TAGGGG", "on error feeds ${notification.error?.message}")
         }
     }
 
@@ -224,15 +233,14 @@ class FeedFragment : BaseFragment() {
 
     private fun eventWhenShareclicked(position: Int) {
         val intent = Intent(context, ShareActivity::class.java)
-        intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
-        intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
+        intent.putExtra(ShareActivity.KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
+        intent.putExtra(ShareActivity.KEY_ID_FEED, feeds[position].id.toString())
 
         startActivity(intent)
     }
 
     private fun initSortDialog() {
         bottomSheetDialogComment = CommentFragment()
-        bottomSheetDialogComment.isFeed = false
     }
 
     private fun eventWhenLikeclicked(position: Int) {
@@ -243,11 +251,6 @@ class FeedFragment : BaseFragment() {
         viewModel.removeLike(position)
     }
 
-
-    internal fun eventOnAddCaptionClicked() {
-        val intent = Intent(context, CaptionActivity::class.java)
-        startActivity(intent)
-    }
 
     internal fun eventClosePlayFeedClicked() {
         ui.areaPlay.visibility = View.GONE
@@ -321,6 +324,12 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun handleLoadData(event: LoadDataFeed) {
+        ui.areaPlay.visibility = View.GONE
+        if (event.isFeedMe) {
+
+            viewModel.getMeFeeds()
+            return
+        }
         viewModel.getFeeds()
     }
 

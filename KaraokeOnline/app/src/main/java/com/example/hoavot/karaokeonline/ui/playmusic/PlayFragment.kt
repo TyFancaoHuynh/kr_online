@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,7 @@ class PlayFragment : BaseFragment(), OnChooseSongListener {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         ui = PlayFragmentUI()
+        d("TAGGGG", "on playfragment create")
         return ui.createView(AnkoContext.Companion.create(ctx, this, false))
     }
 
@@ -262,10 +264,18 @@ class PlayFragment : BaseFragment(), OnChooseSongListener {
                 val date = cursor.getString(dateId)
                 val data = cursor.getString(dataID)
                 val time = cursor.getInt(timeId)
-                listSong.add(Song(0,title, artist, "", data, time, date))
+                listSong.add(Song(0, title, artist, "", data, time, date))
             } while (cursor.moveToNext());
         }
         return listSong
+    }
+
+    internal fun eventReset() {
+        ui.imgMusic.clearAnimation()
+        ui.mImgBtnPause?.visibility = View.VISIBLE
+        ui.mImgBtnPlay?.visibility = View.INVISIBLE
+        ui.mSeekBar.progress = 0
+        ui.mRecyclerView.scrollToPosition(0)
     }
 
     companion object {

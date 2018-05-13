@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
 import android.util.Log.d
+import com.example.hoavot.karaokeonline.ui.base.feed.BaseFeedFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import java.io.IOException
@@ -32,7 +33,8 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         if (intent != null) {
             when (intent.action) {
                 Action.SONGS.value -> {
-                    mSongs = intent.getParcelableArrayListExtra<Song>(FeedFragment.TYPE_SONGS).toList()
+                    mSongs = intent.getParcelableArrayListExtra<Song>(BaseFeedFragment.TYPE_SONGS).toList()
+                    d("TAGGGG","song size feed: ${mSongs.size}")
                     isPlayed = false
                 }
                 Action.ID_FEED.value -> {
@@ -66,7 +68,7 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
 
                     mCurrentPosition--
                     if (mCurrentPosition < 0) {
-                        mCurrentPosition = mSongs.size - 1
+                        mCurrentPosition = 0
                     }
                     setSongPlay()
                     sendAutoNextToFeed()
@@ -129,14 +131,6 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         } catch (e: IOException) {
         } catch (e: IllegalFormatException) {
         }
-    }
-
-    // Update current position of Activity
-    private fun sendPositionToActivity() {
-        val i = Intent()
-        i.action = Action.SEND_POSITION.value
-        i.putExtra(FeedFragment.TYPE_POSITION, mCurrentPosition)
-        sendBroadcast(i)
     }
 
     private fun pauseMedia() {

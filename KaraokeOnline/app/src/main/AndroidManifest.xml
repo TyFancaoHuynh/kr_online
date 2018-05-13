@@ -33,7 +33,7 @@
             android:authorities="com.facebook.app.FacebookContentProvider581570865552396"
             android:exported="true" />
 
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".ui.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,6 +48,8 @@
             android:name=".ui.feed.SongFeedService"
             android:enabled="true" />
 
+        <activity android:name=".ui.register.RegisterActivity" />
+        <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.play.PlayActivity" />
         <activity android:name=".ui.feed.caption.CaptionActivity" />
         <activity android:name=".ui.feed.share.ShareActivity" />

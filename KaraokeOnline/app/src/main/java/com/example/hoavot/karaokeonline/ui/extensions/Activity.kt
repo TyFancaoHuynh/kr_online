@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentTransaction
 import android.util.DisplayMetrics
+import android.util.Log.d
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -114,6 +115,7 @@ internal fun Context.showAlertError(throwable: Throwable) {
         isCancelable = false
         if (throwable is ApiException) {
             (throwable as? ApiException)?.let {
+                d("TAGGGGGG","status code api unauthor: ${it.statusCode}")
                 message = it.messageError
             }
         } else {

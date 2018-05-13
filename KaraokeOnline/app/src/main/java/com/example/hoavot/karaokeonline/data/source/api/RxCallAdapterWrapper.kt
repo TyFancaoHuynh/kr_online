@@ -1,5 +1,6 @@
 package com.example.hoavot.karaokeonline.data.source.api
 
+import android.util.Log.d
 import com.example.hoavot.karaokeonline.data.model.network.UnAuthorizeEvent
 import okhttp3.ResponseBody
 import retrofit2.*
@@ -20,6 +21,7 @@ class RxCallAdapterWrapper<R>(type: Type, retrofit: Retrofit, wrapped: CallAdapt
             when (response?.code()) {
                 HttpsURLConnection.HTTP_UNAUTHORIZED -> response.errorBody()?.let {
                     val apiException = converter.convert(it)
+                    d("TAGGGGG", "errrorrrrr: ${apiException.messageError}")
                     apiException.statusCode = HttpsURLConnection.HTTP_UNAUTHORIZED
                     RxBus.publish(UnAuthorizeEvent(apiException))
                     return apiException

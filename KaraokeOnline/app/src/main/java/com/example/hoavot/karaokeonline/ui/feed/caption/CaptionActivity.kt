@@ -286,7 +286,7 @@ class CaptionActivity : BaseActivity() {
                         }
                         positiveButton("OK") {
                             ui.tvFileName.text = edtSongName?.text.toString()
-                            fileName = edtSongName?.text.toString().plus("." + path.substring(path.length - 4, path.length))
+                            fileName = edtSongName?.text.toString().plus("." + path.substring(path.length - 3, path.length))
                         }
 
                         negativeButton("Cancel") {

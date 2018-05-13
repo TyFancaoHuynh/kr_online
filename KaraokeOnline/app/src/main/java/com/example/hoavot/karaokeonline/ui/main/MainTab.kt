@@ -3,8 +3,10 @@ package com.example.hoavot.karaokeonline.ui.main
 import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
 import com.example.hoavot.karaokeonline.ui.home.HomeFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment
+import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
 import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragment
 import com.example.hoavot.karaokeonline.ui.search.SearchVideoFragment
 

@@ -33,25 +33,12 @@ class SongService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCom
     private var mCheckAutoNext: Boolean = false
     private var mCheckShuffle: Boolean = false
     private var mCountDownTimer: CountDownTimer? = null
-    //    private var mNotificationBroadcast: NotificationBroadcast? = null
-    private val mHandler = Handler()
-    private var mRunnable: Runnable? = null
-
     private val randomPosition: Int
         get() = Random().nextInt(mSongs!!.size)
 
     override fun onBind(intent: Intent): IBinder? {
         // No-op
         return null
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-//        mNotificationBroadcast = NotificationBroadcast()
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
-        intentFilter.addAction(Action.SEEK.value)
-//        registerReceiver(mNotificationBroadcast, intentFilter)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -112,25 +99,8 @@ class SongService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCom
                 mCheckShuffle = true
             } else if (intent.action == Action.SHUFFLE_SELECTED.value) {
                 mCheckShuffle = false
-            } else if (intent.action == Action.CLOSE_NOTIFICATION.value) {
-                if (mCountDownTimer != null) {
-                    mCountDownTimer!!.cancel()
-                }
-                mHandler.removeCallbacks(mRunnable)
-                val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(MY_NOTIFICATION_ID)
-
-                val i = Intent()
-                i.action = Action.CLOSE_ACTIVITY.value
-                sendBroadcast(i)
-
-                val myIntent = Intent(this, SongService::class.java)
-                stopService(myIntent)
-
-            } else if (intent.action == Action.CLICK_NOTIFICATION.value) {
-                mHandler.removeCallbacks(mRunnable)
-                val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(MY_NOTIFICATION_ID)
+            } else if (intent.action == Action.STOP_MEDIA.value) {
+                releaseMedia()
             }
         }
         return Service.START_STICKY
@@ -142,7 +112,6 @@ class SongService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCom
             mMediaPlayer!!.release()
             mMediaPlayer = null
         }
-//        unregisterReceiver(mNotificationBroadcast)
     }
 
     override fun onCompletion(mp: MediaPlayer) {
@@ -181,7 +150,6 @@ class SongService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCom
 
     private fun setSongPlay() {
         try {
-            d("TAGGGGG", "current Index: ${mCurrentPosition}")
             createSongIfNeed()
             mMediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
             mMediaPlayer!!.setDataSource(applicationContext, Uri.parse(mSongs!![mCurrentPosition].url))
@@ -224,67 +192,14 @@ class SongService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCom
         mCountDownTimer!!.start()
     }
 
-//    private fun initNotification() {
-//        val views = RemoteViews(packageName, R.layout.notification_music)
-//        views.setImageViewResource(R.id.imgBtnCloseNotification, R.mipmap.ic_close)
-//        views.setProgressBar(R.id.progressBarNotification, 100, 0, false)
-//
-//        val intent = Intent(this, PlayFragment::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        intent.action = Action.CLICK_NOTIFICATION.value
-//        if (mMediaPlayer!!.isPlaying) {
-//            intent.putExtra(PlayFragment.TYPE_ISPLAYING, true)
-//        }
-//        intent.putExtra(PlayFragment.TYPE_POSITION, mCurrentPosition)
-//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-//
-//        val closeIntent = Intent(this, SongService::class.java)
-//        closeIntent.action = Action.CLOSE_NOTIFICATION.value
-//        val closePendingIntent = PendingIntent.getService(applicationContext, 0, closeIntent, 0)
-//        views.setOnClickPendingIntent(R.id.imgBtnCloseNotification, closePendingIntent)
-//
-//        val builder = NotificationCompat.Builder(this)
-//        builder.setSmallIcon(R.mipmap.ic_music_notification)
-//        builder.setOngoing(true)
-//        builder.setAutoCancel(false)
-//        builder.setContentIntent(pendingIntent)
-//
-//        val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        mRunnable = object : Runnable {
-//            override fun run() {
-//                if (mMediaPlayer != null) {
-//                    views.setImageViewResource(R.id.imgSongNotification, mSongs!![mCurrentPosition].getImage())
-//                    views.setTextViewText(R.id.tvSongNotification, mSongs!![mCurrentPosition].getName())
-//                    views.setTextViewText(R.id.tvArtistNotification, mSongs!![mCurrentPosition].getArtist())
-//                    views.setTextViewText(R.id.tvTimeNowNotification, String.valueOf(MusicUtil.showTime(mMediaPlayer!!.currentPosition)))
-//                    views.setTextViewText(R.id.tvTimeTotalNotification, String.valueOf(MusicUtil.showTime(mMediaPlayer!!.duration)))
-//                    views.setProgressBar(R.id.progressBarNotification, mMediaPlayer!!.duration, mMediaPlayer!!.currentPosition, false)
-//
-//                    builder.setCustomBigContentView(views)
-//
-//                    val notification = builder.build()
-//                    notificationManager.notify(MY_NOTIFICATION_ID, notification)
-//                }
-//                mHandler.postDelayed(this, 1000)
-//            }
-//        }
-//        mHandler.postDelayed(mRunnable, 1000)
-//    }
-//
-//    /**
-//     * Create NotificationBroadcast
-//     */
-//    internal inner class NotificationBroadcast : BroadcastReceiver() {
-//        override fun onReceive(context: Context, intent: Intent?) {
-//            if (intent != null && intent.action == Intent.ACTION_SCREEN_OFF) {
-//                initNotification()
-//            }
-//        }
-//    }
+    private fun releaseMedia() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
 
     companion object {
         private val TAG = SongService::class.java.name
-        private val MY_NOTIFICATION_ID = 12
     }
 }

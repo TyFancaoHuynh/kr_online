@@ -6,10 +6,7 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
-import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
-import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -74,7 +71,7 @@ interface KaraDataSource {
 
     fun updateInforUser(user: User): Single<User>
 
-    fun updateAvatarUser(avatarFile: File): Single<User>
+    fun updateAvatarUser(avatarFile: File): Single<UserResponse>
 
     fun getFeeds(): Single<FeedsResponse>
 
@@ -90,4 +87,8 @@ interface KaraDataSource {
 
     fun postFeed(fileName: String, audioFile: File? = null, caption: String)
             : Single<FeedResponse>
+
+    fun login(username: String, password: String): Single<LoginResponse>
+
+    fun register(username: String, password: String): Single<LoginResponse>
 }

@@ -10,10 +10,8 @@ import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.KaraDataSource
 import com.example.hoavot.karaokeonline.data.source.api.ApiClient
 import com.example.hoavot.karaokeonline.data.source.api.ApiService
-import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
-import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
+import com.example.hoavot.karaokeonline.data.source.request.LoginBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MediaType
@@ -38,14 +36,16 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         return karaApi.updateInforUser(username, password, email, age, gender)
     }
 
-    override fun updateAvatarUser(avatarFile: File): Single<User> {
-        val requestFile = RequestBody.create(MediaType.parse("image/*"), avatarFile)
+    override fun updateAvatarUser(avatarFile: File): Single<UserResponse> {
+        val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), avatarFile)
         d("TAGGG", "file name:${avatarFile.name} ")
-        val requestFileBody = MultipartBody.Part.createFormData("audio", avatarFile.name!!, requestFile)
+        val requestFileBody = MultipartBody.Part.createFormData("avatar", avatarFile.name!!, requestFile)
         return karaApi.updateAvatarUser(requestFileBody)
     }
 
-    override fun getFeeds(): Single<FeedsResponse> = karaApi.getFeeds()
+    override fun getFeeds(): Single<FeedsResponse> {
+       return karaApi.getFeeds()
+    }
 
     override fun getFeedMe(): Single<FeedsResponse> = karaApi.getFeedMe()
 
@@ -105,4 +105,15 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
 
     private fun createNonNullPartFromString(partString: String)
             = RequestBody.create(MediaType.parse("multipart/form-data"), partString)
+
+    override fun login(username: String, password: String): Single<LoginResponse> {
+        val loginBody = LoginBody(username, password)
+        return karaApi.login(loginBody)
+    }
+
+    override fun register(username: String, password: String): Single<LoginResponse> {
+        val registerBody = LoginBody(username, password)
+        return karaApi.register(registerBody)
+    }
+
 }

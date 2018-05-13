@@ -22,6 +22,8 @@
     <string name="profileFragmentEditToolbarTitle">Edit Profile</string>
     <string name="dialog_title_please_choose">Please  choose</string>
     <string name="permissionSettingAlertTitle">Bạn cần cho App quyền truy cập</string>
+    <string name="retry_login">Retry</string>
+    <string name="cancel_login">Cancel</string>
     <string-array name="items">
         <item name="Gallery">Gallery</item>
         <item name="Camera">Camera</item>

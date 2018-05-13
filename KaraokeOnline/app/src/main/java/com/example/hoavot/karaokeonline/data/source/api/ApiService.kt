@@ -2,10 +2,8 @@ package com.example.hoavot.karaokeonline.data.source.api
 
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.*
-import com.example.hoavot.karaokeonline.data.source.response.CommentResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
-import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
-import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
+import com.example.hoavot.karaokeonline.data.source.request.LoginBody
+import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -85,10 +83,11 @@ interface ApiService {
             @Part("gender") gender: RequestBody?
     ): Single<User>
 
+    @Multipart
     @PUT("/api/user/update/avatar")
     fun updateAvatarUser(
-            @Part("avatar") avatar: MultipartBody.Part
-    ): Single<User>
+            @Part avatar: MultipartBody.Part
+    ): Single<UserResponse>
 
     @GET("/api/feeds")
     fun getFeeds(): Single<FeedsResponse>
@@ -116,4 +115,10 @@ interface ApiService {
     @POST("/api/feed/create")
     fun postFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody)
             : Single<FeedResponse>
+
+    @POST("/api/login")
+    fun login(@Body loginBody: LoginBody): Single<LoginResponse>
+
+    @POST("/api/register")
+    fun register(@Body loginBody: LoginBody): Single<LoginResponse>
 }

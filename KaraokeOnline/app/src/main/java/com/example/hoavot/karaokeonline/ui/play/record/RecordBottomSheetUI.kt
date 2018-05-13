@@ -89,7 +89,6 @@ class RecordBottomSheetUI : AnkoComponent<RecordFragment> {
                     lnPlay = linearLayout {
                         lparams(matchParent, matchParent)
                         id = R.id.recordBottomSheetPlay
-                        visibility = View.INVISIBLE
                         backgroundResource = R.color.colorButton
                         imageView(R.drawable.ic_fiber_manual_record_red_500_24dp).lparams {
                             gravity = Gravity.CENTER_VERTICAL
