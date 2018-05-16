@@ -23,7 +23,7 @@ open class ApiClient private constructor(url: String? = null) {
     internal var token: String? = null
     //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
     private var baseYoutbeUrl: String = "https://www.googleapis.com/"
-    private var baseKaraUrl: String = "http://192.168.1.4:3000"
+    private var baseKaraUrl: String = "http://172.17.28.119:3000"
 
     companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
         private const val API_TIMEOUT = 10L // 10 minutes
@@ -40,6 +40,8 @@ open class ApiClient private constructor(url: String? = null) {
         }
 
     private fun createService(): ApiService {
+        val log = HttpLoggingInterceptor()
+        log.level = HttpLoggingInterceptor.Level.BODY
         val httpClientBuilder = OkHttpClient.Builder()
         httpClientBuilder.interceptors().add(Interceptor { chain ->
             val original = chain.request()
@@ -50,6 +52,7 @@ open class ApiClient private constructor(url: String? = null) {
             chain.proceed(request)
         })
         val client = httpClientBuilder
+//                .addInterceptor(log)
                 .connectTimeout(API_TIMEOUT, TimeUnit.MINUTES)
                 .writeTimeout(API_TIMEOUT, TimeUnit.MINUTES)
                 .readTimeout(API_TIMEOUT, TimeUnit.MINUTES)
@@ -86,7 +89,7 @@ open class ApiClient private constructor(url: String? = null) {
             // Request customization: add request headers
             val requestBuilder = original.newBuilder()
                     .method(original.method(), original.body())
-            d("TAGGGGGGGG","token:${token}")
+            d("TAGGGGGGGG", "token:${token}")
             if (token != null) {
                 requestBuilder.addHeader("Accept-Encoding", "identity")
                 requestBuilder.addHeader("Content-Type", "application/json")

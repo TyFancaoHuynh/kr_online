@@ -4,6 +4,7 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.remote.KaraRemoteDataSource
@@ -40,11 +41,15 @@ class KaraRepository : KaraDataSource {
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaRemoteDataSource.getComments(feedId)
 
-    override fun postFeed(fileName: String, audioFile: File?, caption: String): Single<FeedResponse>
-            = karaRemoteDataSource.postFeed(fileName, audioFile, caption)
+    override fun postFeed(fileName: String, audioFile: File?, caption: String,imageFile:File?): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(fileName, audioFile, caption,imageFile)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)
+    }
+
+    override fun getPopularVideo(part: String, chart: String, regionCode: String): Single<MutableList<Item>> {
+        return karaRemoteDataSource.getPopularVideo(part, chart, regionCode)
     }
 
     override fun getPlaylistDetails(part: String, playlistId: String): Observable<PlaylistDetailFromApi> {
@@ -73,5 +78,13 @@ class KaraRepository : KaraDataSource {
 
     override fun register(username: String, password: String): Single<LoginResponse> {
         return karaRemoteDataSource.register(username, password)
+    }
+
+    override fun deleteFeed(feedId: Int): Single<DeleteFeedResponse> {
+        return karaRemoteDataSource.deleteFeed(feedId)
+    }
+
+    override fun updateFeed(feed: Feed, fileName: String, audioFile: File?, caption: String,imageFile: File?): Single<FeedResponse> {
+        return karaRemoteDataSource.updateFeed(feed, fileName, audioFile, caption,imageFile)
     }
 }

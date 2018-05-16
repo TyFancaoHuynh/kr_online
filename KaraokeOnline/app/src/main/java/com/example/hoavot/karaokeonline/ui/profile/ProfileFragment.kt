@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
-import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.util.DiffUtil
 import android.util.Log.d
@@ -26,15 +25,14 @@ import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.data.source.response.UserResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
+import com.example.hoavot.karaokeonline.ui.base.Image.convertBitmapToFile
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.addChildFragment
 import com.example.hoavot.karaokeonline.ui.extensions.animSlideInRightSlideOutRight
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
-import com.example.hoavot.karaokeonline.ui.feed.FeedFragmentUI
 import com.example.hoavot.karaokeonline.ui.feed.FeedViewModel
 import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
-import com.example.hoavot.karaokeonline.ui.feed.caption.CaptionActivity
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
@@ -44,6 +42,9 @@ import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragme
 import com.example.hoavot.karaokeonline.ui.profile.edit.EditProfileFragment
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.yesButton
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -56,8 +57,8 @@ import java.util.*
  */
 class ProfileFragment : BaseFragment() {
     companion object {
-        private const val TYPE_GALLERY = 0
-        private const val TYPE_CAMERA = 1
+        internal const val TYPE_GALLERY = 0
+        internal const val TYPE_CAMERA = 1
     }
 
     private lateinit var ui: ProfileFragmentUI
@@ -79,7 +80,7 @@ class ProfileFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        feedViewModel = FeedViewModel(LocalRepository(context),feeds)
+        feedViewModel = FeedViewModel(LocalRepository(context), feeds)
         user = feedViewModel.getMeInfor()
         ui = ProfileFragmentUI(feeds, user)
         return ui.createView(AnkoContext.Companion.create(context, this))
@@ -104,6 +105,8 @@ class ProfileFragment : BaseFragment() {
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
         ui.feedsAdapter.shareListener = this::eventWhenShareclicked
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
+        ui.feedsAdapter.updateFeedClickListener = this::eventUpdateClicked
+        ui.feedsAdapter.deleteFeedClickListener = this::eventDeleteClicked
         RxBus.listen(LikeFeedMeEvent::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateLike)
@@ -184,7 +187,7 @@ class ProfileFragment : BaseFragment() {
             val extras = data.extras
             if (extras != null) {
                 val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
-                val avatarFile = convertBitmapToFile(bimap)
+                val avatarFile = convertBitmapToFile(bimap,context)
                 feedViewModel.updateAvatar(avatarFile)
                         .observeOnUiThread()
                         .subscribe(
@@ -197,22 +200,6 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun convertBitmapToFile(bitmap: Bitmap): File {
-        val f = File(context.cacheDir, "avatar" + Date().time + ".jpg")
-        f.createNewFile()
-
-        //Convert bitmap to byte array
-        val bos = ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
-        val bitmapdata = bos.toByteArray()
-
-        //write the bytes in file
-        val fos = FileOutputStream(f);
-        fos.write(bitmapdata);
-        fos.flush()
-        fos.close()
-        return f
-    }
 
     private fun handleWhenUpdateAvatarSuccess(userResponse: UserResponse) {
         d("TAGGGG", "handle update avatar success")
@@ -234,7 +221,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun initSortDialog() {
         bottomSheetDialogComment = CommentFragment()
-        bottomSheetDialogComment.isFeed=true
+        bottomSheetDialogComment.isFeed = true
     }
 
     private fun eventWhenLikeclicked(position: Int) {
@@ -356,6 +343,37 @@ class ProfileFragment : BaseFragment() {
         startActivity(intent)
     }
 
+    private fun eventUpdateClicked(position: Int) {
+
+    }
+
+    private fun eventDeleteClicked(position: Int) {
+        alert {
+            title = "CONFIRM"
+            message = "Bạn có muốn xoá bài viết này?"
+            yesButton {
+                feedViewModel.deleteFeed(feeds[position].id)
+                        .observeOnUiThread()
+                        .subscribe({
+                            alert {
+                                message = "Xoá thành công!"
+                                yesButton { }
+                            }.show()
+
+                            feeds.removeAt(position)
+                            ui.feedsAdapter.notifyDataSetChanged()
+                        }, {
+                            alert {
+                                title = "ERROR"
+                                message = "Xoá thất bại!"
+                                yesButton { }
+                            }.show()
+                        })
+            }
+            noButton {}
+        }.show()
+    }
+
     private fun initProgressDialog() {
         progressDialog = ProgressDialog(context)
         progressDialog.setCancelable(false)
@@ -411,7 +429,7 @@ class ProfileFragment : BaseFragment() {
         if (notification.isOnNext) {
             d("TAGGGG", "handle get feed success 1")
             sendListSong()
-            ui.countFeed.text=feeds.size.toString().plus(" Bài viết")
+            ui.countFeed.text = feeds.size.toString().plus(" Bài viết")
             notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
         } else {
             // Todo: Handle later

@@ -47,8 +47,8 @@ class PlayActivityViewModel(internal var videoId: String, private val karaReposi
                     }
                 }
                 .onErrorReturn {
-                    d("TAGG","error: ${it.message}")
-                    Item(Video(Id("", "", "")),
+                    d("TAGG", "error: ${it.message}")
+                    Item("", Video(Id("", "", "")),
                             Snippet("", "", "", "", Thumbnails(Medium("")),
                                     "", ResourceId(""), 0),
                             null, null, null)
@@ -87,7 +87,7 @@ class PlayActivityViewModel(internal var videoId: String, private val karaReposi
                 }
                 .map {
                     it[0].snippet.totalPlaylist = totalsPlayList
-                    Item(video, it[0].snippet, null, null, null)
+                    Item(video.id.videoId, video, it[0].snippet, null, null, null)
                 }
     }
 
@@ -105,7 +105,7 @@ class PlayActivityViewModel(internal var videoId: String, private val karaReposi
                         item?.channel = it[0]
                         item
                     } else {
-                        Item(video!!, it[0].snippet, null, null, null)
+                        Item(video?.id?.videoId!!, video!!, it[0].snippet, null, null, null)
                     }
                 }
     }

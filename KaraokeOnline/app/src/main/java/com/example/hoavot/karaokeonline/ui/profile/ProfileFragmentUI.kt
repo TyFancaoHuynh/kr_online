@@ -1,5 +1,6 @@
 package com.example.hoavot.karaokeonline.ui.profile
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -51,6 +52,8 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
         return with(ui) {
             relativeLayout {
                 lparams(matchParent, matchParent)
+//                backgroundColor=ContextCompat.getColor(context,R.color.colorPlayFeed)
+                backgroundColor=Color.WHITE
                 imageView(R.drawable.ic_more_vert_black_36dp) {
                     id = R.id.profileFragmenMore
                     onClick {
@@ -93,9 +96,9 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
 
                 username = textView {
                     id = R.id.profileFragmentTvUsername
-                    textSize = px2dip(dimen(R.dimen.textSize18))
+                    textSize = px2dip(dimen(R.dimen.textSize21))
                     typeface = Typeface.DEFAULT_BOLD
-                    textColor = Color.BLACK
+                    textColor = Color.WHITE
                 }.lparams {
                     below(R.id.profileFragmenAvatar)
                     topMargin = dip(10)
@@ -104,18 +107,18 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
 
                 age = textView {
                     textSize = px2dip(dimen(R.dimen.textSize15))
-                    textColor = Color.DKGRAY
+                    textColor = Color.WHITE
                 }.lparams {
                     rightOf(R.id.profileFragmentTvUsername)
                     sameTop(R.id.profileFragmentTvUsername)
-                    leftMargin = dip(10)
+                    leftMargin = dip(15)
                     centerHorizontally()
                 }
 
                 countFeed = textView {
                     id = R.id.profileFragmentTvCountFeed
-                    textSize = px2dip(dimen(R.dimen.textSize13))
-                    textColor = Color.BLUE
+                    textSize = px2dip(dimen(R.dimen.textSize18))
+                    textColor = ContextCompat.getColor(context,R.color.colorOrangeLight)
                     paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }.lparams {
                     below(R.id.profileFragmentTvUsername)

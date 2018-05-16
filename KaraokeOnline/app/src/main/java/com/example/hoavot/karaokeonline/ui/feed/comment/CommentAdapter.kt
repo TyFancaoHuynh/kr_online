@@ -1,6 +1,7 @@
 package com.example.hoavot.karaokeonline.ui.feed.comment
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log.d
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -30,9 +31,10 @@ class CommentAdapter(private val comments: MutableList<Comment>) : RecyclerView.
                 .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.user)
+                .placeholder(R.drawable.user_default)
 
         internal fun onBind() {
+            d("HHHHHHHH", "avatartUser: ${comments[layoutPosition].avatarUser}")
             Glide.with(item)
                     .load(comments[layoutPosition].avatarUser)
                     .apply(option)

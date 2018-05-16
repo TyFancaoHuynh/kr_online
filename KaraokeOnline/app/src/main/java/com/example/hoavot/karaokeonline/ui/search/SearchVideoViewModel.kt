@@ -3,8 +3,10 @@ package com.example.hoavot.karaokeonline.ui.search
 import android.text.TextUtils
 import com.example.hoavot.karaokeonline.data.model.nomal.*
 import com.example.hoavot.karaokeonline.data.source.KaraRepository
+import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import io.reactivex.Notification
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -22,6 +24,7 @@ class SearchVideoViewModel {
 
     internal var items = mutableListOf<Item>()
     internal val triggerSearchObserver = PublishSubject.create<String>()
+    internal var videoPopulars = PublishSubject.create<Notification<MutableIterable<Item>>>()
     internal val itemsObserver = BehaviorSubject.create<MutableList<Item>>()
     internal val queryObserver = SingleSubject.create<String>()
     internal val progressDialogObserverable = BehaviorSubject.create<Notification<Boolean>>()
@@ -29,6 +32,26 @@ class SearchVideoViewModel {
 
     init {
         triggerOnSearchButtonClick()
+    }
+
+    internal fun getVideoPopular(part: String = "snippet,contentDetails", chart: String = "mostPopular", regionCode: String = "vn") {
+        karaRepository.getPopularVideo(part, chart, regionCode)
+                .observeOnUiThread()
+                .toObservable()
+                .flatMap { Observable.fromIterable(it) }
+                .map {
+                    val video = Video(Id(it.id))
+                    it.video = video
+                    it
+                }
+                .toList()
+                .subscribe({
+                    videoPopulars.onNext(Notification.createOnNext(it))
+                }, {
+                    videoPopulars.onNext(Notification.createOnError(it))
+                })
+
+
     }
 
     private fun loadMoreVideo(part: String, q: String, page: Int = 1): Observable<MutableList<Item>> {
@@ -50,7 +73,7 @@ class SearchVideoViewModel {
                 }
                 .onErrorReturn {
                     progressDialogObserverable.onNext(Notification.createOnError(it))
-                    Item(Video(Id("", "", "")),
+                    Item("", Video(Id("", "", "")),
                             Snippet("", "", "", "", Thumbnails(Medium("")),
                                     "", ResourceId(""), 0),
                             null, null, null)
@@ -64,7 +87,7 @@ class SearchVideoViewModel {
                 .toObservable()
     }
 
-    private fun searchDetailVideo(part: String, video: Video): Observable<Item> {
+    internal fun searchDetailVideo(part: String, video: Video): Observable<Item> {
         return karaRepository.getVideoDetail(part, video.id.videoId).doOnNext {
             it.video = video
             getChannelDetail("snippet", it, null, true)
@@ -85,7 +108,7 @@ class SearchVideoViewModel {
                 }
                 .map {
                     it[0].snippet.totalPlaylist = totalsPlayList
-                    Item(video, it[0].snippet, null, null, null)
+                    Item(video.id.videoId, video, it[0].snippet, null, null, null)
                 }
     }
 
@@ -103,7 +126,7 @@ class SearchVideoViewModel {
                         item?.channel = it[0]
                         item
                     } else {
-                        Item(video!!, it[0].snippet, null, null, null)
+                        Item(video?.id?.videoId!!, video!!, it[0].snippet, null, null, null)
                     }
                 }
     }

@@ -1,7 +1,6 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log.d
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -10,6 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
+import com.example.hoavot.karaokeonline.ui.base.Time
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -24,6 +24,8 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
     internal var commentListener: (Int) -> Unit = { }
     internal var shareListener: (Int) -> Unit = {}
     internal var fileMusicListener: (Int) -> Unit = {}
+    internal var updateFeedClickListener: (Int) -> Unit = {}
+    internal var deleteFeedClickListener: (Int) -> Unit = {}
 
     override fun onBindViewHolder(holder: FeedHolder?, position: Int) {
         holder?.onBind()
@@ -57,10 +59,26 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
             ui.fileMusic.onClick {
                 fileMusicListener(layoutPosition)
             }
+
+            ui.more.onClick {
+                ui.optionArea.visibility = View.VISIBLE
+            }
+
+            ui.updateFeed.onClick {
+                ui.optionArea.visibility = View.INVISIBLE
+                updateFeedClickListener(layoutPosition)
+            }
+
+            ui.deleteFeed.onClick {
+                ui.optionArea.visibility = View.INVISIBLE
+                deleteFeedClickListener(layoutPosition)
+            }
+            ui.imgBGMusic.onClick {
+                fileMusicListener(layoutPosition)
+            }
         }
 
         private val option = RequestOptions()
-                .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
                 .placeholder(R.drawable.user_default)
@@ -77,11 +95,17 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
             }
             if (feeds[layoutPosition].username == user.username) {
                 ui.share.visibility = View.VISIBLE
+                ui.more.visibility = View.VISIBLE
             }
             Glide.with(item)
                     .load(feeds[layoutPosition].avatar)
                     .apply(option)
                     .into(ui.avatar)
+            if (feeds[layoutPosition].imageFile != null) {
+                Glide.with(item)
+                        .load(feeds[layoutPosition].imageFile)
+                        .into(ui.imgBGMusic)
+            }
             ui.userName.text = feeds[layoutPosition].username
             ui.countLike.text = feeds[layoutPosition].likeCount.toInt().toString()
             ui.countComment.text = feeds[layoutPosition].commentCount.toInt().toString().plus(" comment")
@@ -90,6 +114,7 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
                 ui.fileMusic.visibility = View.VISIBLE
                 ui.fileMusic.text = feeds[layoutPosition].fileMusicUserWrite
             }
+            ui.time.text = Time.parseDay(feeds[layoutPosition].time)
         }
     }
 }

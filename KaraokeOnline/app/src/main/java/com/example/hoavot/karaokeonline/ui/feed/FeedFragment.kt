@@ -200,6 +200,8 @@ class FeedFragment : BaseFragment() {
         if (notification.isOnNext) {
             d("TAGGGG", "handle get feed success 1")
             sendListSong()
+//            ui.feedsAdapter.notifyDataSetChanged()
+            ui.recyclerView.removeAllViews()
             notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
         } else {
             // Todo: Handle later
@@ -226,7 +228,6 @@ class FeedFragment : BaseFragment() {
         val intent = Intent(context, ShareActivity::class.java)
         intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
         intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
-
         startActivity(intent)
     }
 

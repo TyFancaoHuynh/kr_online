@@ -5,6 +5,7 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.KaraDataSource
@@ -24,7 +25,6 @@ import java.io.File
  *  Created by hoavot on 10/12/2017.
  */
 class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaApi: ApiService) : KaraDataSource {
-
     constructor() : this(ApiClient.getInstance(null).youtTubeService, ApiClient.getInstance(null).karaService)
 
     override fun updateInforUser(user: User): Single<User> {
@@ -44,7 +44,7 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
     }
 
     override fun getFeeds(): Single<FeedsResponse> {
-       return karaApi.getFeeds()
+        return karaApi.getFeeds()
     }
 
     override fun getFeedMe(): Single<FeedsResponse> = karaApi.getFeedMe()
@@ -57,16 +57,22 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaApi.getComments(feedId)
 
-    override fun postFeed(fileName: String, audioFile: File?, caption: String): Single<FeedResponse> {
+    override fun postFeed(fileName: String, audioFile: File?, caption: String, imageFile: File?): Single<FeedResponse> {
         var requestFileBody: MultipartBody.Part? = null
         audioFile?.let {
-            val requestFile = RequestBody.create(MediaType.parse("audio/x-m4a"), audioFile)
+            val requestFile = RequestBody.create(MediaType.parse("audio/x-m4a"), it)
             d("TAGGG", "file name:${fileName} ")
-            requestFileBody = MultipartBody.Part.createFormData("audio", audioFile.name!!, requestFile)
+            requestFileBody = MultipartBody.Part.createFormData("audio", it.name!!, requestFile)
+        }
+        var requestFileImageBody: MultipartBody.Part? = null
+        imageFile?.let {
+            val requestImageFile = RequestBody.create(MediaType.parse("image/*"), it)
+            d("TAGGG", "file name:${fileName} ")
+            requestFileImageBody = MultipartBody.Part.createFormData("image", it.name!!, requestImageFile)
         }
         val fileNameRequestBody = createNonNullPartFromString(fileName)
         val captionBody = createNonNullPartFromString(caption)
-        return karaApi.postFeed(requestFileBody, fileNameRequestBody, captionBody)
+        return karaApi.postFeed(requestFileBody, fileNameRequestBody, captionBody, requestFileImageBody)
     }
 
     override fun getInforUser(id: Int): Single<User> = karaApi.getInforUser(id)
@@ -116,4 +122,30 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         return karaApi.register(registerBody)
     }
 
+    override fun getPopularVideo(part: String, chart: String, regionCode: String): Single<MutableList<Item>> {
+        return youtubeApi.getPopularVideo(part, chart, regionCode).map { it.items }
+    }
+
+    override fun deleteFeed(feedId: Int): Single<DeleteFeedResponse> {
+        return karaApi.deleteFeed(feedId)
+    }
+
+    override fun updateFeed(feed: Feed, fileName: String, audioFile: File?, caption: String, imageFile: File?): Single<FeedResponse> {
+        var requestFileBody: MultipartBody.Part? = null
+        audioFile?.let {
+            val requestFile = RequestBody.create(MediaType.parse("audio/x-m4a"), audioFile)
+            d("TAGGG", "file name:${fileName} ")
+            requestFileBody = MultipartBody.Part.createFormData("audio", audioFile.name!!, requestFile)
+        }
+        var requestImageFileBody: MultipartBody.Part? = null
+        imageFile?.let {
+            val requestFileImage = RequestBody.create(MediaType.parse("image/*"), it)
+            d("TAGGG", "file name:${fileName} ")
+            requestImageFileBody = MultipartBody.Part.createFormData("image", it.name!!, requestFileImage)
+        }
+        val fileNameRequestBody = createNonNullPartFromString(fileName)
+        val captionBody = createNonNullPartFromString(caption)
+        val id = createNonNullPartFromString(feed.id.toString())
+        return karaApi.updateFeed(requestFileBody, fileNameRequestBody, captionBody, id, requestImageFileBody)
+    }
 }

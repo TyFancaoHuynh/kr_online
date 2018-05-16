@@ -11,6 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.ui.extensions.*
 import org.jetbrains.anko.AnkoContext
@@ -24,7 +28,7 @@ class CommentFragment : BottomSheetDialogFragment() {
     internal lateinit var ui: CommentLayoutUI
     internal lateinit var feed: Feed
     internal var position = -1
-    internal var isFeed=false
+    internal var isFeed = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         ui = CommentLayoutUI(feed.comments)
@@ -79,7 +83,7 @@ class CommentFragment : BottomSheetDialogFragment() {
             context.showAlertNotification("WARNING", "please input comment!") {}
         } else {
             ui.edtComment.text.clear()
-            if(isFeed) {
+            if (isFeed) {
                 RxBus.publish(CommentFeedMeEvent(position, text))
                 return
             }
@@ -91,7 +95,7 @@ class CommentFragment : BottomSheetDialogFragment() {
     internal fun likeClicked() {
         d("TAGGGG", "on like click")
 //        ui.like.isEnabled = false
-        if(isFeed){
+        if (isFeed) {
             RxBus.publish(LikeFeedMeEvent(position))
             return
         }
@@ -101,7 +105,7 @@ class CommentFragment : BottomSheetDialogFragment() {
     internal fun unLikeClicked() {
         d("TAGGGG", "on unlike click")
 //        ui.unlike.isEnabled = false
-        if(isFeed){
+        if (isFeed) {
             RxBus.publish(UnlikeFeedMeEvent(position))
             return
         }

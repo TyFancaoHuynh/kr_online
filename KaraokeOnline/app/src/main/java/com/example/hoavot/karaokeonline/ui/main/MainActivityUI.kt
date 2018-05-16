@@ -50,9 +50,11 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
             lparams(matchParent, matchParent)
             backgroundColor = Color.WHITE
             tabLayout = tabLayout {
-                backgroundColor = ContextCompat.getColor(context, R.color.colorFooter)
+                backgroundColor = Color.WHITE
                 rotationX = ROTATION_X
                 id = R.id.mainTabLayout
+                setSelectedTabIndicatorColor(ContextCompat.getColor(ctx, R.color.colorStatus))
+
                 addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabReselected(tab: TabLayout.Tab?) {
                     }
@@ -66,8 +68,8 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
                             viewPager.setCurrentItem(it, true)
                             if (lastTab != -1) {
                                 val fragment = mainPagerAdapter.instantiateItem(viewPager, viewPager.currentItem) as Fragment
-                                sendIntent(owner,Action.STOP_MEDIA.value,context,SongService::class.java)
-                                sendIntent(owner,Action.STOP_MEDIA.value,context,SongFeedService::class.java)
+                                sendIntent(owner, Action.STOP_MEDIA.value, context, SongService::class.java)
+                                sendIntent(owner, Action.STOP_MEDIA.value, context, SongFeedService::class.java)
 
                                 when (fragment) {
                                     is HomeFragment -> {

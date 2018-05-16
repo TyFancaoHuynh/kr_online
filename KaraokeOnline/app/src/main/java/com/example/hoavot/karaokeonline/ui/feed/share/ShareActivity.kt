@@ -65,7 +65,7 @@ class ShareActivity : BaseActivity() {
                     .setContentTitle("Android Facebook Integration and Login Tutorial")
                     .setContentDescription(
                             "This tutorial explains how to integrate Facebook and Login through Android Application")
-                    .setContentUrl(Uri.parse("http://" + fileMusic + "/id=" + id))
+                    .setContentUrl(Uri.parse("http://karaokerim.com"))
                     .build()
             shareDialog.show(linkContent);  // Show facebook ShareDialog
         }

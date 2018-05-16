@@ -7,12 +7,14 @@ import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.KaraRepository
+import com.example.hoavot.karaokeonline.data.source.response.DeleteFeedResponse
 import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import com.example.hoavot.karaokeonline.ui.base.Diff
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import io.reactivex.Notification
+import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.io.File
@@ -55,6 +57,9 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 d("TAGGGG", "on error feeds: ${it.message}")
                 feedsObserverable.onNext(Notification.createOnError(it))
             })
+
+    internal fun deleteFeed(feedId: Int): Single<DeleteFeedResponse>
+            = karaRepository.deleteFeed(feedId)
 
     internal fun getMeFeeds() {
         karaRepository.getFeedMe()
@@ -153,6 +158,4 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
         feeds.addAll(newList)
         return diff
     }
-
-
 }

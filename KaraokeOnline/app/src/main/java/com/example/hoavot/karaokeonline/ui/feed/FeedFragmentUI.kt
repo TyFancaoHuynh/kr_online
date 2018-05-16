@@ -42,10 +42,12 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
     override fun createView(ui: AnkoContext<FeedFragment>): View {
         return with(ui) {
             relativeLayout {
+//                backgroundColor = ContextCompat.getColor(context,R.color.colorStatus)
+                backgroundColor=Color.WHITE
                 lparams(matchParent, matchParent)
 //                backgroundColor = ContextCompat.getColor(context, R.color.colorItemFeed)
                 linearLayout {
-                    backgroundColor = Color.WHITE
+                    verticalPadding = dip(10)
                     orientation = LinearLayout.HORIZONTAL
                     id = R.id.feedFragmentAreaCaption
                     lparams(matchParent, dip(60))
@@ -59,7 +61,7 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                     editText {
                         id = R.id.feedFragmentAreaEdtCaption
                         backgroundResource = R.drawable.custom_item_feed
-                        hint = "What do you think?..."
+                        hint = "Bạn đang nghĩ gì?..."
                         textSize = px2dip(dimen(R.dimen.feedTitleTextSize))
                         leftPadding = dip(10)
                         hintTextColor = ContextCompat.getColor(context, R.color.colorGrayLight)
@@ -78,8 +80,8 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                         gravity = Gravity.CENTER
                         weight = 4f
                     }
-                }.lparams(matchParent, dip(40)) {
-                    topMargin = dip(10)
+                }.lparams(matchParent, dip(60)) {
+
                 }
 
                 recyclerView = recyclerView {
@@ -88,7 +90,6 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                     adapter = feedsAdapter
                 }.lparams(matchParent, matchParent) {
                     below(R.id.feedFragmentAreaCaption)
-                    topMargin = dip(10)
                 }
 
                 areaPlay = relativeLayout {
@@ -105,7 +106,7 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                     usernamePlay = textView {
                         id = R.id.feedFragmentUsernamePlay
                         textColor = Color.WHITE
-                        textSize = px2dip(dimen(R.dimen.textSize14))
+                        textSize = px2dip(dimen(R.dimen.textSize16))
                     }.lparams {
                         topMargin = dip(12)
                         rightOf(R.id.feedFragmentAvatarPlay)
@@ -114,14 +115,15 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
 
                     filePlay = textView {
                         id = R.id.feedFragmentFilePlay
-                        textColor = Color.WHITE
+                        textColor = ContextCompat.getColor(context,R.color.colorFilePlay)
                         textSize = px2dip(dimen(R.dimen.textSize12))
-                        maxLines=2
+                        maxLines = 2
                         ellipsize = TextUtils.TruncateAt.END
-                    }.lparams(wrapContent, dip(200)) {
-                        rightMargin = getWidth() / 2
+                    }.lparams {
                         sameLeft(R.id.feedFragmentUsernamePlay)
+                        leftOf(R.id.feedFragmentImgPrevious)
                         below(R.id.feedFragmentUsernamePlay)
+                        rightMargin = dip(10)
                     }
 
                     mImgBtnNext = imageButton(R.drawable.next_feed) {
@@ -162,6 +164,7 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                     }
 
                     mImgBtnPrevious = imageButton(R.drawable.previous_feed) {
+                        id = R.id.feedFragmentImgPrevious
                         enableHighLightWhenClicked()
                         onClick {
                             owner.eventOnButtonClicked(mImgBtnPrevious)

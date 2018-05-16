@@ -20,7 +20,7 @@
     <color name="colorBlack">#111111</color>
     <color name="colorItemFeed">#e5e8e9</color>
     <color name="colorBackgroundEditprofile">#e4e0e0</color>
-    <color name="colorLineFeedScreen">#f5f0f0</color>
+    <color name="colorLineFeedScreen">#faf8f8</color>
     <color name="colorButton">#20252B</color>
     <color name="colorBlackBold">#090909</color>
     <color name="colorBlackBoldBold">#383737</color>
@@ -38,7 +38,11 @@
     <color name="avatar_bolder">#dbf2f2</color>
     <color name="colorItemChoosePlay">#c2d4d2</color>
     <color name="colorItemNoChoosePlay">#eef2f2</color>
-    <color name="colorPlayFeed">#9068b6</color>
+    <color name="colorPlayFeed">#dc54288e</color>
     <color name="colorHightLight">#f7f4f1</color>
+    <color name="colorStatus">#fc7814</color>
+    <color name="colorFilePlay">#FFECB3</color>
+    <color name="colorBGPlay">#FF9800</color>
+    <color name="colorOrangeLight">#FFE0B2</color>
 
 </resources>

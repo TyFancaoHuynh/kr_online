@@ -11,6 +11,7 @@ import android.widget.EditText
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.ui.utils.ShowVideoAdapter
+import com.example.hoavot.karaokeonline.ui.utils.VideoPopularAdapter
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onEditorAction
@@ -19,10 +20,12 @@ import org.jetbrains.anko.sdk25.coroutines.onEditorAction
  *  Copyright © 2017 AsianTech inc.
  *  Created by hoavot on 12/12/2017.
  */
-class SearchVideoFragmentUI(private val items: MutableList<Item>, private val context: Context) : AnkoComponent<SearchVideoFragment> {
+class SearchVideoFragmentUI(private val items: MutableList<Item>, private val context: Context, private val itemsPopulars: MutableList<Item>) : AnkoComponent<SearchVideoFragment> {
     internal lateinit var edtInput: EditText
     internal var adapterSearch = ShowVideoAdapter(context, items, Color.BLACK)
+    internal var adapterPopular = VideoPopularAdapter(context, itemsPopulars)
     internal lateinit var recyclerView: RecyclerView
+    internal lateinit var recyclerViewPopular: RecyclerView
 
     override fun createView(ui: AnkoContext<SearchVideoFragment>): View = with(ui) {
         verticalLayout {
@@ -48,7 +51,7 @@ class SearchVideoFragmentUI(private val items: MutableList<Item>, private val co
                     onEditorAction { v, actionId, event ->
                         owner.eventWhenSearchButtonClick(text.toString())
                     }
-                }.lparams(matchParent, dip(30)) {
+                }.lparams(matchParent, dip(40)) {
                     horizontalMargin = dip(5)
                     verticalMargin = dip(10)
                 }
@@ -57,6 +60,14 @@ class SearchVideoFragmentUI(private val items: MutableList<Item>, private val co
             recyclerView = recyclerView {
                 layoutManager = LinearLayoutManager(context)
                 adapter = adapterSearch
+                visibility=View.GONE
+            }.lparams(matchParent, matchParent) {
+                topMargin = dip(30)
+            }
+
+            recyclerViewPopular = recyclerView {
+                layoutManager = LinearLayoutManager(context)
+                adapter = adapterPopular
             }.lparams(matchParent, matchParent) {
                 topMargin = dip(30)
             }

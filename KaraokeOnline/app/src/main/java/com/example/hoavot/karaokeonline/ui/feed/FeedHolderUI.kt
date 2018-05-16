@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Comment
@@ -18,6 +17,7 @@ import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import com.example.hoavot.karaokeonline.ui.extensions.fontNomal
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
  *
@@ -26,8 +26,8 @@ import org.jetbrains.anko.*
 class FeedHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var avatar: CircleImageView
     internal lateinit var userName: TextView
-    internal lateinit var recordArea: LinearLayout
-    internal lateinit var yourMusic: TextView
+    internal lateinit var optionArea: LinearLayout
+    internal lateinit var more: ImageView
     internal lateinit var fileMusic: TextView
     internal lateinit var like: ImageView
     internal lateinit var unlike: ImageView
@@ -36,16 +36,20 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var captionArea: TextView
     internal lateinit var comment: ImageView
     internal lateinit var share: ImageView
+    internal lateinit var updateFeed: TextView
+    internal lateinit var deleteFeed: TextView
+    internal lateinit var time: TextView
+    internal lateinit var imgBGMusic: ImageView
     internal var comments: MutableList<Comment> = mutableListOf()
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-        verticalLayout {
+        relativeLayout {
             backgroundColor = Color.WHITE
             lparams(matchParent, wrapContent) {
-                topMargin = dip(10)
+                bottomMargin = dip(10)
             }
             linearLayout {
-                lparams(matchParent, dip(50))
+                id = R.id.profileFragmenAreaImage
                 avatar = circleImageView {
                     borderWidth = dip(0.4f)
                     borderColor = Color.GRAY
@@ -54,46 +58,71 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     topMargin = dip(3)
                 }
 
-                userName = textView {
-                    typeface = Typeface.DEFAULT_BOLD
-                    textSize = px2dip(dimen(R.dimen.textSize15))
-                    textColor = Color.BLACK
-                    fontNomal()
+                verticalLayout {
+                    userName = textView {
+                        typeface = Typeface.DEFAULT_BOLD
+                        textSize = px2dip(dimen(R.dimen.textSize16))
+                        textColor = Color.BLACK
+                    }
+                    time = textView {
+                        textSize = px2dip(dimen(R.dimen.textSize13))
+                        textColor = ContextCompat.getColor(context, R.color.colorGrayLight)
+                        fontNomal()
+                    }.lparams {
+                        topMargin = dip(5)
+                        leftMargin = dip(5)
+                    }
                 }.lparams {
                     topMargin = dip(13)
                     leftMargin = dip(5)
                 }
+
+            }.lparams(matchParent, dip(80)) {
+                alignParentTop()
             }
 
             captionArea = textView {
+                id = R.id.profileFragmenCaption
                 maxLines = 6
                 minLines = 1
                 textColor = Color.BLACK
                 textSize = px2dip(dimen(R.dimen.feedCaptionTextSize))
             }.lparams(matchParent, wrapContent) {
                 horizontalMargin = dip(20)
+                below(R.id.profileFragmenAreaImage)
+            }
+
+            imgBGMusic = imageView(R.drawable.bg_play) {
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                id = R.id.profileFragmenImgMusic
+            }.lparams(matchParent, dip(130)) {
+                topMargin = dip(10)
+                below(R.id.profileFragmenCaption)
             }
 
             fileMusic = textView {
-                backgroundColor = ContextCompat.getColor(context, R.color.colorHightLight)
-                textSize = px2dip(dimen(R.dimen.textSize15))
+                id = R.id.profileFragmenFileMusic
+                textColor = Color.WHITE
+                textSize = px2dip(dimen(R.dimen.textSize18))
                 visibility = View.GONE
-                paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
                 typeface = Typeface.DEFAULT_BOLD
-                gravity = Gravity.CENTER
                 enableHighLightWhenClicked()
-            }.lparams(matchParent, dip(40)) {
-                verticalMargin = dip(15)
-                horizontalMargin = dip(30)
+            }.lparams {
+                verticalMargin = dip(20)
+                horizontalMargin = dip(10)
+                below(R.id.profileFragmenCaption)
+                sameLeft(R.id.profileFragmenImgMusic)
             }
 
             relativeLayout {
+                id = R.id.profileFragmenShare
                 lparams(matchParent, wrapContent) {
+                    below(R.id.profileFragmenImgMusic)
                     horizontalPadding = dip(20)
-                    topMargin = dip(10)
+                    topMargin = dip(20)
                 }
 
-                imageView(R.drawable.ic_count_like) {
+                imageView(R.drawable.ic_heart_small) {
                     id = R.id.imgCountLike
                 }.lparams(dip(15), dip(15))
 
@@ -116,24 +145,25 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
             }
 
             view {
+                id = R.id.profileFragmenLine
                 backgroundColor = R.color.colorLineFeedScreen
             }.lparams(matchParent, dip(0.5f)) {
                 horizontalMargin = dip(20)
                 topMargin = dip(10)
+                below(R.id.profileFragmenShare)
             }
 
             linearLayout {
-                lparams(matchParent, dip(40))
                 id = R.id.feedFragmentLikeArea
 
                 relativeLayout {
-                    like = imageView(R.drawable.ic_count_like) {
+                    like = imageView(R.drawable.ic_heart_origin) {
                         id = R.id.feedFragmentImgUnLike
                         enableHighLightWhenClicked()
                     }.lparams(dip(20), dip(20)) {
                         centerHorizontally()
                     }
-                    unlike = imageView(R.drawable.ic_unlike_feed) {
+                    unlike = imageView(R.drawable.ic_heart_96) {
                         id = R.id.feedFragmentImgUnLike
                         enableHighLightWhenClicked()
                     }.lparams(dip(20), dip(20)) {
@@ -159,8 +189,53 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     gravity = Gravity.CENTER
                 }
 
+            }.lparams(matchParent, dip(40)) {
+                below(R.id.profileFragmenLine)
             }
 
+            more = imageView(R.drawable.ic_more_vert_grey_500_24dp) {
+                id = R.id.feedFragmentMore
+                visibility = View.INVISIBLE
+            }.lparams {
+                alignParentRight()
+                alignParentTop()
+                topMargin = dip(15)
+                rightMargin = dip(15)
+            }
+
+            optionArea = verticalLayout {
+                visibility = View.INVISIBLE
+
+                updateFeed = textView("Update") {
+                    textSize = px2dip(dimen(R.dimen.textSize15))
+                    typeface = Typeface.SERIF
+                    textColor = Color.BLACK
+                    padding = dip(5)
+                    backgroundColor = ContextCompat.getColor(context, R.color.colorLineFeedScreen)
+                    gravity = Gravity.CENTER
+                    enableHighLightWhenClicked()
+                }.lparams(matchParent, wrapContent)
+
+                view {
+                    id = R.id.profileFragmenLine
+                    backgroundColor = R.color.colorPurpose
+                }.lparams(matchParent, dip(0.5f)) {
+                    topMargin = dip(2)
+                }
+
+                deleteFeed = textView("Delete") {
+                    textSize = px2dip(dimen(R.dimen.textSize15))
+                    typeface = Typeface.SERIF
+                    textColor = Color.BLACK
+                    padding = dip(5)
+                    backgroundColor = ContextCompat.getColor(context, R.color.colorLineFeedScreen)
+                    gravity = Gravity.CENTER
+                    enableHighLightWhenClicked()
+                }.lparams(matchParent, wrapContent)
+            }.lparams(dip(150), dip(80)) {
+                alignParentRight()
+                below(R.id.feedFragmentMore)
+            }
         }
     }
 }

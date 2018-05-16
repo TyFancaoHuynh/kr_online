@@ -50,7 +50,7 @@ class CommentLayoutUI(private var comments: MutableList<Comment>) : AnkoComponen
 
                 relativeLayout {
                     id = R.id.commentFragmentAreaLike
-                    like = imageView(R.drawable.ic_count_like) {
+                    like = imageView(R.drawable.ic_heart_origin) {
                         enableHighLightWhenClicked()
                         onClick {
                             owner.likeClicked()
@@ -58,7 +58,7 @@ class CommentLayoutUI(private var comments: MutableList<Comment>) : AnkoComponen
                     }.lparams(dip(20), dip(20)) {
                         centerHorizontally()
                     }
-                    unlike = imageView(R.drawable.ic_unlike_feed) {
+                    unlike = imageView(R.drawable.ic_heart_96) {
                         enableHighLightWhenClicked()
                         onClick {
                             owner.unLikeClicked()

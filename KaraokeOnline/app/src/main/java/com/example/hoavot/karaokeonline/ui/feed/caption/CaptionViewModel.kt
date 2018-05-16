@@ -17,17 +17,16 @@ import java.io.File
  */
 class CaptionViewModel(private val localRepository: LocalRepository) {
     private val karaRepository = KaraRepository()
-    internal val userInforObserver = SingleSubject.create<User>()
     internal val progressObserver = BehaviorSubject.create<Boolean>()
     internal val postFeedObserver = PublishSubject.create<FeedResponse>()
 
-    internal fun getUserFromSharePrefrence() {
-        userInforObserver.onSuccess(localRepository.getMeInfor())
+    internal fun getUserFromSharePrefrence(): User {
+        return localRepository.getMeInfor()
     }
 
-    internal fun postFeed(fileName: String, file: File?, caption: String) {
+    internal fun postFeed(fileName: String, file: File?, caption: String, imageFile: File?) {
         d("TAGGGGG", "post feed")
-        karaRepository.postFeed(fileName,file, caption)
+        karaRepository.postFeed(fileName, file, caption, imageFile)
                 .observeOnUiThread()
                 .doOnSubscribe {
                     d("TAGGGG", "do On suscribe")

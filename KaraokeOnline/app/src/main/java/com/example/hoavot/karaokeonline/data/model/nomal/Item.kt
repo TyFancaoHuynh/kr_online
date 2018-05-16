@@ -9,12 +9,14 @@ import com.google.gson.annotations.SerializedName
  * Created by rimoka on 03/08/2017.
  *  For Search detail video
  */
-data class Item(@SerializedName("video") var video: Video,
+data class Item(@SerializedName("id") var id: String,
+                @SerializedName("video") var video: Video,
                 @SerializedName("snippet") var snippet: Snippet,
                 @SerializedName("contentDetails") var contentDetails: ContentDetails?,
                 @SerializedName("statistics") var statistics: Statistics?,
                 @SerializedName("channel") var channel: Channel?) : Parcelable {
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readParcelable(Video::class.java.classLoader),
             parcel.readParcelable(Snippet::class.java.classLoader),
             parcel.readParcelable(ContentDetails::class.java.classLoader),
@@ -23,6 +25,7 @@ data class Item(@SerializedName("video") var video: Video,
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeParcelable(video, flags)
         parcel.writeParcelable(snippet, flags)
         parcel.writeParcelable(contentDetails, flags)

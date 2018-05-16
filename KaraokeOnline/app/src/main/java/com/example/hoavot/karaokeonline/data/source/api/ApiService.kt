@@ -58,6 +58,13 @@ interface ApiService {
                            @Query("key") key: String = KEY_BROWSER
     ): Single<PlaylistDetailFromApi>
 
+    @GET("/youtube/v3/videos")
+    fun getPopularVideo(@Query("part") part: String,
+                        @Query("chart") chart: String,
+                        @Query("regionCode") regionCode: String,
+                        @Query("maxResults") maxResults: Int = 50,
+                        @Query("key") key: String = KEY_BROWSER): Single<VideoDetailFromApi>
+
     @GET(URL_SEARCH_VIDEO)
     fun getMoreVideos(
             @Query("part") part: String,
@@ -113,7 +120,7 @@ interface ApiService {
 
     @Multipart
     @POST("/api/feed/create")
-    fun postFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody)
+    fun postFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody, @Part imageFile: MultipartBody.Part?)
             : Single<FeedResponse>
 
     @POST("/api/login")
@@ -121,4 +128,12 @@ interface ApiService {
 
     @POST("/api/register")
     fun register(@Body loginBody: LoginBody): Single<LoginResponse>
+
+    @DELETE("/api/feed/me/{id}")
+    fun deleteFeed(@Path("id") id: Int): Single<DeleteFeedResponse>
+
+    @Multipart
+    @PUT("/api/feed/me")
+    fun updateFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody, @Part("id") id: RequestBody,@Part imageFile: MultipartBody.Part?)
+            : Single<FeedResponse>
 }

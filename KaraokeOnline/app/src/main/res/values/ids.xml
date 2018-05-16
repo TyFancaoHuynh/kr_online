@@ -108,4 +108,15 @@
     <item name="feedFragmentColsePlay" type="id" />
     <item name="baseFeedFragmentContainer" type="id" />
     <item name="profileFragmentBaseFeedContainer" type="id" />
+    <item name="popular_video_adapter_tv_duratiion_time_video" type="id" />
+    <item name="profileFragmenAreaImage" type="id" />
+    <item name="profileFragmenCaption" type="id" />
+    <item name="profileFragmenFileMusic" type="id" />
+    <item name="profileFragmenShare" type="id" />
+    <item name="profileFragmenLine" type="id" />
+    <item name="feedFragmentMore" type="id" />
+    <item name="feedFragmentImgPrevious" type="id" />
+    <item name="profileFragmenImgMusic" type="id" />
+    <item name="captionFragmenImgMusic" type="id" />
+    <item name="captionFragmentTvFile" type="id" />
 </resources>

@@ -4,6 +4,7 @@ import com.example.hoavot.karaokeonline.data.model.nomal.Channel
 import com.example.hoavot.karaokeonline.data.model.nomal.Item
 import com.example.hoavot.karaokeonline.data.model.nomal.Playlist
 import com.example.hoavot.karaokeonline.data.model.nomal.Video
+import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.response.*
@@ -67,6 +68,10 @@ interface KaraDataSource {
      */
     fun getMoreVideos(part: String, eventType: String, maxResults: String, relatedToVideoId: String, type: String): Single<MutableList<Video>>
 
+    fun getPopularVideo(part: String,
+                        chart: String,
+                        regionCode: String): Single<MutableList<Item>>
+
     fun getInforUser(id: Int): Single<User>
 
     fun updateInforUser(user: User): Single<User>
@@ -85,10 +90,14 @@ interface KaraDataSource {
 
     fun getComments(feedId: Int): Single<CommentResponse>
 
-    fun postFeed(fileName: String, audioFile: File? = null, caption: String)
+    fun postFeed(fileName: String, audioFile: File? = null, caption: String, imageFile: File?)
             : Single<FeedResponse>
 
     fun login(username: String, password: String): Single<LoginResponse>
 
     fun register(username: String, password: String): Single<LoginResponse>
+
+    fun deleteFeed(feedId: Int): Single<DeleteFeedResponse>
+
+    fun updateFeed(feed: Feed, fileName: String, audioFile: File? = null, caption: String, imageFile: File?): Single<FeedResponse>
 }

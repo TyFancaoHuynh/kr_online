@@ -49,7 +49,14 @@
             android:enabled="true" />
 
         <activity android:name=".ui.register.RegisterActivity" />
-        <activity android:name=".ui.main.MainActivity" />
+        <activity android:name=".ui.main.MainActivity">
+            <intent-filter>
+                <data android:scheme="karaoke" android:host="open" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.play.PlayActivity" />
         <activity android:name=".ui.feed.caption.CaptionActivity" />
         <activity android:name=".ui.feed.share.ShareActivity" />

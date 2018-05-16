@@ -1,23 +1,22 @@
 package com.example.hoavot.karaokeonline.ui.feed.caption
 
 import android.app.Activity
-import android.app.AlertDialog
+import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.ContentUris
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.database.Cursor
-import android.graphics.Color
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Parcelable
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.util.Log.d
 import android.widget.EditText
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -25,12 +24,12 @@ import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
+import com.example.hoavot.karaokeonline.ui.base.Image.convertBitmapToFile
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
-import com.example.hoavot.karaokeonline.ui.extensions.showAlertNotification
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
+import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
 import io.reactivex.Observable
-import io.reactivex.Observer
 import org.jetbrains.anko.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -52,6 +51,8 @@ class CaptionActivity : BaseActivity() {
     private var file: File? = null
     private var path = ""
     private var fileName = ""
+    private lateinit var dialogShowCamera: Dialog
+    private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,25 +60,17 @@ class CaptionActivity : BaseActivity() {
         ui.setContentView(this)
         initProgressDialog()
         viewModel = CaptionViewModel(LocalRepository(this))
-        addDisposables(
-                viewModel.userInforObserver
-                        .observeOnUiThread()
-                        .subscribe({
-                            ui.tvUsername.text = it.username
-                            val option = RequestOptions()
-                                    .override(ui.avatar.width, ui.avatar.width)
-                                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                                    .placeholder(R.drawable.bg_item_place_holder)
+        val user = viewModel.getUserFromSharePrefrence()
+        ui.tvUsername.text = user.username
+        val option = RequestOptions()
+                .override(ui.avatar.width, ui.avatar.width)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+                .placeholder(R.drawable.user_default)
 
-                            Glide.with(this)
-                                    .load(it.avatar)
-                                    .apply(option)
-                                    .into(ui.avatar)
-                        }, {
-                            //  Todo:Handle later
-                        })
-        )
-        viewModel.getUserFromSharePrefrence()
+        Glide.with(this)
+                .load(user.avatar)
+                .apply(option)
+                .into(ui.avatar)
     }
 
     override fun onBindViewModel() {
@@ -103,13 +96,23 @@ class CaptionActivity : BaseActivity() {
                         showEditSongDialog()
                     }
                     noButton {
-                        file=File(path)
+                        file = File(path)
                         ui.tvFileName.text = path
                         fileName = path
                     }
                 }.show()
             }
         }
+
+        if (resultCode == Activity.RESULT_OK && data != null && requestCode == ProfileFragment.TYPE_CAMERA) {
+            val extras = data.extras
+            if (extras != null) {
+                val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
+                imageFile = convertBitmapToFile(bimap, this)
+                dialogShowCamera.cancel()
+            }
+        }
+
     }
 
     internal fun eventOnBackClicked() {
@@ -121,7 +124,7 @@ class CaptionActivity : BaseActivity() {
         if (fileName.isBlank()) {
             showAlertError(Throwable("Bạn phải chọn bài hát"))
         } else {
-            viewModel.postFeed(fileName, file, ui.edtCaption.text.toString())
+            viewModel.postFeed(fileName, file, ui.edtCaption.text.toString(), imageFile)
         }
     }
 
@@ -131,6 +134,37 @@ class CaptionActivity : BaseActivity() {
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "audio/*"
         startActivityForResult(Intent.createChooser(intent, getString(R.string.select_audio_file_title)), REQ_CODE_PICK_SOUNDFILE)
+    }
+
+    internal fun eventOnCameraClick() {
+        dialogShowCamera = createDialog()
+        dialogShowCamera.show()
+    }
+
+    // Create dialog with list data got from resource
+    private fun createDialog(): Dialog {
+        val builder = android.support.v7.app.AlertDialog.Builder(this)
+        builder.setTitle(R.string.dialog_title_please_choose)
+                .setItems(R.array.items, DialogInterface.OnClickListener { dialog, which ->
+                    when (which) {
+                        ProfileFragment.TYPE_GALLERY -> {
+                            val intent = Intent(Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                            intent.type = "image/*"
+                            startActivityForResult(intent, ProfileFragment.TYPE_GALLERY)
+                        }
+                        else -> try {
+                            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            startActivityForResult(cameraIntent, ProfileFragment.TYPE_CAMERA)
+                        } catch (anfe: ActivityNotFoundException) {
+                            val toast = Toast
+                                    .makeText(this, "This device doesn't support the camera action!", Toast.LENGTH_SHORT)
+                            toast.show()
+                        }
+
+                    }
+                })
+        return builder.create()
     }
 
     private fun initProgressDialog() {
