@@ -26,19 +26,15 @@ import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.feed.caption.CaptionActivity
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
-import com.example.hoavot.karaokeonline.ui.feed.comment.CommentLayoutUI
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
-import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
-import com.example.hoavot.karaokeonline.ui.playmusic.service.SongService
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.support.v4.startActivity
-import java.util.ArrayList
+import java.util.*
 
 /**
  *
@@ -64,7 +60,7 @@ class FeedFragment : BaseFragment() {
     private val option = RequestOptions()
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-            .placeholder(R.drawable.user_default)
+            .placeholder(R.drawable.ic_avatar_feed)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -73,7 +69,12 @@ class FeedFragment : BaseFragment() {
         d("TAGGGG", "on create feed")
         user = LocalRepository(context).getMeInfor()
         ui = FeedFragmentUI(feeds, user)
-        return ui.createView(AnkoContext.Companion.create(context, this))
+        val view = ui.createView(AnkoContext.Companion.create(context, this))
+        Glide.with(context)
+                .load(user.avatar)
+                .apply(option)
+                .into(ui.circleImgAvatarStatus)
+        return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

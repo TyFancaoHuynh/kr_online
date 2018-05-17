@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.extensions.circleImageView
@@ -17,7 +18,6 @@ import com.example.hoavot.karaokeonline.ui.extensions.onClickWithAvoidRapidActio
 import com.example.hoavot.karaokeonline.ui.utils.AvoidRapidAction
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
-import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
@@ -38,45 +38,42 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
         relativeLayout {
             lparams(matchParent, matchParent)
             backgroundColor = Color.WHITE
-            toolbar = toolbar {
-                lparams(matchParent, dimen(R.dimen.toolBarHeight)) {
-                    leftMargin = -dip(15)
-                }
+            relativeLayout {
+                lparams(matchParent, dimen(R.dimen.toolBarHeight))
                 id = R.id.toolBarCaption
-                relativeLayout {
-                    lparams(matchParent, matchParent)
-                    imageView(R.drawable.ic_left_arrow) {
-                        id = R.id.captionFragmentToolBarBack
-                        topPadding = dimen(R.dimen.toolBarLeftRightIconTopPadding)
-                        bottomPadding = dimen(R.dimen.toolBarLeftRightIconBottomPadding)
-                        enableHighLightWhenClicked()
-                        onClickWithAvoidRapidAction(AvoidRapidAction.DELAY_TIME) {
-                            owner.eventOnBackClicked()
-                        }
-                    }.lparams(dip(40), matchParent)
-
-                    tvTitle = textView(R.string.uploadReviewFragmentToolbarTitle) {
-                        id = R.id.captionFragmentToolBarTitle
-                        textSize = px2dip(dimen(R.dimen.toolBarMiddleTitleTextSize))
-                        maxLines = 1
-                        ellipsize = TextUtils.TruncateAt.END
-                        textColor = ContextCompat.getColor(ctx, android.R.color.black)
-                    }.lparams {
-                        centerHorizontally()
-                        topMargin = dimen(R.dimen.uploadReviewFragmentToolBarTitleTopPadding)
+                imageView(R.drawable.ic_left_arrow) {
+                    id = R.id.captionFragmentToolBarBack
+                    topPadding = dimen(R.dimen.toolBarLeftRightIconTopPadding)
+                    bottomPadding = dimen(R.dimen.toolBarLeftRightIconBottomPadding)
+                    enableHighLightWhenClicked()
+                    onClickWithAvoidRapidAction(AvoidRapidAction.DELAY_TIME) {
+                        owner.eventOnBackClicked()
                     }
+                }.lparams(dip(40), matchParent) {
+                    alignParentLeft()
+                }
 
-                    imageView(R.drawable.ic_complete) {
-                        id = R.id.captionFragmentToolBarUpload
-                        enableHighLightWhenClicked()
-                        onClickWithAvoidRapidAction(AvoidRapidAction.DELAY_TIME) {
-                            owner.eventOnCompleteButtonClicked()
-                        }
-                        topPadding = dimen(R.dimen.toolBarLeftRightIconTopPadding)
-                        bottomPadding = dimen(R.dimen.toolBarLeftRightIconBottomPadding)
-                    }.lparams(dip(40), matchParent) {
-                        alignParentRight()
+                tvTitle = textView(R.string.uploadReviewFragmentToolbarTitle) {
+                    id = R.id.captionFragmentToolBarTitle
+                    textSize = px2dip(dimen(R.dimen.toolBarMiddleTitleTextSize))
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
+                    textColor = ContextCompat.getColor(ctx, android.R.color.black)
+                }.lparams {
+                    centerHorizontally()
+                    topMargin = dimen(R.dimen.uploadReviewFragmentToolBarTitleTopPadding)
+                }
+
+                imageView(R.drawable.ic_complete) {
+                    id = R.id.captionFragmentToolBarUpload
+                    enableHighLightWhenClicked()
+                    onClickWithAvoidRapidAction(AvoidRapidAction.DELAY_TIME) {
+                        owner.eventOnCompleteButtonClicked()
                     }
+                    topPadding = dimen(R.dimen.toolBarLeftRightIconTopPadding)
+                    bottomPadding = dimen(R.dimen.toolBarLeftRightIconBottomPadding)
+                }.lparams(dip(40), matchParent) {
+                    alignParentRight()
                 }
             }
 
@@ -117,70 +114,129 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
                     below(R.id.captionFragmentAvartar)
                 }
 
-                linearLayout {
-                    relativeLayout {
-                        textView("Thêm file nhạc") {
-                            id = R.id.captionFragmentTvFile
-                            textColor=Color.BLACK
-                            textSize = px2dip(dimen(R.dimen.textSize15))
-                        }.lparams {
-                            alignParentTop()
-                            topMargin = dip(5)
+                verticalLayout {
+                    linearLayout {
+                        orientation = LinearLayout.HORIZONTAL
+                        backgroundResource = R.drawable.bg_btn_add_capption
+                        gravity = Gravity.CENTER_VERTICAL
+                        onClick {
+                            owner.eventWhenClickedAddFileRecord()
+                        }
+                        imageView(R.drawable.new_document) {
+                            id = R.id.captionFragmenttvFileRecordImage
+
+                        }.lparams(dip(25), dip(25)) {
                             leftMargin = dip(10)
                         }
 
-                        imageView(R.drawable.ic_add_song_feed) {
-                            id = R.id.captionFragmenttvFileRecordImage
-                            onClick {
-                                owner.eventWhenClickedAddFileRecord()
-                            }
-                        }.lparams(dip(25), dip(25)) {
-                            alignParentTop()
-                            topMargin = dip(5)
-                            leftMargin = dip(5)
-                            rightOf(R.id.captionFragmentTvFile)
-                        }
-
-                        tvFileName = textView {
-                            id = R.id.captionFragmenttvFileName
-                            textSize = px2dip(dimen(R.dimen.textSize14))
-                            typeface = Typeface.DEFAULT_BOLD
-                            textColor = ContextCompat.getColor(context, R.color.colorGrayLight)
+                        tvFileName = textView("Thêm file nhạc") {
+                            id = R.id.captionFragmentTvFile
+                            textColor = Color.BLACK
+                            textSize = px2dip(dimen(R.dimen.textSize15))
                         }.lparams {
-                            below(R.id.captionFragmenttvFileRecordImage)
-                            horizontalMargin = dip(10)
+                            leftMargin = dip(10)
                         }
-                    }.lparams(dip(0), matchParent) {
-                        weight = 1f
+                    }.lparams(matchParent, dip(52)) {
+                        horizontalMargin = dip(5)
                     }
 
-                    relativeLayout {
-                        imgMusic = circleImageView {
-                            id = R.id.captionFragmenImgMusic
-                            backgroundResource = R.drawable.bg_play
-                        }.lparams(matchParent, matchParent)
-
-                        relativeLayout {
-                            backgroundColor = ContextCompat.getColor(context, R.color.colorProfileAvatar)
-                            pickImage = imageView(R.drawable.ic_camera_alt_red_300_24dp) {
-                            }.lparams {
-                                centerInParent()
-                            }
-                            enableHighLightWhenClicked()
-                            onClick {
-                                owner.eventOnCameraClick()
-                            }
-                        }.lparams(matchParent, dip(40)) {
-                            alignParentBottom()
-                            alignParentRight()
+                    linearLayout {
+                        orientation = LinearLayout.HORIZONTAL
+                        backgroundResource = R.drawable.bg_btn_add_capption
+                        gravity = Gravity.CENTER_VERTICAL
+                        onClick {
+                            owner.eventOnCameraClick()
                         }
-                    }.lparams(dip(0), matchParent) {
-                        weight = 1f
+                        imageView(R.drawable.img_add) {
+                            id = R.id.captionFragmenttvFileRecordImage
+
+                        }.lparams(dip(25), dip(25)) {
+                            leftMargin = dip(10)
+                        }
+
+                        textView("Thêm ảnh") {
+                            id = R.id.captionFragmentTvFile
+                            textColor = Color.BLACK
+                            textSize = px2dip(dimen(R.dimen.textSize15))
+                        }.lparams {
+                            leftMargin = dip(10)
+                        }
+                    }.lparams(matchParent, dip(52)) {
+                        topMargin = dip(5)
+                        horizontalMargin = dip(5)
                     }
-                }.lparams(matchParent, dip(200)) {
+
+                }.lparams(matchParent, wrapContent) {
                     below(R.id.captionFragmentEdtCaption)
-                    topMargin = dip(10)
+                    topMargin = dip(20)
+
                 }
+
+
+//                linearLayout {
+//                    relativeLayout {
+//                        textView("Thêm file nhạc") {
+//                            id = R.id.captionFragmentTvFile
+//                            textColor = Color.BLACK
+//                            textSize = px2dip(dimen(R.dimen.textSize15))
+//                        }.lparams {
+//                            alignParentTop()
+//                            topMargin = dip(5)
+//                            leftMargin = dip(10)
+//                        }
+//
+//                        imageView(R.drawable.ic_add_song_feed) {
+//                            id = R.id.captionFragmenttvFileRecordImage
+//                            onClick {
+//                                owner.eventWhenClickedAddFileRecord()
+//                            }
+//                        }.lparams(dip(25), dip(25)) {
+//                            alignParentTop()
+//                            topMargin = dip(5)
+//                            leftMargin = dip(5)
+//                            rightOf(R.id.captionFragmentTvFile)
+//                        }
+//
+//                        tvFileName = textView {
+//                            id = R.id.captionFragmenttvFileName
+//                            textSize = px2dip(dimen(R.dimen.textSize14))
+//                            typeface = Typeface.DEFAULT_BOLD
+//                            textColor = ContextCompat.getColor(context, R.color.colorGrayLight)
+//                        }.lparams {
+//                            below(R.id.captionFragmenttvFileRecordImage)
+//                            horizontalMargin = dip(10)
+//                        }
+//                    }.lparams(dip(0), matchParent) {
+//                        weight = 1f
+//                    }
+//
+//                    relativeLayout {
+//                        imgMusic = circleImageView {
+//                            id = R.id.captionFragmenImgMusic
+//                            backgroundResource = R.drawable.bg_play
+//                        }.lparams(matchParent, matchParent)
+//
+//                        relativeLayout {
+//                            backgroundColor = ContextCompat.getColor(context, R.color.colorProfileAvatar)
+//                            pickImage = imageView(R.drawable.ic_camera_alt_red_300_24dp) {
+//                            }.lparams {
+//                                centerInParent()
+//                            }
+//                            enableHighLightWhenClicked()
+//                            onClick {
+//                                owner.eventOnCameraClick()
+//                            }
+//                        }.lparams(matchParent, dip(40)) {
+//                            alignParentBottom()
+//                            alignParentRight()
+//                        }
+//                    }.lparams(dip(0), matchParent) {
+//                        weight = 1f
+//                    }
+//                }.lparams(matchParent, dip(200)) {
+//                    below(R.id.captionFragmentEdtCaption)
+//                    topMargin = dip(10)
+//                }
 
             }.lparams(matchParent, matchParent) {
                 below(R.id.toolBarCaption)

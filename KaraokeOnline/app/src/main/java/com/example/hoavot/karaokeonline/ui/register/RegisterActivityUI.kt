@@ -20,6 +20,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 class RegisterActivityUI : AnkoComponent<RegisterActivity> {
     internal lateinit var edtUserName: EditText
     internal lateinit var edtPass: EditText
+    internal lateinit var edtRePass: EditText
     internal lateinit var btnRegister: Button
     internal lateinit var tvSignIn: TextView
     override fun createView(ui: AnkoContext<RegisterActivity>) = with(ui) {
@@ -33,7 +34,7 @@ class RegisterActivityUI : AnkoComponent<RegisterActivity> {
                 this.background.alpha = 70
 
                 tvSignIn = textView("Register") {
-                    textSize = px2sp(dip(40))
+                    textSize = px2sp(dip(30))
                     textColor = R.color.colorTextSearch
                 }.lparams {
                     topMargin = dip(10)
@@ -69,6 +70,26 @@ class RegisterActivityUI : AnkoComponent<RegisterActivity> {
                     edtPass = editText {
                         backgroundColor = Color.WHITE
                         hint = "Password"
+                        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    }.lparams(matchParent, wrapContent) {
+                        horizontalMargin = dip(10)
+                    }
+                }.lparams(matchParent, wrapContent) {
+                    topMargin = dip(10)
+                    horizontalMargin = dip(20)
+                }
+
+                linearLayout {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER
+                    backgroundDrawable = ContextCompat.getDrawable(ctx, R.drawable.bg_edt_login)
+
+                    imageView(R.drawable.edt_pass_left).lparams {
+                        leftMargin = dip(10)
+                    }
+                    edtRePass = editText {
+                        backgroundColor = Color.WHITE
+                        hint = "Re Password"
                         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                     }.lparams(matchParent, wrapContent) {
                         horizontalMargin = dip(10)
