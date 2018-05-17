@@ -73,10 +73,10 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
 
                                 when (fragment) {
                                     is HomeFragment -> {
-                                        RxBus.publish(LoadDataFeed(false))
+                                        RxBus.publish(LoadDataFeed())
                                     }
                                     is BaseProfileFragment -> {
-                                        RxBus.publish(LoadDataFeed(true))
+                                        RxBus.publish(LoadDataFeedMe())
                                     }
                                     is PlayFragment -> {
                                         d("TAGGG", "is Play")

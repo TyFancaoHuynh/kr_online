@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v7.util.DiffUtil
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +30,6 @@ import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
-import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import com.example.hoavot.karaokeonline.ui.playmusic.service.SongService
@@ -65,6 +63,7 @@ class FeedFragment : BaseFragment() {
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
             .placeholder(R.drawable.user_default)
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         retainInstance = true
@@ -198,7 +197,7 @@ class FeedFragment : BaseFragment() {
         (activity as? MainActivity)?.startService(intent)
     }
 
-    private fun handleGetFeedsSuccess(notification: Notification<DiffUtil.DiffResult>) {
+    private fun handleGetFeedsSuccess(notification: Notification<MutableList<Feed>>) {
         if (notification.isOnNext) {
             sendListSong()
             ui.feedsAdapter.notifyDataSetChanged()
@@ -281,7 +280,7 @@ class FeedFragment : BaseFragment() {
     private fun handleWhenUpdateLike(event: LikeEvent) {
         isLikeFromCommentScreen = true
         viewModel.addLike(event.position)
-        viewModel.removeLike(event.position)
+//        viewModel.removeLike(event.position)
     }
 
     private fun handleWhenUpdateUnLike(event: UnlikeEvent) {
@@ -321,16 +320,17 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun handleLoadData(event: LoadDataFeed) {
+        ui.areaPlay.visibility = View.GONE
         viewModel.getFeeds()
     }
 
-    private fun handleUpdateLikeSuccess(notification: Notification<Feed>){
+    private fun handleUpdateLikeSuccess(notification: Notification<Feed>) {
         notification.value?.run {
             with(feeds.find {
                 it.id == this.id
             }) {
                 this?.let {
-                    it.likeCount= this.likeCount
+                    it.likeCount = this.likeCount
                     it.likeFlag = this.likeFlag
                     ui.feedsAdapter.notifyDataSetChanged()
                 }

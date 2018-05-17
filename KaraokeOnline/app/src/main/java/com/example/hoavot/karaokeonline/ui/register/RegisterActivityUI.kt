@@ -78,6 +78,26 @@ class RegisterActivityUI : AnkoComponent<RegisterActivity> {
                     horizontalMargin = dip(20)
                 }
 
+                linearLayout {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER
+                    backgroundDrawable = ContextCompat.getDrawable(ctx, R.drawable.bg_edt_login)
+
+                    imageView(R.drawable.edt_pass_left).lparams {
+                        leftMargin = dip(10)
+                    }
+                    edtPass = editText {
+                        backgroundColor = Color.WHITE
+                        hint = "Confirm Password"
+                        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    }.lparams(matchParent, wrapContent) {
+                        horizontalMargin = dip(10)
+                    }
+                }.lparams(matchParent, wrapContent) {
+                    topMargin = dip(10)
+                    horizontalMargin = dip(20)
+                }
+
                 btnRegister = button("Register") {
                     backgroundDrawable = ContextCompat.getDrawable(ctx, R.drawable.bg_btn_login)
                     textColor = Color.WHITE

@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -88,6 +89,7 @@ class ProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animationRotate = AnimationUtils.loadAnimation(context, R.anim.anim_rotate_start)
         initProgressDialog()
         initSortDialog()
         Glide.with(context)
@@ -97,7 +99,7 @@ class ProfileFragment : BaseFragment() {
         ui.username.text = user.username
         ui.age.text = user.age.toString().plus(" Tuổi")
         feedViewModel.getMeFeeds()
-        RxBus.listen(LoadDataFeedMe::class.java)
+        RxBus.listen(LoadDataFeed::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleLoadDataFeedMe)
         ui.feedsAdapter.likeListener = this::eventWhenLikeclicked
@@ -133,6 +135,9 @@ class ProfileFragment : BaseFragment() {
                 feedViewModel.isLikeFromCommentScreenObserver
                         .observeOnUiThread()
                         .subscribe(this::handleUpdateLikeFromCommentcreenSuccess),
+                feedViewModel.startObserverable
+                        .observeOnUiThread()
+                        .subscribe(this::handleUpdateLikeSuccess),
                 RxBus.listen(CommentFeedMeEvent::class.java)
                         .observeOnUiThread()
                         .subscribe(this::handleWhenAddComment)
@@ -187,7 +192,7 @@ class ProfileFragment : BaseFragment() {
             val extras = data.extras
             if (extras != null) {
                 val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
-                val avatarFile = convertBitmapToFile(bimap,context)
+                val avatarFile = convertBitmapToFile(bimap, context)
                 feedViewModel.updateAvatar(avatarFile)
                         .observeOnUiThread()
                         .subscribe(
@@ -215,7 +220,8 @@ class ProfileFragment : BaseFragment() {
                 .into(ui.avatar)
     }
 
-    private fun handleLoadDataFeedMe(event: LoadDataFeedMe) {
+    private fun handleLoadDataFeedMe(event: LoadDataFeed) {
+        ui.areaPlay.visibility = View.GONE
         feedViewModel.getMeFeeds()
     }
 
@@ -328,6 +334,21 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
+    private fun handleUpdateLikeSuccess(notification: Notification<Feed>) {
+        notification.value?.run {
+            with(feeds.find {
+                it.id == this.id
+            }) {
+                this?.let {
+                    it.likeCount = this.likeCount
+                    it.likeFlag = this.likeFlag
+                    ui.feedsAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+    }
+
     private fun eventWhenCommentclicked(position: Int) {
         isLikeFromCommentScreen = false
         bottomSheetDialogComment.feed = feeds[position]
@@ -386,7 +407,6 @@ class ProfileFragment : BaseFragment() {
     private fun handleWhenUpdateLike(event: LikeFeedMeEvent) {
         isLikeFromCommentScreen = true
         feedViewModel.addLike(event.position)
-        feedViewModel.removeLike(event.position)
     }
 
     private fun handleWhenUpdateUnLike(event: UnlikeFeedMeEvent) {
@@ -425,12 +445,11 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun handleGetFeedsSuccess(notification: Notification<DiffUtil.DiffResult>) {
+    private fun handleGetFeedsSuccess(notification: Notification<MutableList<Feed>>) {
         if (notification.isOnNext) {
-            d("TAGGGG", "handle get feed success 1")
             sendListSong()
             ui.countFeed.text = feeds.size.toString().plus(" Bài viết")
-            notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
+            ui.feedsAdapter.notifyDataSetChanged()
         } else {
             // Todo: Handle later
             d("TAGGGG", "on error feeds ${notification.error?.message}")

@@ -66,7 +66,7 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         }
         var requestFileImageBody: MultipartBody.Part? = null
         imageFile?.let {
-            val requestImageFile = RequestBody.create(MediaType.parse("image/*"), it)
+            val requestImageFile = RequestBody.create(MediaType.parse("image/jpeg"), it)
             d("TAGGG", "file name:${fileName} ")
             requestFileImageBody = MultipartBody.Part.createFormData("image", it.name!!, requestImageFile)
         }

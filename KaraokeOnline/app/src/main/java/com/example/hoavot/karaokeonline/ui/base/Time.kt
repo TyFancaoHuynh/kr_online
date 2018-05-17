@@ -54,7 +54,7 @@ object Time {
             }
         } else {
             if (elapsedDays <= 29) {
-                return elapsedDays.toString() + "ngày trước"
+                return elapsedDays.toString() + " ngày trước"
             }
             if (elapsedDays in 30..58) {
                 return "1 tháng trước"

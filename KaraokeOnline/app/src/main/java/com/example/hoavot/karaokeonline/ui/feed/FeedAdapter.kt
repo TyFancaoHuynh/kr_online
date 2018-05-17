@@ -80,7 +80,6 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
 
         private val option = RequestOptions()
                 .override(ui.avatar.width, ui.avatar.width)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
                 .placeholder(R.drawable.user_default)
 
         internal fun onBind() {
@@ -94,7 +93,7 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
                 ui.like.isEnabled = true
             }
             if (feeds[layoutPosition].username == user.username) {
-                ui.share.visibility = View.VISIBLE
+                ui.share.visibility = View.GONE
                 ui.more.visibility = View.VISIBLE
             }
             Glide.with(item)

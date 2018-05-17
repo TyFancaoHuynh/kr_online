@@ -109,6 +109,15 @@ class CaptionActivity : BaseActivity() {
             if (extras != null) {
                 val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
                 imageFile = convertBitmapToFile(bimap, this)
+                val option = RequestOptions()
+                        .override(ui.avatar.width, ui.avatar.width)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+                        .placeholder(R.drawable.bg_play)
+
+                Glide.with(this)
+                        .load(imageFile)
+                        .apply(option)
+                        .into(ui.imgMusic)
                 dialogShowCamera.cancel()
             }
         }

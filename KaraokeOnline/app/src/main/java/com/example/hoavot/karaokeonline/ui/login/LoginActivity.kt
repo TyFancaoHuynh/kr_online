@@ -83,7 +83,6 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun handleLoginSuccess(result: LoginResponse) {
-        d("TAGGGGG", "tokenlogin: ${result.token}")
         viewModel.saveInfor(result.token, result.user)
         ApiClient.getInstance(null).token = result.token
         startActivity<MainActivity>()

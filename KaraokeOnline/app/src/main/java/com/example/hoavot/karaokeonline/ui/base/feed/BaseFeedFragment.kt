@@ -324,13 +324,12 @@ class BaseFeedFragment : BaseFragment() {
     }
 
     private fun handleLoadData(event: LoadDataFeed) {
-        ui.areaPlay.visibility = View.GONE
-        if (event.isFeedMe) {
-
-            viewModel.getMeFeeds()
-            return
-        }
-        viewModel.getFeeds()
+//        ui.areaPlay.visibility = View.GONE
+//        if (event.isFeedMe) {
+//            viewModel.getMeFeeds()
+//            return
+//        }
+//        viewModel.getFeeds()
     }
 
     /**

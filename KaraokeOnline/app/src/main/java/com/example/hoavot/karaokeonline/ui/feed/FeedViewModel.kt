@@ -12,7 +12,6 @@ import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
 import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
 import com.example.hoavot.karaokeonline.ui.base.Diff
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
-import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import io.reactivex.Notification
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
@@ -24,11 +23,11 @@ import java.io.File
  * @author at-hoavo.
  */
 class FeedViewModel(private val localRepository: LocalRepository, internal val feeds: MutableList<Feed>) {
-    internal val feedsObserverable = PublishSubject.create<Notification<DiffUtil.DiffResult>>()
+    internal val feedsObserverable = PublishSubject.create<Notification<MutableList<Feed>>>()
     internal val isLikeFromCommentScreenObserver = PublishSubject.create<Notification<Feed>>()
     internal val commentObserverable = PublishSubject.create<Notification<MutableList<Comment>>>()
     internal val progressDilogObserverable = BehaviorSubject.create<Boolean>()
-    internal val startObserverable=PublishSubject.create<Notification<Feed>>()
+    internal val startObserverable = PublishSubject.create<Notification<Feed>>()
     private val karaRepository = KaraRepository()
 
     internal fun getMeInfor() = localRepository.getMeInfor()
@@ -48,14 +47,13 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 progressDilogObserverable.onNext(false)
             }
             .onErrorReturn {
-                d("TAGGGG", "onError return feeds: ${it.message}")
                 FeedsResponse(mutableListOf())
             }
             .subscribe({
-                d("TAGGGG", "on next feeds: ${it.feeds}")
-                feedsObserverable.onNext(Notification.createOnNext(updateFeedList(it.feeds)))
+                feeds.clear()
+                feeds.addAll(it.feeds)
+                feedsObserverable.onNext(Notification.createOnNext(feeds))
             }, {
-                d("TAGGGG", "on error feeds: ${it.message}")
                 feedsObserverable.onNext(Notification.createOnError(it))
             })
 
@@ -72,7 +70,9 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                     progressDilogObserverable.onNext(false)
                 }
                 .subscribe({
-                    feedsObserverable.onNext(Notification.createOnNext(updateFeedList(it.feeds)))
+                    feeds.clear()
+                    feeds.addAll(it.feeds)
+                    feedsObserverable.onNext(Notification.createOnNext(feeds))
                 }, {
                     feedsObserverable.onNext(Notification.createOnError(it))
                 })
@@ -87,19 +87,22 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 .postLike(feeds[position].id)
                 .observeOnUiThread()
                 .map {
-                    updateFeedDiff(position, it)
+                    feeds[position].likeCount=it.likeCount
+                    feeds[position].likeFlag=if (feeds[position].likeFlag == 0) 1 else 0
+                    feeds[position]
                 }
                 .doOnSubscribe {
                     feeds[position].isRequesting = true
                 }
-                .subscribe({
-                    d("TAGGGGG", "add like success: ")
-                    feedsObserverable.onNext(Notification.createOnNext(it))
-                }, {
-                    d("TAGGGG", "error 1:${it.message}")
-                    isLikeFromCommentScreenObserver.onNext(Notification.createOnError(it))
+                .doFinally {
                     feeds[position].isRequesting = false
-                    feedsObserverable.onNext(Notification.createOnError(it))
+                }
+                .subscribe({
+                    isLikeFromCommentScreenObserver.onNext(Notification.createOnNext(it))
+                    startObserverable.onNext(Notification.createOnNext(it))
+                }, {
+                    isLikeFromCommentScreenObserver.onNext(Notification.createOnError(it))
+                    startObserverable.onNext(Notification.createOnError(it))
                 })
     }
 
@@ -111,24 +114,26 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 .postUnLike(feeds[position].id)
                 .observeOnUiThread()
                 .map {
-                    updateFeedDiff(position, it)
+                    feeds[position].likeCount=it.likeCount
+                    feeds[position].likeFlag=if (feeds[position].likeFlag == 0) 1 else 0
+                    feeds[position]
                 }
                 .doOnSubscribe {
                     feeds[position].isRequesting = true
                 }
-                .subscribe({
-                    startObserverable.onNext(Notification.createOnNext(feeds[position]))
-                    feedsObserverable.onNext(Notification.createOnNext(it))
-                }, {
-
+                .doFinally {
                     feeds[position].isRequesting = false
-                    feedsObserverable.onNext(Notification.createOnError(it))
+                }
+                .subscribe({
+                    isLikeFromCommentScreenObserver.onNext(Notification.createOnNext(it))
+                    startObserverable.onNext(Notification.createOnNext(feeds[position]))
+                }, {
                     startObserverable.onNext(Notification.createOnError(it))
+                    isLikeFromCommentScreenObserver.onNext(Notification.createOnError(it))
                 })
     }
 
     internal fun addComment(position: Int, comment: String) {
-        d("TAGGG", "feedId:${feeds[position].id}  comment:${comment}")
         karaRepository.
                 postComment(feeds[position].id, comment)
                 .observeOnUiThread()
@@ -136,29 +141,7 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                     commentObserverable.onNext(Notification.createOnNext(it.comments))
                 }, {
                     commentObserverable.onNext(Notification.createOnError(it))
-                    d("TAGGG", "error at post comment: ${it.message}")
                 })
 
-    }
-
-    private fun updateFeedDiff(position: Int, response: LikeResponse): DiffUtil.DiffResult {
-        val newList = mutableListOf<Feed>()
-        newList.addAll(feeds)
-        newList[position] = newList[position].copy(likeCount = response.likeCount, likeFlag = if (newList[position].likeFlag == 0) 1 else 0)
-        newList[position].isRequesting = false
-        isLikeFromCommentScreenObserver.onNext(Notification.createOnNext(newList[position]))
-        d("TAGGG", "done ${newList[position].likeFlag}")
-        return updateFeedList(newList)
-    }
-
-    private fun updateFeedList(newList: List<Feed>): DiffUtil.DiffResult {
-        val diff = Diff(feeds, newList)
-                .areItemsTheSame { oldItem, newItem ->
-                    oldItem.id == newItem.id
-                }
-                .calculateDiff()
-        feeds.clear()
-        feeds.addAll(newList)
-        return diff
     }
 }

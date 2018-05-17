@@ -52,8 +52,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
         return with(ui) {
             relativeLayout {
                 lparams(matchParent, matchParent)
-//                backgroundColor=ContextCompat.getColor(context,R.color.colorPlayFeed)
-                backgroundColor=Color.WHITE
+                backgroundColor=ContextCompat.getColor(context,R.color.colorSetting)
                 imageView(R.drawable.ic_more_vert_black_36dp) {
                     id = R.id.profileFragmenMore
                     onClick {
@@ -96,9 +95,9 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
 
                 username = textView {
                     id = R.id.profileFragmentTvUsername
-                    textSize = px2dip(dimen(R.dimen.textSize21))
+                    textSize = px2dip(dimen(R.dimen.textSize18))
                     typeface = Typeface.DEFAULT_BOLD
-                    textColor = Color.WHITE
+                    textColor = Color.BLACK
                 }.lparams {
                     below(R.id.profileFragmenAvatar)
                     topMargin = dip(10)
@@ -108,6 +107,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                 age = textView {
                     textSize = px2dip(dimen(R.dimen.textSize15))
                     textColor = Color.WHITE
+                    visibility=View.INVISIBLE
                 }.lparams {
                     rightOf(R.id.profileFragmentTvUsername)
                     sameTop(R.id.profileFragmentTvUsername)
@@ -117,13 +117,13 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
 
                 countFeed = textView {
                     id = R.id.profileFragmentTvCountFeed
-                    textSize = px2dip(dimen(R.dimen.textSize18))
-                    textColor = ContextCompat.getColor(context,R.color.colorOrangeLight)
+                    textSize = px2dip(dimen(R.dimen.textSize14))
+                    textColor = ContextCompat.getColor(context,R.color.colorBlackBold)
                     paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }.lparams {
-                    below(R.id.profileFragmentTvUsername)
-                    topMargin = dip(10)
-                    centerHorizontally()
+                    sameTop(R.id.profileFragmentTvUsername)
+                    rightOf(R.id.profileFragmentTvUsername)
+                    leftMargin=dip(10)
                 }
 
                 recyclerView {
@@ -131,7 +131,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                     layoutManager = LinearLayoutManager(context)
                     adapter = feedsAdapter
                 }.lparams(matchParent, matchParent) {
-                    below(R.id.profileFragmentTvCountFeed)
+                    below(R.id.profileFragmentTvUsername)
                     topMargin = dip(20)
                 }
 
