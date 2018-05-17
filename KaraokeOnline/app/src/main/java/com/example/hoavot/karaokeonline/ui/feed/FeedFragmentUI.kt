@@ -9,12 +9,15 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewManager
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
-import com.example.hoavot.karaokeonline.ui.extensions.getWidthScreen
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
@@ -42,8 +45,8 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
     override fun createView(ui: AnkoContext<FeedFragment>): View {
         return with(ui) {
             relativeLayout {
-//                backgroundColor = ContextCompat.getColor(context,R.color.colorStatus)
-                backgroundColor=Color.WHITE
+                //                backgroundColor = ContextCompat.getColor(context,R.color.colorStatus)
+                backgroundColor = Color.WHITE
                 lparams(matchParent, matchParent)
 //                backgroundColor = ContextCompat.getColor(context, R.color.colorItemFeed)
                 linearLayout {
@@ -80,9 +83,20 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
                         gravity = Gravity.CENTER
                         weight = 4f
                     }
-                }.lparams(matchParent, dip(60)) {
-
-                }
+                    verticalLayout {
+                        onClick { owner.eventOnAddCaptionClicked() }
+                        imageView(R.drawable.ic_add_song_feed) {
+                        }
+                        textView {
+                            text = "Music"
+                            textColor = Color.BLACK
+                            textSize = px2dip(dip(10))
+                        }
+                    }.lparams {
+                        gravity = Gravity.CENTER_VERTICAL
+                        rightMargin = dip(10)
+                    }
+                }.lparams(matchParent, dip(60))
 
                 recyclerView = recyclerView {
                     backgroundColor = ContextCompat.getColor(context, R.color.colorItemFeed)
@@ -115,7 +129,7 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
 
                     filePlay = textView {
                         id = R.id.feedFragmentFilePlay
-                        textColor = ContextCompat.getColor(context,R.color.colorFilePlay)
+                        textColor = ContextCompat.getColor(context, R.color.colorFilePlay)
                         textSize = px2dip(dimen(R.dimen.textSize12))
                         maxLines = 2
                         ellipsize = TextUtils.TruncateAt.END
@@ -193,6 +207,5 @@ class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoCom
         }
     }
 
-    inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView
-            = ankoView({ CircleImageView(it) }, 0, init)
+    inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView = ankoView({ CircleImageView(it) }, 0, init)
 }

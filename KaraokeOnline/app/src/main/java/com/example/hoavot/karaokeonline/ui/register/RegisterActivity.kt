@@ -1,6 +1,7 @@
 package com.example.hoavot.karaokeonline.ui.register
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log.d
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
@@ -11,7 +12,6 @@ import com.example.hoavot.karaokeonline.data.source.api.ApiException
 import com.example.hoavot.karaokeonline.data.source.response.LoginResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
-import com.example.hoavot.karaokeonline.ui.login.LoginActivityUI
 import com.example.hoavot.karaokeonline.ui.login.LoginViewModel
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import org.jetbrains.anko.alert
@@ -41,8 +41,9 @@ class RegisterActivity : BaseActivity() {
     internal fun register() {
         val username = ui.edtUserName.text.toString()
         val password = ui.edtPass.text.toString()
+        val repassword = ui.edtRePass.text.toString()
         user = User(username = username, password = password)
-        if (username.isNotBlank() && password.isNotBlank()) {
+        if (username.isNotBlank() && password.isNotBlank() && TextUtils.equals(password, repassword)) {
             if (!isRequesting) {
                 isRequesting = true
                 viewModel.register(username, password)

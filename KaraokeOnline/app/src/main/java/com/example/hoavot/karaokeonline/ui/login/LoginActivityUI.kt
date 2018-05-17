@@ -25,16 +25,13 @@ class LoginActivityUI : AnkoComponent<LoginActivity> {
     internal lateinit var tvNotify: TextView
     override fun createView(ui: AnkoContext<LoginActivity>) = with(ui) {
         verticalLayout {
-            backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.bglogin)
+            backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.bg_register)
             lparams(matchParent, matchParent)
             gravity = Gravity.CENTER
             verticalLayout {
                 gravity = Gravity.CENTER
                 backgroundColor = Color.WHITE
                 this.background.alpha = 70
-                imageView(R.drawable.ic_user_login).lparams(dip(64), dip(64)) {
-                    topMargin = dip(20)
-                }
 
                 tvSignIn = textView("Sign In") {
                     textSize = px2sp(dip(30))

@@ -61,11 +61,15 @@ class CaptionActivity : BaseActivity() {
         initProgressDialog()
         viewModel = CaptionViewModel(LocalRepository(this))
         val user = viewModel.getUserFromSharePrefrence()
-        ui.tvUsername.text = user.username
+        if (user.username.isNotEmpty()) {
+            ui.tvUsername.text = user.username
+        } else {
+            ui.tvUsername.text = "Your Name"
+        }
         val option = RequestOptions()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.user_default)
+                .placeholder(R.drawable.ic_avatar_feed)
 
         Glide.with(this)
                 .load(user.avatar)
