@@ -28,6 +28,7 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
     internal val isLikeFromCommentScreenObserver = PublishSubject.create<Notification<Feed>>()
     internal val commentObserverable = PublishSubject.create<Notification<MutableList<Comment>>>()
     internal val progressDilogObserverable = BehaviorSubject.create<Boolean>()
+    internal val startObserverable=PublishSubject.create<Notification<Feed>>()
     private val karaRepository = KaraRepository()
 
     internal fun getMeInfor() = localRepository.getMeInfor()
@@ -116,11 +117,13 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                     feeds[position].isRequesting = true
                 }
                 .subscribe({
+                    startObserverable.onNext(Notification.createOnNext(feeds[position]))
                     feedsObserverable.onNext(Notification.createOnNext(it))
                 }, {
 
                     feeds[position].isRequesting = false
                     feedsObserverable.onNext(Notification.createOnError(it))
+                    startObserverable.onNext(Notification.createOnError(it))
                 })
     }
 

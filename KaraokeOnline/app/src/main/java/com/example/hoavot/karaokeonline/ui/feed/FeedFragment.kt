@@ -65,7 +65,6 @@ class FeedFragment : BaseFragment() {
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
             .placeholder(R.drawable.user_default)
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         retainInstance = true
@@ -117,6 +116,9 @@ class FeedFragment : BaseFragment() {
                 viewModel.isLikeFromCommentScreenObserver
                         .observeOnUiThread()
                         .subscribe(this::handleUpdateLikeFromCommentcreenSuccess),
+                viewModel.startObserverable
+                        .observeOnUiThread()
+                        .subscribe(this::handleUpdateLikeSuccess),
                 RxBus.listen(CommentEvent::class.java)
                         .observeOnUiThread()
                         .subscribe(this::handleWhenAddComment))
@@ -198,11 +200,8 @@ class FeedFragment : BaseFragment() {
 
     private fun handleGetFeedsSuccess(notification: Notification<DiffUtil.DiffResult>) {
         if (notification.isOnNext) {
-            d("TAGGGG", "handle get feed success 1")
             sendListSong()
-//            ui.feedsAdapter.notifyDataSetChanged()
-            ui.recyclerView.removeAllViews()
-            notification.value?.dispatchUpdatesTo(ui.feedsAdapter)
+            ui.feedsAdapter.notifyDataSetChanged()
         } else {
             // Todo: Handle later
             d("TAGGGG", "on error feeds ${notification.error?.message}")
@@ -323,6 +322,21 @@ class FeedFragment : BaseFragment() {
 
     private fun handleLoadData(event: LoadDataFeed) {
         viewModel.getFeeds()
+    }
+
+    private fun handleUpdateLikeSuccess(notification: Notification<Feed>){
+        notification.value?.run {
+            with(feeds.find {
+                it.id == this.id
+            }) {
+                this?.let {
+                    it.likeCount= this.likeCount
+                    it.likeFlag = this.likeFlag
+                    ui.feedsAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+
     }
 
     /**
