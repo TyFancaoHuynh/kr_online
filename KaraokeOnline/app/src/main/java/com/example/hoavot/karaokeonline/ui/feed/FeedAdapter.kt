@@ -87,7 +87,6 @@ class FeedAdapter(private val feeds: MutableList<Feed>, val isFromFeed: Boolean)
 
         private val option = RequestOptions()
                 .override(ui.avatar.width, ui.avatar.width)
-                .placeholder(R.drawable.user_default)
 
         internal fun onBind() {
             if (feeds[layoutPosition].likeFlag == 1) {
@@ -100,7 +99,6 @@ class FeedAdapter(private val feeds: MutableList<Feed>, val isFromFeed: Boolean)
                 ui.like.isEnabled = true
             }
 
-            ui.share.visibility = View.GONE
             if (!isFromFeed) {
                 ui.more.visibility = View.VISIBLE
             }

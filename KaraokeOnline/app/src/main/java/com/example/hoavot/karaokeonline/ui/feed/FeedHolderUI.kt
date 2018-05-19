@@ -78,7 +78,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     leftMargin = dip(5)
                 }
 
-            }.lparams(matchParent, dip(80)) {
+            }.lparams(matchParent, dip(65)) {
                 alignParentTop()
             }
 
@@ -96,29 +96,38 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
             imgBGMusic = imageView(R.drawable.bg_play) {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 id = R.id.profileFragmenImgMusic
-            }.lparams(matchParent, dip(130)) {
+            }.lparams(matchParent, dip(150)) {
                 topMargin = dip(10)
                 below(R.id.profileFragmenCaption)
             }
 
-            fileMusic = textView {
+            verticalLayout {
                 id = R.id.profileFragmenFileMusic
-                textColor = Color.WHITE
-                textSize = px2dip(dimen(R.dimen.textSize18))
-                visibility = View.GONE
-                typeface = Typeface.DEFAULT_BOLD
-                enableHighLightWhenClicked()
-            }.lparams {
-                verticalMargin = dip(20)
-                horizontalMargin = dip(10)
-                below(R.id.profileFragmenCaption)
-                sameLeft(R.id.profileFragmenImgMusic)
+                backgroundColor = ContextCompat.getColor(context, R.color.colorBGFileName)
+                textView("MP3 File") {
+                    textColor = ContextCompat.getColor(context, R.color.colorTextMp3)
+                    textSize = px2dip(dimen(R.dimen.textSize13))
+                }.lparams {
+                    topMargin = dip(5)
+                    leftMargin=dip(3)
+                }
+
+                fileMusic = textView {
+                    textColor = ContextCompat.getColor(context, R.color.colorTextFileMusic)
+                    textSize = px2dip(dimen(R.dimen.textSize15))
+                    typeface = Typeface.DEFAULT_BOLD
+                }.lparams {
+                    topMargin = dip(2)
+                    leftMargin=dip(3)
+                }
+            }.lparams(matchParent, dip(60)) {
+                below(R.id.profileFragmenImgMusic)
             }
 
             relativeLayout {
-                id = R.id.profileFragmenShare
+                id = R.id.profileFragmenAreaMusic
                 lparams(matchParent, wrapContent) {
-                    below(R.id.profileFragmenImgMusic)
+                    below(R.id.profileFragmenFileMusic)
                     horizontalPadding = dip(20)
                     topMargin = dip(20)
                 }
@@ -184,14 +193,13 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
                 share = imageView(R.drawable.ic_share_feed) {
                     id = R.id.feedFragmentImgShare
-                    visibility = View.GONE
                 }.lparams(dip(20), dip(20)) {
                     weight = 1f
                     gravity = Gravity.CENTER
                 }
 
             }.lparams(matchParent, dip(40)) {
-                below(R.id.profileFragmenLine)
+                below(R.id.profileFragmenAreaMusic)
             }
 
             more = imageView(R.drawable.ic_more_vert_grey_500_24dp) {
@@ -206,11 +214,10 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
             optionArea = verticalLayout {
                 visibility = View.INVISIBLE
-
                 updateFeed = textView("Update") {
                     textSize = px2dip(dimen(R.dimen.textSize15))
-                    typeface = Typeface.SERIF
-                    textColor = Color.BLACK
+                    typeface = Typeface.DEFAULT_BOLD
+                    textColor = ContextCompat.getColor(context, R.color.colorButton)
                     padding = dip(5)
                     backgroundColor = ContextCompat.getColor(context, R.color.colorLineFeedScreen)
                     gravity = Gravity.CENTER
@@ -226,8 +233,8 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
 
                 deleteFeed = textView("Delete") {
                     textSize = px2dip(dimen(R.dimen.textSize15))
-                    typeface = Typeface.SERIF
-                    textColor = Color.BLACK
+                    typeface = Typeface.DEFAULT_BOLD
+                    textColor = ContextCompat.getColor(context, R.color.colorButton)
                     padding = dip(5)
                     backgroundColor = ContextCompat.getColor(context, R.color.colorLineFeedScreen)
                     gravity = Gravity.CENTER

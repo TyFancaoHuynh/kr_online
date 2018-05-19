@@ -31,7 +31,7 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
     internal lateinit var tvFileName: TextView
     internal lateinit var toolbar: Toolbar
     internal lateinit var avatar: CircleImageView
-    internal lateinit var imgMusic: CircleImageView
+    internal lateinit var imgMusic: ImageView
     internal lateinit var pickImage: ImageView
 
     override fun createView(ui: AnkoContext<CaptionActivity>): View = with(ui) {
@@ -115,6 +115,7 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
                 }
 
                 verticalLayout {
+                    id = R.id.captionAcivityImage
                     linearLayout {
                         orientation = LinearLayout.HORIZONTAL
                         backgroundResource = R.drawable.bg_btn_add_capption
@@ -172,72 +173,15 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
 
                 }
 
-
-//                linearLayout {
-//                    relativeLayout {
-//                        textView("Thêm file nhạc") {
-//                            id = R.id.captionFragmentTvFile
-//                            textColor = Color.BLACK
-//                            textSize = px2dip(dimen(R.dimen.textSize15))
-//                        }.lparams {
-//                            alignParentTop()
-//                            topMargin = dip(5)
-//                            leftMargin = dip(10)
-//                        }
-//
-//                        imageView(R.drawable.ic_add_song_feed) {
-//                            id = R.id.captionFragmenttvFileRecordImage
-//                            onClick {
-//                                owner.eventWhenClickedAddFileRecord()
-//                            }
-//                        }.lparams(dip(25), dip(25)) {
-//                            alignParentTop()
-//                            topMargin = dip(5)
-//                            leftMargin = dip(5)
-//                            rightOf(R.id.captionFragmentTvFile)
-//                        }
-//
-//                        tvFileName = textView {
-//                            id = R.id.captionFragmenttvFileName
-//                            textSize = px2dip(dimen(R.dimen.textSize14))
-//                            typeface = Typeface.DEFAULT_BOLD
-//                            textColor = ContextCompat.getColor(context, R.color.colorGrayLight)
-//                        }.lparams {
-//                            below(R.id.captionFragmenttvFileRecordImage)
-//                            horizontalMargin = dip(10)
-//                        }
-//                    }.lparams(dip(0), matchParent) {
-//                        weight = 1f
-//                    }
-//
-//                    relativeLayout {
-//                        imgMusic = circleImageView {
-//                            id = R.id.captionFragmenImgMusic
-//                            backgroundResource = R.drawable.bg_play
-//                        }.lparams(matchParent, matchParent)
-//
-//                        relativeLayout {
-//                            backgroundColor = ContextCompat.getColor(context, R.color.colorProfileAvatar)
-//                            pickImage = imageView(R.drawable.ic_camera_alt_red_300_24dp) {
-//                            }.lparams {
-//                                centerInParent()
-//                            }
-//                            enableHighLightWhenClicked()
-//                            onClick {
-//                                owner.eventOnCameraClick()
-//                            }
-//                        }.lparams(matchParent, dip(40)) {
-//                            alignParentBottom()
-//                            alignParentRight()
-//                        }
-//                    }.lparams(dip(0), matchParent) {
-//                        weight = 1f
-//                    }
-//                }.lparams(matchParent, dip(200)) {
-//                    below(R.id.captionFragmentEdtCaption)
-//                    topMargin = dip(10)
-//                }
-
+                imgMusic = imageView {
+                    id = R.id.captionFragmenImgMusic
+                    backgroundResource = R.drawable.bg_play
+                    scaleType=ImageView.ScaleType.CENTER_CROP
+                }.lparams(dip(100), dip(100)) {
+                    below(R.id.captionAcivityImage)
+                    topMargin = dip(10)
+                    centerHorizontally()
+                }
             }.lparams(matchParent, matchParent) {
                 below(R.id.toolBarCaption)
             }

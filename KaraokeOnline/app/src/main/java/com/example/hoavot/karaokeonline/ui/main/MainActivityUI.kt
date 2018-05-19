@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Handler
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -68,19 +69,20 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
                                 val fragment = mainPagerAdapter.instantiateItem(viewPager, viewPager.currentItem) as Fragment
                                 sendIntent(owner, Action.STOP_MEDIA.value, context, SongService::class.java)
                                 sendIntent(owner, Action.STOP_MEDIA.value, context, SongFeedService::class.java)
-
-                                when (fragment) {
-                                    is HomeFragment -> {
-                                        RxBus.publish(LoadDataFeed())
+                                Handler().postDelayed({
+                                    when (fragment) {
+                                        is HomeFragment -> {
+                                            RxBus.publish(LoadDataFeed())
+                                        }
+                                        is BaseProfileFragment -> {
+                                            RxBus.publish(LoadDataFeedMe())
+                                        }
+                                        is PlayFragment -> {
+                                            d("TAGGG", "is Play")
+                                            fragment.eventReset()
+                                        }
                                     }
-                                    is BaseProfileFragment -> {
-                                        RxBus.publish(LoadDataFeedMe())
-                                    }
-                                    is PlayFragment -> {
-                                        d("TAGGG", "is Play")
-                                        fragment.eventReset()
-                                    }
-                                }
+                                }, 300)
                             }
                             lastTab = it
                             sendIntent(owner, Action.STOP_MEDIA.value, context, SongFeedService::class.java)

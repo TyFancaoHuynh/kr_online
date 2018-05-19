@@ -21,7 +21,7 @@
     <color name="colorItemFeed">#e5e8e9</color>
     <color name="colorBackgroundEditprofile">#e4e0e0</color>
     <color name="colorLineFeedScreen">#faf8f8</color>
-    <color name="colorButton">#20252B</color>
+    <color name="colorButton">#3a0564</color>
     <color name="colorBlackBold">#090909</color>
     <color name="colorBlackBoldBold">#383737</color>
     <color name="colorBackGroundPlay">#211A2A</color>
@@ -31,18 +31,21 @@
     <color name="colorCenterPlay">#3E223C</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorGrayBold">#3e4853</color>
-    <color name="colorPurpose">#d6d6d7</color>
-    <color name="colorSetting">#e2dbdb</color>
+    <color name="colorPurpose">#220c4b</color>
+    <color name="colorSetting">#cf400263</color>
     <color name="colorProfileAvatar">#50fcf7f7</color>
     <color name="colorRed">#ec5656</color>
     <color name="avatar_bolder">#dbf2f2</color>
     <color name="colorItemChoosePlay">#c2d4d2</color>
     <color name="colorItemNoChoosePlay">#eef2f2</color>
-    <color name="colorPlayFeed">#dc54416c</color>
+    <color name="colorPlayFeed">#dc7e1ea4</color>
     <color name="colorHightLight">#f7f4f1</color>
-    <color name="colorStatus">#fc7814</color>
+    <color name="colorStatus">#8010b7</color>
     <color name="colorFilePlay">#FFECB3</color>
     <color name="colorBGPlay">#FF9800</color>
     <color name="colorOrangeLight">#FFE0B2</color>
-
+    <color name="colorBGFileName">#F2F3F5</color>
+    <color name="colorTextFileMusic">#2F3034</color>
+    <color name="colorTextMp3">#8e8e94</color>
+    <color name="colorShareBG">#cf4d0376</color>
 </resources>

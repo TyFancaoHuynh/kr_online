@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.google.http-client:google-http-client-android:1.22.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     implementation 'com.squareup.okhttp3:okhttp:3.8.0'
-    implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.8'
+    implementation 'com.adityak:browsemyfiles:1.7'
 
     //Youtube
     implementation 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'

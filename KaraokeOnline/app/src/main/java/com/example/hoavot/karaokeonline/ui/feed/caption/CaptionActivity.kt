@@ -1,22 +1,19 @@
 package com.example.hoavot.karaokeonline.ui.feed.caption
 
 import android.app.Activity
-import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.*
-import android.database.Cursor
+import android.content.CursorLoader
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.util.Log.d
 import android.widget.EditText
-import android.widget.Toast
+import com.aditya.filebrowser.Constants
+import com.aditya.filebrowser.FileChooser
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -27,10 +24,13 @@ import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
+import com.example.hoavot.karaokeonline.ui.base.Image
+import com.example.hoavot.karaokeonline.ui.extensions.UriUtil
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
+import com.facebook.FacebookSdk
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.SingleSubject
@@ -56,7 +56,6 @@ class CaptionActivity : BaseActivity() {
     private var file: File? = null
     private var path = ""
     private var fileName = ""
-    private lateinit var dialogShowCamera: Dialog
     private var updateStartFromUpdateFeed: Feed? = null
     private var imageFile: File? = null
 
@@ -102,8 +101,10 @@ class CaptionActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQ_CODE_PICK_SOUNDFILE && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
-                val audioFileUri = data.data
-                path = getPath(this, audioFileUri)!!
+                val audioFileUri = UriUtil.getPath(this, data.data)
+                d("TAGGGGGGG", "path0: ${audioFileUri}")
+
+                path = audioFileUri!!
                 alert {
                     title = "Bạn có muốn đổi tên bài hát?"
                     yesButton {
@@ -119,33 +120,29 @@ class CaptionActivity : BaseActivity() {
         }
 
         if (resultCode == Activity.RESULT_OK && data != null && requestCode == ProfileFragment.TYPE_GALLERY) {
-            val uri = data.data.toString()
-            getImageBitmap(uri, 1f)
+            val uri: Uri = data.data as Uri
+            getImageBitmap(uri.toString(), 1f)
                     .observeOnUiThread()
                     .subscribe({
-                        d("TAGGGGGG", "bitmap at caption: ${it}")
-                        ui.avatar.setImageBitmap(it)
-                        dialogShowCamera.cancel()
-                    }, {
-                        d("TAGGGGGG", "error: ${it.message}")
-                    })
+                        imageFile = Image.convertBitmapToFile(it, this)
+                        val option = RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
 
-//            if (extras != null) {
-//                val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
-//                imageFile = convertBitmapToFile(bimap, this)
-//                val option = RequestOptions()
-//                        .override(ui.avatar.width, ui.avatar.width)
-//                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-//                        .placeholder(R.drawable.bg_play)
-//
-//                Glide.with(this)
-//                        .load(imageFile)
-//                        .apply(option)
-//                        .into(ui.imgMusic)
-//                dialogShowCamera.cancel()
-//            }
+                        Glide.with(this)
+                                .load(imageFile)
+                                .apply(option)
+                                .into(ui.imgMusic)
+                    }, {})
         }
+    }
 
+    private fun getAudioPath(uri: Uri): String {
+        val data = arrayOf(MediaStore.Audio.Media.DATA)
+        val loader = CursorLoader(applicationContext, uri, data, null, null, null)
+        val cursor = loader.loadInBackground()
+        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(column_index)
     }
 
     private fun getImageBitmap(uri: String, ratio: Float): Single<Bitmap> {
@@ -195,35 +192,11 @@ class CaptionActivity : BaseActivity() {
     }
 
     internal fun eventOnCameraClick() {
-        dialogShowCamera = createDialog()
-        dialogShowCamera.show()
+        val i2 = Intent(FacebookSdk.getApplicationContext(), FileChooser::class.java)
+        i2.putExtra(Constants.SELECTION_MODE, Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal)
+        startActivityForResult(i2, ProfileFragment.TYPE_GALLERY)
     }
 
-    // Create dialog with list data got from resource
-    private fun createDialog(): Dialog {
-        val builder = android.support.v7.app.AlertDialog.Builder(this)
-        builder.setTitle(R.string.dialog_title_please_choose)
-                .setItems(R.array.items, DialogInterface.OnClickListener { dialog, which ->
-                    when (which) {
-                        ProfileFragment.TYPE_GALLERY -> {
-                            val intent = Intent(Intent.ACTION_PICK,
-                                    MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-                            intent.type = "image/*"
-                            startActivityForResult(intent, ProfileFragment.TYPE_GALLERY)
-                        }
-                        else -> try {
-                            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            startActivityForResult(cameraIntent, ProfileFragment.TYPE_CAMERA)
-                        } catch (anfe: ActivityNotFoundException) {
-                            val toast = Toast
-                                    .makeText(this, "This device doesn't support the camera action!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
-
-                    }
-                })
-        return builder.create()
-    }
 
     private fun initUpdateScreen() {
         ui.edtCaption.setText(updateStartFromUpdateFeed?.caption)
@@ -253,115 +226,6 @@ class CaptionActivity : BaseActivity() {
 
     private fun handleWhenPostFeedSuccess(feedResponse: FeedResponse) {
         startActivity<MainActivity>()
-    }
-
-    fun getPath(context: Context, uri: Uri): String? {
-
-        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-
-                if ("primary".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
-                }
-
-                // TODO handle non-primary volumes
-            } else if (isDownloadsDocument(uri)) {
-
-                val id = DocumentsContract.getDocumentId(uri)
-                val contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)!!)
-
-                return getDataColumn(context, contentUri, null, null)
-            } else if (isMediaDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-
-                var contentUri: Uri? = null
-                if ("image" == type) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                }
-
-                val selection = "_id=?"
-                val selectionArgs = arrayOf(split[1])
-
-                return getDataColumn(context, contentUri, selection, selectionArgs)
-            }// MediaProvider
-            // DownloadsProvider
-        } else if ("content".equals(uri.getScheme(), ignoreCase = true)) {
-            return getDataColumn(context, uri, null, null)
-        } else if ("file".equals(uri.getScheme(), ignoreCase = true)) {
-            return uri.getPath()
-        }// File
-        // MediaStore (and general)
-
-        return null
-    }
-
-    /**
-     * Get the value of the data column for this Uri. This is useful for
-     * MediaStore Uris, and other file-based ContentProviders.
-     *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
-     * @param selectionArgs (Optional) Selection arguments used in the query.
-     * @return The value of the _data column, which is typically a file path.
-     */
-    fun getDataColumn(context: Context, uri: Uri?, selection: String?,
-                      selectionArgs: Array<String>?): String? {
-
-        var cursor: Cursor? = null
-        val column = "_data"
-        val projection = arrayOf(column)
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null)
-            if (cursor != null && cursor.moveToFirst()) {
-                val column_index = cursor.getColumnIndexOrThrow(column)
-                return cursor.getString(column_index)
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close()
-        }
-        return null
-    }
-
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
-    fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" == uri.getAuthority()
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
-    fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" == uri.getAuthority()
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
-    fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" == uri.getAuthority()
     }
 
 

@@ -32,9 +32,4 @@ class ProfileAcivity : BaseActivity() {
             it.animSlideInRightSlideOutRight()
         })
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
 }

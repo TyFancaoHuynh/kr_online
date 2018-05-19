@@ -87,7 +87,7 @@ class FeedFragment : BaseFragment() {
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
         ui.feedsAdapter.shareListener = this::eventWhenShareclicked
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
-        ui.feedsAdapter.likeSmallListener=this::eventWhenLikeSmallclicked
+        ui.feedsAdapter.likeSmallListener = this::eventWhenLikeSmallclicked
         viewModel = FeedViewModel(LocalRepository(context), feeds)
         RxBus.listen(LikeEvent::class.java)
                 .observeOnUiThread()
@@ -203,9 +203,10 @@ class FeedFragment : BaseFragment() {
 
     private fun handleGetFeedsSuccess(notification: Notification<MutableList<Feed>>) {
         if (notification.isOnNext) {
+            d("NNNNNNN","song size: ${notification.value?.size}")
             sendListSong()
             ui.feedsAdapter.notifyDataSetChanged()
-//            ui.recyclerView.scrollToPosition(0)
+            ui.recyclerView.scrollToPosition(0)
         } else {
             // Todo: Handle later
             d("TAGGGG", "on error feeds ${notification.error?.message}")
@@ -222,14 +223,14 @@ class FeedFragment : BaseFragment() {
 
     private fun eventWhenCommentclicked(position: Int) {
         isLikeFromCommentScreen = false
-        bottomSheetDialogComment.feed = feeds[position]
+        bottomSheetDialogComment.feed = viewModel.feeds[position]
         bottomSheetDialogComment.position = position
         bottomSheetDialogComment.show(fragmentManager, "COMMENT")
     }
 
     private fun eventWhenShareclicked(position: Int) {
         val intent = Intent(context, ShareActivity::class.java)
-        intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
+        intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
         intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
         startActivity(intent)
     }
@@ -239,16 +240,16 @@ class FeedFragment : BaseFragment() {
         bottomSheetDialogComment.isFeed = false
     }
 
-    private fun initBottomSheetLike() {
-        bottomSheetDialogLike = LikeFragment()
-    }
-
     private fun eventWhenLikeclicked(position: Int) {
         viewModel.addLike(position)
     }
 
-    private fun eventWhenLikeSmallclicked(position: Int){
-         bottomSheetDialogLike.feedId=feeds[position].id
+    private fun initBottomSheetLike() {
+        bottomSheetDialogLike = LikeFragment()
+    }
+
+    private fun eventWhenLikeSmallclicked(position: Int) {
+        bottomSheetDialogLike.feedId = feeds[position].id
         bottomSheetDialogLike.show(fragmentManager, "LIKE")
     }
 
@@ -283,7 +284,7 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun initProgressDialog() {
-        progressDialog = ProgressDialog(context)
+        progressDialog = ProgressDialog(activity as? MainActivity)
         progressDialog.setCancelable(false)
     }
 
@@ -335,6 +336,16 @@ class FeedFragment : BaseFragment() {
     private fun handleLoadData(event: LoadDataFeed) {
         ui.areaPlay.visibility = View.GONE
         viewModel.getFeeds()
+        viewModel.getMeInfor(user.id)
+                .observeOnUiThread()
+                .subscribe({
+                    Glide.with(context)
+                            .load(it.avatar)
+                            .apply(option)
+                            .into(ui.circleImgAvatarStatus)
+                }, {
+                    //Todo: handle later
+                })
     }
 
     private fun handleUpdateLikeSuccess(notification: Notification<Feed>) {

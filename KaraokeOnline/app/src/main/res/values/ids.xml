@@ -120,4 +120,7 @@
     <item name="captionFragmenImgMusic" type="id" />
     <item name="captionFragmentTvFile" type="id" />
     <item name="profileActivityContainer" type="id" />
+    <item name="captionAcivityImage" type="id" />
+    <item name="profileFragmenAreaMusic" type="id" />
+    <item name="shareActivityCaption" type="id" />
 </resources>

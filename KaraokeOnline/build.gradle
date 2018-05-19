@@ -29,6 +29,9 @@ allprojects {
         maven {
             url  "http://dl.bintray.com/piasy/maven"
         }
+        maven {
+            url  "http://dl.bintray.com/lukaville/maven"
+        }
         google()
         jcenter()
     }

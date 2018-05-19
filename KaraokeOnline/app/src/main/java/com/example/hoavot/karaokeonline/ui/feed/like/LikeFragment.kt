@@ -24,14 +24,6 @@ class LikeFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val KEY_FEED_ID = "KEY_FEED_ID"
-
-        fun newInstance(feedId: Int): LikeFragment {
-            return LikeFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(KEY_FEED_ID, feedId)
-                }
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

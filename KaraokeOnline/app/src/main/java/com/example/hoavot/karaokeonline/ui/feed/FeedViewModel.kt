@@ -1,5 +1,6 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
+import android.util.Log.d
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
@@ -48,6 +49,7 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
             .subscribe({
                 feeds.clear()
                 feeds.addAll(it.feeds)
+                d("NNNNNNNNNN","feeds: size: ${feeds.size}")
                 feedsObserverable.onNext(Notification.createOnNext(feeds))
             }, {
                 feedsObserverable.onNext(Notification.createOnError(it))

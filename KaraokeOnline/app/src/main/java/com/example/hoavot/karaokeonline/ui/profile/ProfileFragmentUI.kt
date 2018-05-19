@@ -51,10 +51,11 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
         return with(ui) {
             relativeLayout {
                 lparams(matchParent, matchParent)
-                backgroundColor = ContextCompat.getColor(context, R.color.colorSetting)
+                backgroundResource = R.drawable.bg_share
                 onClick {
                     owner.eventOnProfileClicked()
                 }
+
                 more = imageView(R.drawable.ic_more_vert_black_36dp) {
                     id = R.id.profileFragmenMore
                     onClick {
@@ -97,7 +98,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                     id = R.id.profileFragmentTvUsername
                     textSize = px2dip(dimen(R.dimen.textSize18))
                     typeface = Typeface.DEFAULT_BOLD
-                    textColor = Color.BLACK
+                    textColor = Color.WHITE
                 }.lparams {
                     below(R.id.profileFragmenAvatar)
                     topMargin = dip(10)
@@ -118,12 +119,12 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                 countFeed = textView {
                     id = R.id.profileFragmentTvCountFeed
                     textSize = px2dip(dimen(R.dimen.textSize14))
-                    textColor = ContextCompat.getColor(context, R.color.colorBlackBold)
+                    textColor = ContextCompat.getColor(context, R.color.colorFilePlay)
                     paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }.lparams {
-                    sameTop(R.id.profileFragmentTvUsername)
-                    rightOf(R.id.profileFragmentTvUsername)
-                    leftMargin = dip(10)
+                    sameLeft(R.id.profileFragmentTvUsername)
+                    below(R.id.profileFragmentTvUsername)
+                    topMargin = dip(3)
                 }
 
                 recyclerView {
@@ -131,7 +132,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<Pr
                     layoutManager = LinearLayoutManager(context)
                     adapter = feedsAdapter
                 }.lparams(matchParent, matchParent) {
-                    below(R.id.profileFragmentTvUsername)
+                    below(R.id.profileFragmentTvCountFeed)
                     topMargin = dip(20)
                 }
 

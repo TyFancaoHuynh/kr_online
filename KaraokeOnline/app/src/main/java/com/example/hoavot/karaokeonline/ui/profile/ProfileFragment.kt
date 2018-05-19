@@ -1,11 +1,15 @@
 package com.example.hoavot.karaokeonline.ui.profile
 
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log.d
@@ -15,14 +19,18 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
+import com.aditya.filebrowser.Constants
+import com.aditya.filebrowser.FileChooser
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.*
-import com.example.hoavot.karaokeonline.data.source.response.UserResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
+import com.example.hoavot.karaokeonline.ui.base.Image
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.addChildFragment
 import com.example.hoavot.karaokeonline.ui.extensions.animSlideInRightSlideOutRight
@@ -31,14 +39,17 @@ import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
 import com.example.hoavot.karaokeonline.ui.feed.FeedViewModel
 import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
+import com.example.hoavot.karaokeonline.ui.feed.like.LikeFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragment
 import com.example.hoavot.karaokeonline.ui.profile.edit.EditProfileFragment
-import com.obsez.android.lib.filechooser.ChooserDialog
+import com.facebook.FacebookSdk.getApplicationContext
 import io.reactivex.Notification
+import io.reactivex.Single
+import io.reactivex.subjects.SingleSubject
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
@@ -74,6 +85,7 @@ class ProfileFragment : BaseFragment() {
     private lateinit var user: User
     private var userId: Int = -1
     private var isStartFromProfileFragment = false
+    private lateinit var bottomSheetDialogLike: LikeFragment
     private lateinit var dialogShowCamera: Dialog
     private var feeds = mutableListOf<Feed>()
     private lateinit var progressDialog: ProgressDialog
@@ -82,6 +94,7 @@ class ProfileFragment : BaseFragment() {
     private lateinit var animationRotate: Animation
     private var myBroadcastProfile = MyBroadcastProfile()
     private var mSongs = mutableListOf<Song>()
+
     val option = RequestOptions()
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
@@ -102,6 +115,7 @@ class ProfileFragment : BaseFragment() {
         animationRotate = AnimationUtils.loadAnimation(context, R.anim.anim_rotate_start)
         initProgressDialog()
         initSortDialog()
+        initBottomSheetLike()
         if (!isStartFromProfileFragment) {
             ui.more.visibility = View.GONE
         }
@@ -120,6 +134,7 @@ class ProfileFragment : BaseFragment() {
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
         ui.feedsAdapter.updateFeedClickListener = this::eventUpdateClicked
         ui.feedsAdapter.deleteFeedClickListener = this::eventDeleteClicked
+        ui.feedsAdapter.likeSmallListener = this::eventWhenLikeSmallclicked
         RxBus.listen(LikeFeedMeEvent::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateLike)
@@ -165,36 +180,65 @@ class ProfileFragment : BaseFragment() {
     }
 
     internal fun eventOnCameraClick() {
-        ChooserDialog().with(context)
-                .withFilter(false, false, "jpg", "jpeg", "png")
-//                .withStartFile(path)
-                .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(object : ChooserDialog.Result {
-                    override fun onChoosePath(p0: String?, p1: File?) {
-                        if (p1 != null) {
-                            feedViewModel.updateAvatar(p1)
-                                    .observeOnUiThread()
-                                    .subscribe({
-                                        feedViewModel.saveUser(it.user)
-                                        val option = RequestOptions()
-                                                .centerCrop()
-                                                .override(ui.avatar.width, ui.avatar.width)
-                                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                                                .placeholder(R.drawable.bg_item_place_holder)
+        val i2 = Intent(getApplicationContext(), FileChooser::class.java)
+        i2.putExtra(Constants.SELECTION_MODE, Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal)
+        startActivityForResult(i2, TYPE_GALLERY)
+    }
 
-                                        Glide.with(context)
-                                                .load(it.user.avatar)
-                                                .apply(option)
-                                                .into(ui.avatar)
-                                    }, {
-                                        d("HHHHHHH", "error update avatar error: ${it.message}")
-                                    })
-                        }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TYPE_GALLERY && resultCode == RESULT_OK && data != null) {
+            val uri: Uri = data.data as Uri
+            d("TAGGGGGGG", "path0: ${uri}")
+
+            getImageBitmap(uri.toString(), 1f)
+                    .observeOnUiThread()
+                    .subscribe({
+                        val file = Image.convertBitmapToFile(it, context)
+                        feedViewModel.updateAvatar(file)
+                                .observeOnUiThread()
+                                .subscribe({
+                                    feedViewModel.saveUser(it.user)
+                                    val option = RequestOptions()
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+                                            .placeholder(R.drawable.bg_item_place_holder)
+
+                                    Glide.with(context)
+                                            .load(it.user.avatar)
+                                            .apply(option)
+                                            .into(ui.avatar)
+                                    RxBus.publish(LoadDataFeedMe())
+                                }, {
+                                    d("HHHHHHH", "error update avatar error: ${it.message}")
+                                })
+                    }, {})
+        }
+    }
+
+    fun getImageBitmap(uri: String, ratio: Float): Single<Bitmap> {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(File(uri).absolutePath, options)
+        val imageWidth = options.outWidth
+        val imageHeight = options.outHeight
+        val newW = (imageWidth * ratio).toInt()
+        val newH = (imageHeight * ratio).toInt()
+        val result: SingleSubject<Bitmap> = SingleSubject.create()
+        val option = RequestOptions
+                .overrideOf(newW, newH)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+
+        Glide.with(context)
+                .asBitmap()
+                .load(uri)
+                .apply(option)
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        result.onSuccess(resource)
                     }
                 })
-                .build()
-                .show()
-
+        return result
     }
 
     internal fun handleWhenEditProfileClick() {
@@ -206,21 +250,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     internal fun eventOnProfileClicked() {
-        // Todo handle
-    }
-
-    private fun handleWhenUpdateAvatarSuccess(userResponse: UserResponse) {
-        feedViewModel.saveUser(userResponse.user)
-        val option = RequestOptions()
-                .centerCrop()
-                .override(ui.avatar.width, ui.avatar.width)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.bg_item_place_holder)
-
-        Glide.with(context)
-                .load(userResponse.user.avatar)
-                .apply(option)
-                .into(ui.avatar)
+        ui.editProfile.visibility = View.GONE
     }
 
     private fun handleLoadDataFeedMe(event: LoadDataFeedMe) {
@@ -239,6 +269,15 @@ class ProfileFragment : BaseFragment() {
 
     private fun eventWhenUnLikeclicked(position: Int) {
         feedViewModel.removeLike(position)
+    }
+
+    private fun initBottomSheetLike() {
+        bottomSheetDialogLike = LikeFragment()
+    }
+
+    private fun eventWhenLikeSmallclicked(position: Int) {
+        bottomSheetDialogLike.feedId = feeds[position].id
+        bottomSheetDialogLike.show(fragmentManager, "LIKE")
     }
 
     internal fun eventClosePlayFeedClicked() {
@@ -374,7 +413,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun eventWhenShareclicked(position: Int) {
         val intent = Intent(context, ShareActivity::class.java)
-        intent.putExtra(ShareActivity.KEY_FILE_MUSIC, feeds[position].fileMusic.toString())
+        intent.putExtra(ShareActivity.KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
         intent.putExtra(ShareActivity.KEY_ID_FEED, feeds[position].id.toString())
 
         startActivity(intent)
