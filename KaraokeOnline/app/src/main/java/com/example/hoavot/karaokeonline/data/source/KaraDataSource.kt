@@ -10,7 +10,6 @@ import com.example.hoavot.karaokeonline.data.model.remote.PlaylistDetailFromApi
 import com.example.hoavot.karaokeonline.data.source.response.*
 import io.reactivex.Observable
 import io.reactivex.Single
-import okhttp3.MultipartBody
 import java.io.File
 
 /**
@@ -74,13 +73,13 @@ interface KaraDataSource {
 
     fun getInforUser(id: Int): Single<User>
 
-    fun updateInforUser(user: User): Single<User>
+    fun updateInforUser(user: User): Single<LoginResponse>
 
     fun updateAvatarUser(avatarFile: File): Single<UserResponse>
 
     fun getFeeds(): Single<FeedsResponse>
 
-    fun getFeedMe(): Single<FeedsResponse>
+    fun getFeedMe(userId: Int): Single<FeedsResponse>
 
     fun postComment(feedId: Int, comment: String): Single<CommentResponse>
 
@@ -100,4 +99,7 @@ interface KaraDataSource {
     fun deleteFeed(feedId: Int): Single<DeleteFeedResponse>
 
     fun updateFeed(feed: Feed, fileName: String, audioFile: File? = null, caption: String, imageFile: File?): Single<FeedResponse>
+
+    fun getListUserLike(feedId: Int): Single<UserLikeResponse>
+
 }

@@ -37,8 +37,7 @@ class MainActivity : BaseActivity() {
         checkPermissionAccessRecord()
         val mainTabs = listOf(MainTab(MainTab.TabItemType.ITEM_HOME),
                 MainTab(MainTab.TabItemType.ITEM_USER),
-                MainTab(MainTab.TabItemType.ITEM_SEARCH),
-                MainTab(MainTab.TabItemType.ITEM_VOICE))
+                MainTab(MainTab.TabItemType.ITEM_SEARCH))
         ui = MainActivityUI(mainTabs)
         ui.setContentView(this)
     }
@@ -66,11 +65,12 @@ class MainActivity : BaseActivity() {
 
     private fun checkPermissionGallery() {
         if (ContextCompat.checkSelfPermission(this
-                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this
+                , Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 askedPermissionTime = System.currentTimeMillis()
                 ActivityCompat.requestPermissions(this
-                        , arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_GALLERY_PERMISSION_CODE)
+                        , arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_GALLERY_PERMISSION_CODE)
             }
         } else {
             isAccess = true

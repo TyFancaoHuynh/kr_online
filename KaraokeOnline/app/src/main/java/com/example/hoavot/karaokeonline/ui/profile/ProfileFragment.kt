@@ -1,15 +1,13 @@
 package com.example.hoavot.karaokeonline.ui.profile
 
-import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.*
-import android.graphics.Bitmap
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
-import android.provider.MediaStore
-import android.support.v7.app.AlertDialog
-import android.support.v7.util.DiffUtil
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +15,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -26,7 +23,6 @@ import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.data.source.response.UserResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
-import com.example.hoavot.karaokeonline.ui.base.Image.convertBitmapToFile
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.addChildFragment
 import com.example.hoavot.karaokeonline.ui.extensions.animSlideInRightSlideOutRight
@@ -41,14 +37,13 @@ import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import com.example.hoavot.karaokeonline.ui.profile.baseprofile.BaseProfileFragment
 import com.example.hoavot.karaokeonline.ui.profile.edit.EditProfileFragment
+import com.obsez.android.lib.filechooser.ChooserDialog
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 
@@ -60,11 +55,25 @@ class ProfileFragment : BaseFragment() {
     companion object {
         internal const val TYPE_GALLERY = 0
         internal const val TYPE_CAMERA = 1
+        internal const val KEY_USER_ID = "KEY_USER_ID"
+        internal const val KEY_PROFILE_FRAGMENT = "KEY_PROFILE_FRAGMENT"
+
+        fun newInstance(userId: Int, isFromProfileFragment: Boolean): ProfileFragment {
+            val instance = ProfileFragment()
+            val bundle = Bundle().apply {
+                putInt(KEY_USER_ID, userId)
+                putBoolean(KEY_PROFILE_FRAGMENT, isFromProfileFragment)
+            }
+            instance.arguments = bundle
+            return instance
+        }
     }
 
     private lateinit var ui: ProfileFragmentUI
     private lateinit var feedViewModel: FeedViewModel
     private lateinit var user: User
+    private var userId: Int = -1
+    private var isStartFromProfileFragment = false
     private lateinit var dialogShowCamera: Dialog
     private var feeds = mutableListOf<Feed>()
     private lateinit var progressDialog: ProgressDialog
@@ -76,14 +85,15 @@ class ProfileFragment : BaseFragment() {
     val option = RequestOptions()
             .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-            .placeholder(R.drawable.user_default)
+            .placeholder(R.drawable.bg_item_place_holder)
     internal var isPlaying = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        userId = arguments.getInt(KEY_USER_ID)
+        isStartFromProfileFragment = arguments.getBoolean(KEY_PROFILE_FRAGMENT, false)
         feedViewModel = FeedViewModel(LocalRepository(context), feeds)
-        user = feedViewModel.getMeInfor()
-        ui = ProfileFragmentUI(feeds, user)
+        ui = ProfileFragmentUI(feeds)
         return ui.createView(AnkoContext.Companion.create(context, this))
     }
 
@@ -92,16 +102,17 @@ class ProfileFragment : BaseFragment() {
         animationRotate = AnimationUtils.loadAnimation(context, R.anim.anim_rotate_start)
         initProgressDialog()
         initSortDialog()
-        Glide.with(context)
-                .load(user.avatar)
-                .apply(option)
-                .into(ui.avatar)
-        ui.username.text = user.username
-        ui.age.text = user.age.toString().plus(" Tuổi")
-        feedViewModel.getMeFeeds()
-        RxBus.listen(LoadDataFeed::class.java)
+        if (!isStartFromProfileFragment) {
+            ui.more.visibility = View.GONE
+        }
+        feedViewModel.getMeFeeds(userId)
+
+        RxBus.listen(LoadDataFeedMe::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleLoadDataFeedMe)
+        RxBus.listen(UserUpdateEvent::class.java)
+                .observeOnUiThread()
+                .subscribe(this::handleUpdateUser)
         ui.feedsAdapter.likeListener = this::eventWhenLikeclicked
         ui.feedsAdapter.unLikeListener = this::eventWhenUnLikeclicked
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
@@ -123,6 +134,11 @@ class ProfileFragment : BaseFragment() {
 
     override fun onBindViewModel() {
         addDisposables(
+                feedViewModel.getMeInfor(userId)
+                        .observeOnUiThread()
+                        .subscribe({
+                            updateUser(it)
+                        }, {}),
                 feedViewModel.feedsObserverable
                         .observeOnUiThread()
                         .subscribe(this::handleGetFeedsSuccess),
@@ -149,8 +165,36 @@ class ProfileFragment : BaseFragment() {
     }
 
     internal fun eventOnCameraClick() {
-        dialogShowCamera = createDialog()
-        dialogShowCamera.show()
+        ChooserDialog().with(context)
+                .withFilter(false, false, "jpg", "jpeg", "png")
+//                .withStartFile(path)
+                .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+                .withChosenListener(object : ChooserDialog.Result {
+                    override fun onChoosePath(p0: String?, p1: File?) {
+                        if (p1 != null) {
+                            feedViewModel.updateAvatar(p1)
+                                    .observeOnUiThread()
+                                    .subscribe({
+                                        feedViewModel.saveUser(it.user)
+                                        val option = RequestOptions()
+                                                .centerCrop()
+                                                .override(ui.avatar.width, ui.avatar.width)
+                                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+                                                .placeholder(R.drawable.bg_item_place_holder)
+
+                                        Glide.with(context)
+                                                .load(it.user.avatar)
+                                                .apply(option)
+                                                .into(ui.avatar)
+                                    }, {
+                                        d("HHHHHHH", "error update avatar error: ${it.message}")
+                                    })
+                        }
+                    }
+                })
+                .build()
+                .show()
+
     }
 
     internal fun handleWhenEditProfileClick() {
@@ -161,68 +205,27 @@ class ProfileFragment : BaseFragment() {
         })
     }
 
-    // Create dialog with list data got from resource
-    private fun createDialog(): Dialog {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.dialog_title_please_choose)
-                .setItems(R.array.items, DialogInterface.OnClickListener { dialog, which ->
-                    when (which) {
-                        TYPE_GALLERY -> {
-                            val intent = Intent(Intent.ACTION_PICK,
-                                    MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-                            intent.type = "image/*"
-                            startActivityForResult(intent, TYPE_GALLERY)
-                        }
-                        else -> try {
-                            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            startActivityForResult(cameraIntent, TYPE_CAMERA)
-                        } catch (anfe: ActivityNotFoundException) {
-                            val toast = Toast
-                                    .makeText(context, "This device doesn't support the camera action!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
-
-                    }
-                })
-        return builder.create()
+    internal fun eventOnProfileClicked() {
+        // Todo handle
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && data != null) {
-            val extras = data.extras
-            if (extras != null) {
-                val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
-                val avatarFile = convertBitmapToFile(bimap, context)
-                feedViewModel.updateAvatar(avatarFile)
-                        .observeOnUiThread()
-                        .subscribe(
-                                this::handleWhenUpdateAvatarSuccess,
-                                {
-                                    d("TAGGGG", "error update avatar error: ${it.message}")
-                                })
-                dialogShowCamera.cancel()
-            }
-        }
-    }
-
 
     private fun handleWhenUpdateAvatarSuccess(userResponse: UserResponse) {
-        d("TAGGGG", "handle update avatar success")
         feedViewModel.saveUser(userResponse.user)
         val option = RequestOptions()
                 .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
                 .placeholder(R.drawable.bg_item_place_holder)
+
         Glide.with(context)
                 .load(userResponse.user.avatar)
                 .apply(option)
                 .into(ui.avatar)
     }
 
-    private fun handleLoadDataFeedMe(event: LoadDataFeed) {
+    private fun handleLoadDataFeedMe(event: LoadDataFeedMe) {
         ui.areaPlay.visibility = View.GONE
-        feedViewModel.getMeFeeds()
+        feedViewModel.getMeFeeds(userId)
     }
 
     private fun initSortDialog() {
@@ -256,6 +259,19 @@ class ProfileFragment : BaseFragment() {
         ui.mImgBtnPause.visibility = View.VISIBLE
         sendIntent(Action.ID_FEED.value, feeds[position].id)
         sendIntent(Action.PLAY.value)
+    }
+
+    private fun updateUser(user: User) {
+        Glide.with(context)
+                .load(user.avatar)
+                .apply(option)
+                .into(ui.avatar)
+        ui.username.text = user.username
+        ui.age.text = user.age.toString().plus(" Tuổi")
+    }
+
+    private fun handleUpdateUser(event: UserUpdateEvent) {
+        updateUser(event.user)
     }
 
     internal fun eventOnButtonClicked(view: ImageButton) {
@@ -378,7 +394,8 @@ class ProfileFragment : BaseFragment() {
                         .subscribe({
                             alert {
                                 message = "Xoá thành công!"
-                                yesButton { }
+                                yesButton {
+                                }
                             }.show()
 
                             feeds.removeAt(position)

@@ -4,11 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
-import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.ui.base.Time
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -18,7 +16,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  *
  * @author at-hoavo.
  */
-class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) : RecyclerView.Adapter<FeedAdapter.FeedHolder>() {
+class FeedAdapter(private val feeds: MutableList<Feed>, val isFromFeed: Boolean) : RecyclerView.Adapter<FeedAdapter.FeedHolder>() {
     internal var likeListener: (Int) -> Unit = {}
     internal var unLikeListener: (Int) -> Unit = {}
     internal var commentListener: (Int) -> Unit = { }
@@ -26,6 +24,7 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
     internal var fileMusicListener: (Int) -> Unit = {}
     internal var updateFeedClickListener: (Int) -> Unit = {}
     internal var deleteFeedClickListener: (Int) -> Unit = {}
+    internal var likeSmallListener: (Int) -> Unit = {}
 
     override fun onBindViewHolder(holder: FeedHolder?, position: Int) {
         holder?.onBind()
@@ -76,6 +75,14 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
             ui.imgBGMusic.onClick {
                 fileMusicListener(layoutPosition)
             }
+
+            ui.rlParent.onClick {
+                ui.optionArea.visibility = View.GONE
+            }
+
+            ui.likeSmall.onClick {
+                likeSmallListener(layoutPosition)
+            }
         }
 
         private val option = RequestOptions()
@@ -92,8 +99,9 @@ class FeedAdapter(private val feeds: MutableList<Feed>, private val user: User) 
                 ui.unlike.visibility = View.INVISIBLE
                 ui.like.isEnabled = true
             }
-            if (feeds[layoutPosition].username == user.username) {
-                ui.share.visibility = View.GONE
+
+            ui.share.visibility = View.GONE
+            if (!isFromFeed) {
                 ui.more.visibility = View.VISIBLE
             }
             Glide.with(item)

@@ -7,7 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
 import android.util.Log.d
-import com.example.hoavot.karaokeonline.ui.base.feed.BaseFeedFragment
+import com.example.hoavot.karaokeonline.ui.feed.FeedFragment.Companion.TYPE_SONGS
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
 import java.io.IOException
@@ -33,8 +33,8 @@ class SongFeedService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         if (intent != null) {
             when (intent.action) {
                 Action.SONGS.value -> {
-                    mSongs = intent.getParcelableArrayListExtra<Song>(BaseFeedFragment.TYPE_SONGS).toList()
-                    d("TAGGGG","song size feed: ${mSongs.size}")
+                    mSongs = intent.getParcelableArrayListExtra<Song>(TYPE_SONGS).toList()
+                    d("TAGGGG", "song size feed: ${mSongs.size}")
                     isPlayed = false
                 }
                 Action.ID_FEED.value -> {

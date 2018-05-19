@@ -23,6 +23,9 @@ class LocalRepository(private val context: Context) : LocalDataSource {
         private const val KEY_API_TOKEN = "KEY_API_TOKEN"
         private const val KEY_USERNAME = "KEY_USERNAME"
         private const val KEY_AVATAR = "KEY_AVATAR"
+        private const val KEY_EMAIL = "KEY_EMAIL"
+        private const val KEY_PASSWORD = "KEY_PASSWORD"
+        private const val KEY_ID = "KEY_ID"
     }
 
     private val pref by lazy {
@@ -68,12 +71,18 @@ class LocalRepository(private val context: Context) : LocalDataSource {
     override fun getMeInfor(): User {
         val username = pref.getString(KEY_USERNAME, "")
         val avatar = pref.getString(KEY_AVATAR, "")
-        return User(username = username, avatar = avatar)
+        val email = pref.getString(KEY_EMAIL, "")
+        val password = pref.getString(KEY_PASSWORD, "")
+        val id = pref.getInt(KEY_ID, 0)
+        return User(id = id, username = username, avatar = avatar, email = email, password = password)
     }
 
     override fun saveMeInfor(user: User): Boolean {
         pref.edit().putString(KEY_USERNAME, user.username).apply()
         pref.edit().putString(KEY_AVATAR, user.avatar).apply()
+        pref.edit().putString(KEY_EMAIL, user.email).apply()
+        pref.edit().putString(KEY_PASSWORD, user.password).apply()
+        pref.edit().putInt(KEY_ID, user.id).apply()
         return true
     }
 

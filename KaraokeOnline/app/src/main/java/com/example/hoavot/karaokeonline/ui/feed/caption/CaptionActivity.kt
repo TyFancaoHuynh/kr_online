@@ -6,11 +6,11 @@ import android.app.ProgressDialog
 import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Parcelable
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
@@ -20,16 +20,20 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
+import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
-import com.example.hoavot.karaokeonline.ui.base.Image.convertBitmapToFile
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.subjects.SingleSubject
 import org.jetbrains.anko.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -43,6 +47,7 @@ class CaptionActivity : BaseActivity() {
 
     companion object {
         private const val REQ_CODE_PICK_SOUNDFILE = 100
+        private const val KEY_FROM_PROFILE = "KEY_FROM_PROFILE"
     }
 
     private lateinit var ui: CaptionActivityUI
@@ -52,10 +57,12 @@ class CaptionActivity : BaseActivity() {
     private var path = ""
     private var fileName = ""
     private lateinit var dialogShowCamera: Dialog
+    private var updateStartFromUpdateFeed: Feed? = null
     private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        updateStartFromUpdateFeed = intent.getSerializableExtra(KEY_FROM_PROFILE) as? Feed
         ui = CaptionActivityUI()
         ui.setContentView(this)
         initProgressDialog()
@@ -75,6 +82,9 @@ class CaptionActivity : BaseActivity() {
                 .load(user.avatar)
                 .apply(option)
                 .into(ui.avatar)
+        if (updateStartFromUpdateFeed != null) {
+            initUpdateScreen()
+        }
     }
 
     override fun onBindViewModel() {
@@ -108,24 +118,59 @@ class CaptionActivity : BaseActivity() {
             }
         }
 
-        if (resultCode == Activity.RESULT_OK && data != null && requestCode == ProfileFragment.TYPE_CAMERA) {
-            val extras = data.extras
-            if (extras != null) {
-                val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
-                imageFile = convertBitmapToFile(bimap, this)
-                val option = RequestOptions()
-                        .override(ui.avatar.width, ui.avatar.width)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                        .placeholder(R.drawable.bg_play)
+        if (resultCode == Activity.RESULT_OK && data != null && requestCode == ProfileFragment.TYPE_GALLERY) {
+            val uri = data.data.toString()
+            getImageBitmap(uri, 1f)
+                    .observeOnUiThread()
+                    .subscribe({
+                        d("TAGGGGGG", "bitmap at caption: ${it}")
+                        ui.avatar.setImageBitmap(it)
+                        dialogShowCamera.cancel()
+                    }, {
+                        d("TAGGGGGG", "error: ${it.message}")
+                    })
 
-                Glide.with(this)
-                        .load(imageFile)
-                        .apply(option)
-                        .into(ui.imgMusic)
-                dialogShowCamera.cancel()
-            }
+//            if (extras != null) {
+//                val bimap = extras.getParcelable<Parcelable>("data") as Bitmap
+//                imageFile = convertBitmapToFile(bimap, this)
+//                val option = RequestOptions()
+//                        .override(ui.avatar.width, ui.avatar.width)
+//                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+//                        .placeholder(R.drawable.bg_play)
+//
+//                Glide.with(this)
+//                        .load(imageFile)
+//                        .apply(option)
+//                        .into(ui.imgMusic)
+//                dialogShowCamera.cancel()
+//            }
         }
 
+    }
+
+    private fun getImageBitmap(uri: String, ratio: Float): Single<Bitmap> {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(File(uri).absolutePath, options)
+        val imageWidth = options.outWidth
+        val imageHeight = options.outHeight
+        val newW = (imageWidth * ratio).toInt()
+        val newH = (imageHeight * ratio).toInt()
+        val result: SingleSubject<Bitmap> = SingleSubject.create()
+        val option = RequestOptions
+                .overrideOf(newW, newH)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+        Glide.with(applicationContext)
+                .asBitmap()
+                .load(uri)
+                .apply(option)
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        result.onSuccess(resource)
+                    }
+                })
+        return result
     }
 
     internal fun eventOnBackClicked() {
@@ -178,6 +223,19 @@ class CaptionActivity : BaseActivity() {
                     }
                 })
         return builder.create()
+    }
+
+    private fun initUpdateScreen() {
+        ui.edtCaption.setText(updateStartFromUpdateFeed?.caption)
+        ui.tvFileName.text = updateStartFromUpdateFeed?.fileMusicUserWrite
+        val option = RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+                .placeholder(R.drawable.bg_play)
+
+        Glide.with(this)
+                .load(updateStartFromUpdateFeed?.imageFile)
+                .apply(option)
+                .into(ui.imgMusic)
     }
 
     private fun initProgressDialog() {

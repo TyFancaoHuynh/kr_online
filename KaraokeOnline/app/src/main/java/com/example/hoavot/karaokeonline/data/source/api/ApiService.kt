@@ -76,19 +76,18 @@ interface ApiService {
     )
             : Single<VideoSearchFromApi>
 
-    @GET("/api/user/me")
-    fun getInforUser(
-            @Query("id") id: Int
+    @GET("/api/user/infor/{id}")
+    fun getMeUser(
+            @Path("id") id: Int
     ): Single<User>
 
+    @FormUrlEncoded
     @PUT("/api/user/update")
     fun updateInforUser(
-            @Part("username") username: RequestBody,
-            @Part("password") password: RequestBody,
-            @Part("email") email: RequestBody,
-            @Part("age") age: RequestBody?,
-            @Part("gender") gender: RequestBody?
-    ): Single<User>
+            @Field("username") username: String,
+            @Field("password") password: String,
+            @Field("email") email: String
+    ): Single<LoginResponse>
 
     @Multipart
     @PUT("/api/user/update/avatar")
@@ -99,8 +98,8 @@ interface ApiService {
     @GET("/api/feeds")
     fun getFeeds(): Single<FeedsResponse>
 
-    @GET("/api/feed/me")
-    fun getFeedMe(): Single<FeedsResponse>
+    @GET("/api/feed/infor/{id}")
+    fun getFeedMe(@Path("id") id: Int): Single<FeedsResponse>
 
     /**
      *  Function for me comment to feed
@@ -134,6 +133,12 @@ interface ApiService {
 
     @Multipart
     @PUT("/api/feed/me")
-    fun updateFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody, @Part("id") id: RequestBody,@Part imageFile: MultipartBody.Part?)
+    fun updateFeed(@Part audio: MultipartBody.Part?, @Part("file_name") file_name: RequestBody, @Part("caption") caption: RequestBody, @Part("id") id: RequestBody, @Part imageFile: MultipartBody.Part?)
             : Single<FeedResponse>
+
+//    @GET("/api/user")
+//    fun getInforUser(@Query("id") id: Int): Single<UserInforResponse>
+
+    @GET("/api/feed/{id}/likes")
+    fun getUsersLike(@Path("id") id: Int): Single<UserLikeResponse>
 }

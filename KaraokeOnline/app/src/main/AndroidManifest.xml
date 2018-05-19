@@ -60,6 +60,7 @@
         <activity android:name=".ui.play.PlayActivity" />
         <activity android:name=".ui.feed.caption.CaptionActivity" />
         <activity android:name=".ui.feed.share.ShareActivity" />
+        <activity android:name=".ui.profile.ProfileAcivity"/>
         <activity
             android:name=".ui.playmusic.PlayMusicActivity"
             android:launchMode="singleTask">

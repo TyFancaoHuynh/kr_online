@@ -16,10 +16,8 @@ import android.view.ViewManager
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.LoadDataFeed
 import com.example.hoavot.karaokeonline.data.model.other.LoadDataFeedMe
-import com.example.hoavot.karaokeonline.ui.base.feed.BaseFeedFragment
 import com.example.hoavot.karaokeonline.ui.custom.nonSwipeAbleViewPager
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
-import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
 import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
 import com.example.hoavot.karaokeonline.ui.home.HomeFragment
 import com.example.hoavot.karaokeonline.ui.playmusic.PlayFragment

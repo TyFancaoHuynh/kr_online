@@ -1,6 +1,5 @@
 package com.example.hoavot.karaokeonline.ui.profile
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -16,7 +15,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
-import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.ui.extensions.circleImageView
 import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import com.example.hoavot.karaokeonline.ui.feed.FeedAdapter
@@ -29,7 +27,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  *
  * @author at-hoavo.
  */
-class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoComponent<ProfileFragment> {
+class ProfileFragmentUI(private val feeds: MutableList<Feed>) : AnkoComponent<ProfileFragment> {
     internal lateinit var avatar: ImageView
     internal lateinit var pickImage: ImageView
     internal lateinit var username: TextView
@@ -46,14 +44,18 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
     internal lateinit var mImgBtnPlay: ImageButton
     internal lateinit var mImgBtnPause: ImageButton
     internal lateinit var recyclerView: RecyclerView
-    internal var feedsAdapter = FeedAdapter(feeds,user)
+    internal lateinit var more: ImageView
+    internal var feedsAdapter = FeedAdapter(feeds, false)
 
     override fun createView(ui: AnkoContext<ProfileFragment>): View {
         return with(ui) {
             relativeLayout {
                 lparams(matchParent, matchParent)
-                backgroundColor=ContextCompat.getColor(context,R.color.colorSetting)
-                imageView(R.drawable.ic_more_vert_black_36dp) {
+                backgroundColor = ContextCompat.getColor(context, R.color.colorSetting)
+                onClick {
+                    owner.eventOnProfileClicked()
+                }
+                more = imageView(R.drawable.ic_more_vert_black_36dp) {
                     id = R.id.profileFragmenMore
                     onClick {
                         owner.onMoreClick()
@@ -73,8 +75,6 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                     }
 
                     avatar = imageView {
-                        backgroundColor = Color.DKGRAY
-//                        backgroundResource = R.drawable.user
                     }.lparams(matchParent, matchParent)
 
                     relativeLayout {
@@ -107,7 +107,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                 age = textView {
                     textSize = px2dip(dimen(R.dimen.textSize15))
                     textColor = Color.WHITE
-                    visibility=View.INVISIBLE
+                    visibility = View.INVISIBLE
                 }.lparams {
                     rightOf(R.id.profileFragmentTvUsername)
                     sameTop(R.id.profileFragmentTvUsername)
@@ -118,12 +118,12 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                 countFeed = textView {
                     id = R.id.profileFragmentTvCountFeed
                     textSize = px2dip(dimen(R.dimen.textSize14))
-                    textColor = ContextCompat.getColor(context,R.color.colorBlackBold)
+                    textColor = ContextCompat.getColor(context, R.color.colorBlackBold)
                     paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }.lparams {
                     sameTop(R.id.profileFragmentTvUsername)
                     rightOf(R.id.profileFragmentTvUsername)
-                    leftMargin=dip(10)
+                    leftMargin = dip(10)
                 }
 
                 recyclerView {
@@ -176,7 +176,7 @@ class ProfileFragmentUI(private val feeds: MutableList<Feed>,user: User) : AnkoC
                         id = R.id.feedFragmentFilePlay
                         textColor = Color.WHITE
                         textSize = px2dip(dimen(R.dimen.textSize12))
-                        maxLines=2
+                        maxLines = 2
                         ellipsize = TextUtils.TruncateAt.END
                     }.lparams(wrapContent, dip(200)) {
                         rightMargin = getWidth() / 2

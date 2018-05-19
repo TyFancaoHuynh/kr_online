@@ -25,15 +25,11 @@ import java.io.File
  *  Created by hoavot on 10/12/2017.
  */
 class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaApi: ApiService) : KaraDataSource {
+
     constructor() : this(ApiClient.getInstance(null).youtTubeService, ApiClient.getInstance(null).karaService)
 
-    override fun updateInforUser(user: User): Single<User> {
-        val username = createNonNullPartFromString(user.username)
-        val password = createNonNullPartFromString(user.password)
-        val email = createNonNullPartFromString(user.email)
-        val age = createPartFromString(user.age.toString())
-        val gender = createPartFromString(user.gender.toString())
-        return karaApi.updateInforUser(username, password, email, age, gender)
+    override fun updateInforUser(user: User): Single<LoginResponse> {
+        return karaApi.updateInforUser(user.username, user.password, user.email)
     }
 
     override fun updateAvatarUser(avatarFile: File): Single<UserResponse> {
@@ -47,7 +43,7 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         return karaApi.getFeeds()
     }
 
-    override fun getFeedMe(): Single<FeedsResponse> = karaApi.getFeedMe()
+    override fun getFeedMe(userId: Int): Single<FeedsResponse> = karaApi.getFeedMe(userId)
 
     override fun postComment(feedId: Int, comment: String): Single<CommentResponse> = karaApi.postComment(feedId, comment)
 
@@ -75,7 +71,7 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         return karaApi.postFeed(requestFileBody, fileNameRequestBody, captionBody, requestFileImageBody)
     }
 
-    override fun getInforUser(id: Int): Single<User> = karaApi.getInforUser(id)
+    override fun getInforUser(id: Int): Single<User> = karaApi.getMeUser(id)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return youtubeApi.getChannelDetail("snippet", id).toObservable().map { it.items.toMutableList() }
@@ -147,5 +143,9 @@ class KaraRemoteDataSource(private val youtubeApi: ApiService, private val karaA
         val captionBody = createNonNullPartFromString(caption)
         val id = createNonNullPartFromString(feed.id.toString())
         return karaApi.updateFeed(requestFileBody, fileNameRequestBody, captionBody, id, requestImageFileBody)
+    }
+
+    override fun getListUserLike(feedId: Int): Single<UserLikeResponse> {
+        return karaApi.getUsersLike(feedId)
     }
 }

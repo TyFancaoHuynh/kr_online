@@ -13,7 +13,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.bumptech.glide.Glide
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.model.other.User
@@ -30,7 +29,7 @@ import org.jetbrains.anko.sdk25.coroutines.onTouch
  * @author at-hoavo.
  */
 class FeedFragmentUI(private val feeds: MutableList<Feed>, user: User) : AnkoComponent<FeedFragment> {
-    internal val feedsAdapter = FeedAdapter(feeds, user)
+    internal val feedsAdapter = FeedAdapter(feeds, true)
     internal lateinit var circleImgAvatarStatus: CircleImageView
     internal lateinit var areaPlay: RelativeLayout
     internal lateinit var avatarPlay: CircleImageView

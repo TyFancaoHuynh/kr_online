@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
 import com.example.hoavot.karaokeonline.ui.extensions.addChildFragment
 import com.example.hoavot.karaokeonline.ui.extensions.animSlideInRightSlideOutRight
@@ -24,7 +25,8 @@ class BaseProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addChildFragment(R.id.profileFragmentContainer, ProfileFragment(), ProfileFragment::class.java.name, {
+        val user = LocalRepository(context).getMeInfor()
+        addChildFragment(R.id.profileFragmentContainer, ProfileFragment.newInstance(user.id, true), ProfileFragment::class.java.name, {
             it.animSlideInRightSlideOutRight()
         })
     }

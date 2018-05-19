@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.ui.extensions.circleImageView
 import com.example.hoavot.karaokeonline.ui.extensions.fontNomal
+import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
 
 /**
@@ -15,7 +17,7 @@ import org.jetbrains.anko.*
  * @author at-hoavo.
  */
 class CommentUI : AnkoComponent<ViewGroup> {
-    internal lateinit var avatar: ImageView
+    internal lateinit var avatar: CircleImageView
     internal lateinit var username: TextView
     internal lateinit var comment: TextView
 
@@ -25,9 +27,11 @@ class CommentUI : AnkoComponent<ViewGroup> {
                 horizontalMargin = dip(20)
                 verticalMargin = dip(10)
             }
-            avatar = imageView {
+            avatar = circleImageView {
                 id = R.id.commentFragmentAvatar
-            }.lparams(dip(25), dip(25))
+                borderWidth = dip(0.4f)
+                borderColor = Color.GRAY
+            }.lparams(dip(35), dip(35))
 
             relativeLayout {
                 backgroundResource = R.drawable.ic_comment_area

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
  *
  * @author at-hoavo.
  */
-data class User(@SerializedName("id") val id: String = "",
+data class User(@SerializedName("id") val id: Int = -1,
                 @SerializedName("username") var username: String = "",
                 @SerializedName("password") var password: String = "",
                 @SerializedName("create_at") val createdAt: String = "",

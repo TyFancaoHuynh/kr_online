@@ -38,7 +38,7 @@ class MainTab(val itemType: TabItemType) {
         /**
          * Fourth Item On Tab
          */
-        ITEM_VOICE(R.drawable.ic_settings_voice_black_24dp)
+//        ITEM_VOICE(R.drawable.ic_settings_voice_black_24dp)
     }
 
     /**
@@ -50,7 +50,7 @@ class MainTab(val itemType: TabItemType) {
     fun getItem(): Fragment? = when (itemType) {
         TabItemType.ITEM_HOME -> HomeFragment()
         TabItemType.ITEM_USER -> BaseProfileFragment()
-        TabItemType.ITEM_SEARCH -> SearchVideoFragment()
-        else -> PlayFragment()
+        else -> SearchVideoFragment()
+//        else -> PlayFragment()
     }
 }

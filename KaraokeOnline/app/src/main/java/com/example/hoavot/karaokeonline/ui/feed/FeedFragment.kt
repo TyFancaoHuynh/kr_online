@@ -25,6 +25,7 @@ import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.feed.caption.CaptionActivity
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
+import com.example.hoavot.karaokeonline.ui.feed.like.LikeFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
@@ -50,6 +51,7 @@ class FeedFragment : BaseFragment() {
     private lateinit var viewModel: FeedViewModel
     private lateinit var progressDialog: ProgressDialog
     private lateinit var bottomSheetDialogComment: CommentFragment
+    private lateinit var bottomSheetDialogLike: LikeFragment
     private var isLikeFromCommentScreen = false
     private lateinit var animationRotate: Animation
     private var myBroadcastFeed = MyBroadcastFeed()
@@ -64,8 +66,6 @@ class FeedFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         retainInstance = true
-
-        d("TAGGGG", "on create feed")
         user = LocalRepository(context).getMeInfor()
         ui = FeedFragmentUI(feeds, user)
         val view = ui.createView(AnkoContext.Companion.create(context, this))
@@ -80,12 +80,14 @@ class FeedFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         animationRotate = AnimationUtils.loadAnimation(context, R.anim.anim_rotate_start)
         initProgressDialog()
-        initSortDialog()
+        initCommentDialog()
+        initBottomSheetLike()
         ui.feedsAdapter.likeListener = this::eventWhenLikeclicked
         ui.feedsAdapter.unLikeListener = this::eventWhenUnLikeclicked
         ui.feedsAdapter.commentListener = this::eventWhenCommentclicked
         ui.feedsAdapter.shareListener = this::eventWhenShareclicked
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
+        ui.feedsAdapter.likeSmallListener=this::eventWhenLikeSmallclicked
         viewModel = FeedViewModel(LocalRepository(context), feeds)
         RxBus.listen(LikeEvent::class.java)
                 .observeOnUiThread()
@@ -203,6 +205,7 @@ class FeedFragment : BaseFragment() {
         if (notification.isOnNext) {
             sendListSong()
             ui.feedsAdapter.notifyDataSetChanged()
+//            ui.recyclerView.scrollToPosition(0)
         } else {
             // Todo: Handle later
             d("TAGGGG", "on error feeds ${notification.error?.message}")
@@ -231,13 +234,22 @@ class FeedFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    private fun initSortDialog() {
+    private fun initCommentDialog() {
         bottomSheetDialogComment = CommentFragment()
         bottomSheetDialogComment.isFeed = false
     }
 
+    private fun initBottomSheetLike() {
+        bottomSheetDialogLike = LikeFragment()
+    }
+
     private fun eventWhenLikeclicked(position: Int) {
         viewModel.addLike(position)
+    }
+
+    private fun eventWhenLikeSmallclicked(position: Int){
+         bottomSheetDialogLike.feedId=feeds[position].id
+        bottomSheetDialogLike.show(fragmentManager, "LIKE")
     }
 
     private fun eventWhenUnLikeclicked(position: Int) {
@@ -282,7 +294,6 @@ class FeedFragment : BaseFragment() {
     private fun handleWhenUpdateLike(event: LikeEvent) {
         isLikeFromCommentScreen = true
         viewModel.addLike(event.position)
-//        viewModel.removeLike(event.position)
     }
 
     private fun handleWhenUpdateUnLike(event: UnlikeEvent) {

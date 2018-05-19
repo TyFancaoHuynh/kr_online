@@ -1,7 +1,6 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.view.Gravity
@@ -9,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Comment
@@ -17,7 +17,6 @@ import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import com.example.hoavot.karaokeonline.ui.extensions.fontNomal
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
  *
@@ -40,10 +39,12 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
     internal lateinit var deleteFeed: TextView
     internal lateinit var time: TextView
     internal lateinit var imgBGMusic: ImageView
+    internal lateinit var rlParent: RelativeLayout
+    internal lateinit var likeSmall: ImageView
     internal var comments: MutableList<Comment> = mutableListOf()
 
-    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-        relativeLayout {
+    override fun createView(ui: AnkoContext<ViewGroup>): View = ui.apply {
+        rlParent = relativeLayout {
             backgroundColor = Color.WHITE
             lparams(matchParent, wrapContent) {
                 bottomMargin = dip(10)
@@ -122,7 +123,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                     topMargin = dip(20)
                 }
 
-                imageView(R.drawable.ic_heart_small) {
+                likeSmall = imageView(R.drawable.ic_heart_small) {
                     id = R.id.imgCountLike
                 }.lparams(dip(15), dip(15))
 
@@ -237,5 +238,5 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 below(R.id.feedFragmentMore)
             }
         }
-    }
+    }.view
 }

@@ -34,7 +34,6 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
         verticalLayout {
             backgroundColor = Color.WHITE
             lparams(matchParent, matchParent)
-
             toolbar {
                 lparams(matchParent, dimen(R.dimen.toolBarHeight)) {
                     leftMargin = -dip(15)
@@ -144,31 +143,31 @@ class EditProfileFragmentUI(private val user: User) : AnkoComponent<EditProfileF
                 }
             }
 
-            linearLayout {
-                editProfile = button("Edit") {
-                    backgroundColor = ContextCompat.getColor(context, R.color.colorRed)
-                    textColor = Color.WHITE
-                    enableHighLightWhenClicked()
-                    onClick {
-                        owner.eventOnEditClick()
-                    }
-                }
-
-                save = button("Save") {
-                    backgroundColor = ContextCompat.getColor(context, R.color.colorRed)
-                    textColor = Color.WHITE
-                    enableHighLightWhenClicked()
-                    onClick {
-                        owner.eventOnSaveCLicked()
-                    }
-                }.lparams {
-                    leftMargin = dip(6)
-                }
-            }.lparams(wrapContent, dip(40)) {
-                gravity = Gravity.END
-                topMargin = dip(15)
-                rightMargin = dip(20)
-            }
+//            linearLayout {
+//                editProfile = button("Edit") {
+//                    backgroundColor = ContextCompat.getColor(context, R.color.colorRed)
+//                    textColor = Color.WHITE
+//                    enableHighLightWhenClicked()
+//                    onClick {
+//                        owner.eventOnEditClick()
+//                    }
+//                }
+//
+//                save = button("Save") {
+//                    backgroundColor = ContextCompat.getColor(context, R.color.colorRed)
+//                    textColor = Color.WHITE
+//                    enableHighLightWhenClicked()
+//                    onClick {
+//                        owner.eventOnSaveCLicked()
+//                    }
+//                }.lparams {
+//                    leftMargin = dip(6)
+//                }
+//            }.lparams(wrapContent, dip(40)) {
+//                gravity = Gravity.END
+//                topMargin = dip(15)
+//                rightMargin = dip(20)
+//            }
         }
     }
 }

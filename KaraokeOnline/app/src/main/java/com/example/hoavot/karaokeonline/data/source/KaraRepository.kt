@@ -23,14 +23,14 @@ class KaraRepository : KaraDataSource {
 
     override fun getInforUser(id: Int): Single<User> = karaRemoteDataSource.getInforUser(id)
 
-    override fun updateInforUser(user: User): Single<User> = karaRemoteDataSource.updateInforUser(user)
+    override fun updateInforUser(user: User): Single<LoginResponse> = karaRemoteDataSource.updateInforUser(user)
 
     override fun updateAvatarUser(avatarFile: File): Single<UserResponse>
             = karaRemoteDataSource.updateAvatarUser(avatarFile)
 
     override fun getFeeds(): Single<FeedsResponse> = karaRemoteDataSource.getFeeds()
 
-    override fun getFeedMe(): Single<FeedsResponse> = karaRemoteDataSource.getFeedMe()
+    override fun getFeedMe(userId: Int): Single<FeedsResponse> = karaRemoteDataSource.getFeedMe(userId)
 
     override fun postComment(feedId: Int, comment: String): Single<CommentResponse>
             = karaRemoteDataSource.postComment(feedId, comment)
@@ -41,8 +41,8 @@ class KaraRepository : KaraDataSource {
 
     override fun getComments(feedId: Int): Single<CommentResponse> = karaRemoteDataSource.getComments(feedId)
 
-    override fun postFeed(fileName: String, audioFile: File?, caption: String,imageFile:File?): Single<FeedResponse>
-            = karaRemoteDataSource.postFeed(fileName, audioFile, caption,imageFile)
+    override fun postFeed(fileName: String, audioFile: File?, caption: String, imageFile: File?): Single<FeedResponse>
+            = karaRemoteDataSource.postFeed(fileName, audioFile, caption, imageFile)
 
     override fun getChannelDetail(part: String, id: String): Observable<MutableList<Channel>> {
         return karaRemoteDataSource.getChannelDetail(part, id)
@@ -84,7 +84,11 @@ class KaraRepository : KaraDataSource {
         return karaRemoteDataSource.deleteFeed(feedId)
     }
 
-    override fun updateFeed(feed: Feed, fileName: String, audioFile: File?, caption: String,imageFile: File?): Single<FeedResponse> {
-        return karaRemoteDataSource.updateFeed(feed, fileName, audioFile, caption,imageFile)
+    override fun updateFeed(feed: Feed, fileName: String, audioFile: File?, caption: String, imageFile: File?): Single<FeedResponse> {
+        return karaRemoteDataSource.updateFeed(feed, fileName, audioFile, caption, imageFile)
+    }
+
+    override fun getListUserLike(feedId: Int): Single<UserLikeResponse> {
+        return karaRemoteDataSource.getListUserLike(feedId)
     }
 }

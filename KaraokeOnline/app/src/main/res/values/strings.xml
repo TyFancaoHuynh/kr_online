@@ -24,6 +24,7 @@
     <string name="permissionSettingAlertTitle">Bạn cần cho App quyền truy cập</string>
     <string name="retry_login">Retry</string>
     <string name="cancel_login">Cancel</string>
+    <string name="title_choose_file">Choose file</string>
     <string-array name="items">
         <item name="Gallery">Gallery</item>
         <item name="Camera">Camera</item>

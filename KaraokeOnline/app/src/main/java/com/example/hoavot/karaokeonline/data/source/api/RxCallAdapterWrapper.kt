@@ -27,13 +27,13 @@ class RxCallAdapterWrapper<R>(type: Type, retrofit: Retrofit, wrapped: CallAdapt
                     return apiException
                 }
 
-                HttpsURLConnection.HTTP_BAD_REQUEST -> response.errorBody()?.let {
-                    return converter.convert(it)
-                }
-
-                HttpsURLConnection.HTTP_INTERNAL_ERROR -> response.errorBody()?.let {
-                    return converter.convert(it)
-                }
+//                HttpsURLConnection.HTTP_BAD_REQUEST -> response.errorBody()?.let {
+//                    return converter.convert(it)
+//                }
+//
+//                HttpsURLConnection.HTTP_INTERNAL_ERROR -> response.errorBody()?.let {
+//                    return converter.convert(it)
+//                }
             }
         }
 

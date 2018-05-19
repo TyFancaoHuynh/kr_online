@@ -1,7 +1,5 @@
 package com.example.hoavot.karaokeonline.ui.feed
 
-import android.support.v7.util.DiffUtil
-import android.util.Log.d
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.Comment
 import com.example.hoavot.karaokeonline.data.model.other.Feed
@@ -9,8 +7,6 @@ import com.example.hoavot.karaokeonline.data.model.other.User
 import com.example.hoavot.karaokeonline.data.source.KaraRepository
 import com.example.hoavot.karaokeonline.data.source.response.DeleteFeedResponse
 import com.example.hoavot.karaokeonline.data.source.response.FeedsResponse
-import com.example.hoavot.karaokeonline.data.source.response.LikeResponse
-import com.example.hoavot.karaokeonline.ui.base.Diff
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import io.reactivex.Notification
 import io.reactivex.Single
@@ -30,7 +26,7 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
     internal val startObserverable = PublishSubject.create<Notification<Feed>>()
     private val karaRepository = KaraRepository()
 
-    internal fun getMeInfor() = localRepository.getMeInfor()
+    internal fun getMeInfor(userId: Int) = karaRepository.getInforUser(userId)
 
     internal fun updateAvatar(avatarFile: File) = karaRepository.updateAvatarUser(avatarFile)
 
@@ -60,8 +56,8 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
     internal fun deleteFeed(feedId: Int): Single<DeleteFeedResponse>
             = karaRepository.deleteFeed(feedId)
 
-    internal fun getMeFeeds() {
-        karaRepository.getFeedMe()
+    internal fun getMeFeeds(userId: Int) {
+        karaRepository.getFeedMe(userId)
                 .observeOnUiThread()
                 .doOnSubscribe {
                     progressDilogObserverable.onNext(true)
@@ -87,8 +83,8 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 .postLike(feeds[position].id)
                 .observeOnUiThread()
                 .map {
-                    feeds[position].likeCount=it.likeCount
-                    feeds[position].likeFlag=if (feeds[position].likeFlag == 0) 1 else 0
+                    feeds[position].likeCount = it.likeCount
+                    feeds[position].likeFlag = if (feeds[position].likeFlag == 0) 1 else 0
                     feeds[position]
                 }
                 .doOnSubscribe {
@@ -114,8 +110,8 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                 .postUnLike(feeds[position].id)
                 .observeOnUiThread()
                 .map {
-                    feeds[position].likeCount=it.likeCount
-                    feeds[position].likeFlag=if (feeds[position].likeFlag == 0) 1 else 0
+                    feeds[position].likeCount = it.likeCount
+                    feeds[position].likeFlag = if (feeds[position].likeFlag == 0) 1 else 0
                     feeds[position]
                 }
                 .doOnSubscribe {
