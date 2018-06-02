@@ -48,4 +48,5 @@
     <color name="colorTextFileMusic">#2F3034</color>
     <color name="colorTextMp3">#8e8e94</color>
     <color name="colorShareBG">#cf4d0376</color>
+    <color name="colorRecord">#111111</color>
 </resources>

@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.ui.base.Time
 import org.jetbrains.anko.AnkoContext
@@ -25,6 +24,7 @@ class FeedAdapter(private val feeds: MutableList<Feed>, val isFromFeed: Boolean)
     internal var updateFeedClickListener: (Int) -> Unit = {}
     internal var deleteFeedClickListener: (Int) -> Unit = {}
     internal var likeSmallListener: (Int) -> Unit = {}
+    internal var avatarClickListener: (Int) -> Unit = {}
 
     override fun onBindViewHolder(holder: FeedHolder?, position: Int) {
         holder?.onBind()
@@ -82,6 +82,10 @@ class FeedAdapter(private val feeds: MutableList<Feed>, val isFromFeed: Boolean)
 
             ui.likeSmall.onClick {
                 likeSmallListener(layoutPosition)
+            }
+
+            ui.avatar.onClick {
+                avatarClickListener(layoutPosition)
             }
         }
 

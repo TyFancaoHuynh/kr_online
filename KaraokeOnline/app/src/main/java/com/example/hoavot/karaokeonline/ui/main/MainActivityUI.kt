@@ -15,8 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import com.example.hoavot.karaokeonline.R
-import com.example.hoavot.karaokeonline.data.model.other.LoadDataFeed
-import com.example.hoavot.karaokeonline.data.model.other.LoadDataFeedMe
+import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.ui.custom.nonSwipeAbleViewPager
 import com.example.hoavot.karaokeonline.ui.extensions.RxBus
 import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
@@ -67,26 +66,24 @@ class MainActivityUI(private val mainTabs: List<MainTab>)
                             viewPager.setCurrentItem(it, true)
                             if (lastTab != -1) {
                                 val fragment = mainPagerAdapter.instantiateItem(viewPager, viewPager.currentItem) as Fragment
-                                sendIntent(owner, Action.STOP_MEDIA.value, context, SongService::class.java)
                                 sendIntent(owner, Action.STOP_MEDIA.value, context, SongFeedService::class.java)
                                 Handler().postDelayed({
                                     when (fragment) {
                                         is HomeFragment -> {
                                             RxBus.publish(LoadDataFeed())
+//                                            RxBus.publish(StopBRProfileEvent())
+//                                            RxBus.publish(RegisterBRFeedEvent())
                                         }
                                         is BaseProfileFragment -> {
                                             RxBus.publish(LoadDataFeedMe())
-                                        }
-                                        is PlayFragment -> {
-                                            d("TAGGG", "is Play")
-                                            fragment.eventReset()
+//                                            RxBus.publish(StopBRFeedEvent())
+//                                            RxBus.publish(RegisterBRProfileEvent())
                                         }
                                     }
                                 }, 300)
                             }
                             lastTab = it
                             sendIntent(owner, Action.STOP_MEDIA.value, context, SongFeedService::class.java)
-                            sendIntent(owner, Action.STOP_MEDIA.value, context, SongService::class.java)
                         }
                     }
                 })

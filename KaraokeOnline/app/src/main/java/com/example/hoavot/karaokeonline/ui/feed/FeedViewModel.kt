@@ -24,10 +24,19 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
     internal val isLikeFromCommentScreenObserver = PublishSubject.create<Notification<Feed>>()
     internal val commentObserverable = PublishSubject.create<Notification<MutableList<Comment>>>()
     internal val progressDilogObserverable = BehaviorSubject.create<Boolean>()
+    internal val userObserverable = PublishSubject.create<User>()
     internal val startObserverable = PublishSubject.create<Notification<Feed>>()
     private val karaRepository = KaraRepository()
 
-    internal fun getMeInfor(userId: Int) = karaRepository.getInforUser(userId)
+    internal fun getMeInfor(userId: Int) {
+        karaRepository.getInforUser(userId)
+                .observeOnUiThread()
+                .subscribe({
+                    userObserverable.onNext(it)
+                }, {
+                    userObserverable.onError(it)
+                })
+    }
 
     internal fun updateAvatar(avatarFile: File) = karaRepository.updateAvatarUser(avatarFile)
 
@@ -38,9 +47,11 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
     internal fun getFeeds() = karaRepository.getFeeds()
             .observeOnUiThread()
             .doOnSubscribe {
+                d("NNNNNNNNN", "do onSub progress")
                 progressDilogObserverable.onNext(true)
             }
             .doFinally {
+                d("NNNNNNNNN", "do finallly progress")
                 progressDilogObserverable.onNext(false)
             }
             .onErrorReturn {
@@ -49,7 +60,7 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
             .subscribe({
                 feeds.clear()
                 feeds.addAll(it.feeds)
-                d("NNNNNNNNNN","feeds: size: ${feeds.size}")
+                d("NNNNNNNNNN", "feeds: size: ${feeds.size}")
                 feedsObserverable.onNext(Notification.createOnNext(feeds))
             }, {
                 feedsObserverable.onNext(Notification.createOnError(it))
@@ -141,5 +152,9 @@ class FeedViewModel(private val localRepository: LocalRepository, internal val f
                     commentObserverable.onNext(Notification.createOnError(it))
                 })
 
+    }
+
+    internal fun logout() {
+        localRepository.logout()
     }
 }

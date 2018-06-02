@@ -7,10 +7,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.extensions.circleImageView
 import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
@@ -33,9 +30,10 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
     internal lateinit var avatar: CircleImageView
     internal lateinit var imgMusic: ImageView
     internal lateinit var pickImage: ImageView
+    internal lateinit var rlParent: RelativeLayout
 
-    override fun createView(ui: AnkoContext<CaptionActivity>): View = with(ui) {
-        relativeLayout {
+    override fun createView(ui: AnkoContext<CaptionActivity>): View = ui.apply {
+        rlParent = relativeLayout {
             lparams(matchParent, matchParent)
             backgroundColor = Color.WHITE
             relativeLayout {
@@ -176,7 +174,7 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
                 imgMusic = imageView {
                     id = R.id.captionFragmenImgMusic
                     backgroundResource = R.drawable.bg_play
-                    scaleType=ImageView.ScaleType.CENTER_CROP
+                    scaleType = ImageView.ScaleType.CENTER_CROP
                 }.lparams(dip(100), dip(100)) {
                     below(R.id.captionAcivityImage)
                     topMargin = dip(10)
@@ -186,5 +184,5 @@ class CaptionActivityUI : AnkoComponent<CaptionActivity> {
                 below(R.id.toolBarCaption)
             }
         }
-    }
+    }.view
 }

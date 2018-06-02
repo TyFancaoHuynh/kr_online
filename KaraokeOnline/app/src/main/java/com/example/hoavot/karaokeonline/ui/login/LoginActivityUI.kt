@@ -4,13 +4,16 @@ import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.text.InputType
 import android.view.Gravity
+import android.view.ViewManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
+import com.facebook.login.widget.LoginButton
 import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
@@ -23,6 +26,7 @@ class LoginActivityUI : AnkoComponent<LoginActivity> {
     internal lateinit var btnLogin: Button
     internal lateinit var tvSignIn: TextView
     internal lateinit var tvNotify: TextView
+    internal lateinit var btnLoginFacebook: LoginButton
     override fun createView(ui: AnkoContext<LoginActivity>) = with(ui) {
         verticalLayout {
             backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.bg_register)
@@ -98,6 +102,17 @@ class LoginActivityUI : AnkoComponent<LoginActivity> {
                 topMargin = dip(20)
                 gravity = Gravity.CENTER_HORIZONTAL
             }
+
+            btnLoginFacebook = loginFacebook {
+                gravity = Gravity.CENTER_HORIZONTAL
+            }.lparams(dip(150), dip(50)){
+                topMargin=dip(20)
+            }
+
         }
+    }
+
+    inline fun ViewManager.loginFacebook(init: LoginButton.() -> Unit): LoginButton {
+        return ankoView({ LoginButton(it) }, theme = 0, init = init)
     }
 }

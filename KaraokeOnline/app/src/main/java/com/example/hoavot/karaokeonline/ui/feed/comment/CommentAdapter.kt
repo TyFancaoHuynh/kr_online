@@ -31,7 +31,7 @@ class CommentAdapter(private val comments: MutableList<Comment>) : RecyclerView.
                 .centerCrop()
                 .override(ui.avatar.width, ui.avatar.width)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                .placeholder(R.drawable.user_default)
+                .placeholder(R.drawable.ic_avatar_feed)
 
         internal fun onBind() {
             d("HHHHHHHH", "avatartUser: ${comments[layoutPosition].avatarUser}")

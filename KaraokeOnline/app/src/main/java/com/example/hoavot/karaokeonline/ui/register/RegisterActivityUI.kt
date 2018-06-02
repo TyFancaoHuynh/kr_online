@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.hoavot.karaokeonline.R
+import com.example.hoavot.karaokeonline.ui.extensions.enableHighLightWhenClicked
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -101,6 +102,7 @@ class RegisterActivityUI : AnkoComponent<RegisterActivity> {
 
                 btnRegister = button("Register") {
                     backgroundDrawable = ContextCompat.getDrawable(ctx, R.drawable.bg_btn_login)
+                    enableHighLightWhenClicked()
                     textColor = Color.WHITE
                     onClick { owner.eventRegisterButtonClicked() }
                 }.lparams(matchParent, wrapContent) {

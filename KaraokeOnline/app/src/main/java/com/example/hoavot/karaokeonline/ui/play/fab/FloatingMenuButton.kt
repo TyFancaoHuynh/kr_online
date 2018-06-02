@@ -26,10 +26,8 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
         LinearLayout(context, attrs) {
     private lateinit var imgBtnSearch: ImageButton
     private lateinit var imgBtnRecord: ImageButton
-    private lateinit var imgBtnDownload: ImageButton
     internal lateinit var rlSearch: RelativeLayout
     internal lateinit var rlRecord: RelativeLayout
-    internal lateinit var rlDownload: RelativeLayout
     private lateinit var imgBtnMenu: ImageButton
     private lateinit var frOverlay: FrameLayout
     private var isExpand = false
@@ -61,10 +59,6 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
                             R.drawable.custom_bg_item_record_button,
                             R.mipmap.ic_record, R.string.custom_floating_menu_record_title)
                     imgBtnRecord = rlRecord.find(R.id.floating_btn_menu_img_btn_record)
-                    rlDownload = itemFloatingButton(R.id.floating_btn_menu_img_btn_download,
-                            R.drawable.custom_bg_item_download_button,
-                            R.mipmap.ic_dislike, R.string.custom_floating_menu_download_title)
-                    imgBtnDownload = rlDownload.find(R.id.floating_btn_menu_img_btn_download)
                     imgBtnMenu = imageButton {
                         id = R.id.floating_btn_menu
                         imageResource = R.mipmap.ic_menu
@@ -151,20 +145,17 @@ class FloatingMenuButton(private var onMenuClickListener: OnMenuClickListener,
     }
 
     private fun startAnimationFab(animation: Animation) {
-        rlDownload.startAnimation(animation)
         rlRecord.startAnimation(animation)
         rlSearch.startAnimation(animation)
     }
 
     private fun visibilityAllChildView(visibilityState: Int) {
-        rlDownload.visibility = visibilityState
         rlRecord.visibility = visibilityState
         rlSearch.visibility = visibilityState
     }
 
     private fun checkItemViewVisibility(): Boolean =
-            rlDownload.visibility == View.INVISIBLE ||
-                    rlRecord.visibility == View.INVISIBLE ||
+            rlRecord.visibility == View.INVISIBLE ||
                     rlSearch.visibility == View.INVISIBLE
 
     private fun setGoneOverLay() {

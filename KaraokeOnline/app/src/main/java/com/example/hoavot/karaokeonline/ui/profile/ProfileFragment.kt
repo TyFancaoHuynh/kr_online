@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.v4.app.ActivityCompat
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
@@ -41,6 +42,7 @@ import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
 import com.example.hoavot.karaokeonline.ui.feed.like.LikeFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
+import com.example.hoavot.karaokeonline.ui.login.LoginActivity
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
@@ -49,10 +51,13 @@ import com.example.hoavot.karaokeonline.ui.profile.edit.EditProfileFragment
 import com.facebook.FacebookSdk.getApplicationContext
 import io.reactivex.Notification
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.SingleSubject
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.yesButton
 import java.io.File
 import java.util.*
@@ -97,7 +102,6 @@ class ProfileFragment : BaseFragment() {
 
     val option = RequestOptions()
             .centerCrop()
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
             .placeholder(R.drawable.bg_item_place_holder)
     internal var isPlaying = false
 
@@ -120,12 +124,11 @@ class ProfileFragment : BaseFragment() {
             ui.more.visibility = View.GONE
         }
         feedViewModel.getMeFeeds(userId)
-
         RxBus.listen(LoadDataFeedMe::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleLoadDataFeedMe)
         RxBus.listen(UserUpdateEvent::class.java)
-                .observeOnUiThread()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handleUpdateUser)
         ui.feedsAdapter.likeListener = this::eventWhenLikeclicked
         ui.feedsAdapter.unLikeListener = this::eventWhenUnLikeclicked
@@ -144,21 +147,30 @@ class ProfileFragment : BaseFragment() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Action.PAUSE.value)
         intentFilter.addAction(Action.AUTO_NEXT.value)
-        (activity as? MainActivity)?.registerReceiver(myBroadcastProfile, intentFilter)
+        RxBus.listen(RegisterBRProfileEvent::class.java)
+                .subscribe({
+                    toast("vo day ni")
+                    (activity as? MainActivity)?.registerReceiver(myBroadcastProfile, intentFilter)
+                })
+        RxBus.listen(StopBRProfileEvent::class.java)
+                .subscribe({
+                    (activity as? MainActivity)?.unregisterReceiver(myBroadcastProfile)
+                })
     }
 
     override fun onBindViewModel() {
+        feedViewModel.getMeInfor(userId)
         addDisposables(
-                feedViewModel.getMeInfor(userId)
+                feedViewModel.userObserverable
                         .observeOnUiThread()
                         .subscribe({
                             updateUser(it)
-                        }, {}),
+                        }),
                 feedViewModel.feedsObserverable
                         .observeOnUiThread()
                         .subscribe(this::handleGetFeedsSuccess),
                 feedViewModel.progressDilogObserverable
-                        .observeOnUiThread()
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::handleShowProgressDialog),
                 feedViewModel.commentObserverable
                         .observeOnUiThread()
@@ -170,7 +182,7 @@ class ProfileFragment : BaseFragment() {
                         .observeOnUiThread()
                         .subscribe(this::handleUpdateLikeSuccess),
                 RxBus.listen(CommentFeedMeEvent::class.java)
-                        .observeOnUiThread()
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::handleWhenAddComment)
         )
     }
@@ -189,7 +201,6 @@ class ProfileFragment : BaseFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TYPE_GALLERY && resultCode == RESULT_OK && data != null) {
             val uri: Uri = data.data as Uri
-            d("TAGGGGGGG", "path0: ${uri}")
 
             getImageBitmap(uri.toString(), 1f)
                     .observeOnUiThread()
@@ -249,6 +260,12 @@ class ProfileFragment : BaseFragment() {
         })
     }
 
+    internal fun eventLogoutClicked() {
+        feedViewModel.logout()
+        ActivityCompat.finishAffinity(activity)
+        startActivity<LoginActivity>()
+    }
+
     internal fun eventOnProfileClicked() {
         ui.editProfile.visibility = View.GONE
     }
@@ -256,6 +273,7 @@ class ProfileFragment : BaseFragment() {
     private fun handleLoadDataFeedMe(event: LoadDataFeedMe) {
         ui.areaPlay.visibility = View.GONE
         feedViewModel.getMeFeeds(userId)
+        feedViewModel.getMeInfor(userId)
     }
 
     private fun initSortDialog() {
@@ -306,7 +324,6 @@ class ProfileFragment : BaseFragment() {
                 .apply(option)
                 .into(ui.avatar)
         ui.username.text = user.username
-        ui.age.text = user.age.toString().plus(" Tuổi")
     }
 
     private fun handleUpdateUser(event: UserUpdateEvent) {
@@ -360,7 +377,6 @@ class ProfileFragment : BaseFragment() {
         mSongs.clear()
         feeds.forEach {
             if (it.fileMusic?.isNotBlank()!!) {
-                d("TAGGGGG", "fileMusic: ${it.fileMusicUserWrite}")
                 val image = it.avatar ?: ""
                 val song = Song(it.id, it.fileMusicUserWrite!!, it.username, image, it.fileMusic, 0, it.time.toString())
                 mSongs.add(song)
@@ -503,6 +519,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun handleGetFeedsSuccess(notification: Notification<MutableList<Feed>>) {
         if (notification.isOnNext) {
+            d("NNNNNNNNNN", "get feed success")
             sendListSong()
             ui.countFeed.text = feeds.size.toString().plus(" Bài viết")
             ui.feedsAdapter.notifyDataSetChanged()

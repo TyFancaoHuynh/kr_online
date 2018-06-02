@@ -29,11 +29,14 @@ import com.example.hoavot.karaokeonline.ui.feed.like.LikeFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
+import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_IMAGE_MUSIC
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
+import com.example.hoavot.karaokeonline.ui.profile.ProfileAcivity
 import io.reactivex.Notification
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.support.v4.startActivity
 import java.util.*
 
 /**
@@ -88,7 +91,9 @@ class FeedFragment : BaseFragment() {
         ui.feedsAdapter.shareListener = this::eventWhenShareclicked
         ui.feedsAdapter.fileMusicListener = this::eventWhenFileMusicclicked
         ui.feedsAdapter.likeSmallListener = this::eventWhenLikeSmallclicked
+        ui.feedsAdapter.avatarClickListener = this::eventAvatarClicked
         viewModel = FeedViewModel(LocalRepository(context), feeds)
+
         RxBus.listen(LikeEvent::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleWhenUpdateLike)
@@ -98,10 +103,20 @@ class FeedFragment : BaseFragment() {
         RxBus.listen(LoadDataFeed::class.java)
                 .observeOnUiThread()
                 .subscribe(this::handleLoadData)
+
         val intentFilter = IntentFilter()
         intentFilter.addAction(Action.PAUSE.value)
         intentFilter.addAction(Action.AUTO_NEXT.value)
         (activity as? MainActivity)?.registerReceiver(myBroadcastFeed, intentFilter)
+
+        RxBus.listen(RegisterBRFeedEvent::class.java)
+                .subscribe({
+                    (activity as? MainActivity)?.registerReceiver(myBroadcastFeed, intentFilter)
+                })
+        RxBus.listen(StopBRFeedEvent::class.java)
+                .subscribe({
+                    (activity as? MainActivity)?.unregisterReceiver(myBroadcastFeed)
+                })
     }
 
     override fun onBindViewModel() {
@@ -122,6 +137,16 @@ class FeedFragment : BaseFragment() {
                 viewModel.startObserverable
                         .observeOnUiThread()
                         .subscribe(this::handleUpdateLikeSuccess),
+                viewModel.userObserverable
+                        .observeOnUiThread()
+                        .subscribe({
+                            Glide.with(context)
+                                    .load(it.avatar)
+                                    .apply(option)
+                                    .into(ui.circleImgAvatarStatus)
+                        }, {
+                            //Todo: handle later
+                        }),
                 RxBus.listen(CommentEvent::class.java)
                         .observeOnUiThread()
                         .subscribe(this::handleWhenAddComment))
@@ -163,7 +188,6 @@ class FeedFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        (activity as? MainActivity)?.unregisterReceiver(myBroadcastFeed)
         sendIntent(Action.STOP_MEDIA.value)
     }
 
@@ -203,7 +227,7 @@ class FeedFragment : BaseFragment() {
 
     private fun handleGetFeedsSuccess(notification: Notification<MutableList<Feed>>) {
         if (notification.isOnNext) {
-            d("NNNNNNN","song size: ${notification.value?.size}")
+            d("NNNNNNN", "song size: ${notification.value?.size}")
             sendListSong()
             ui.feedsAdapter.notifyDataSetChanged()
             ui.recyclerView.scrollToPosition(0)
@@ -232,6 +256,7 @@ class FeedFragment : BaseFragment() {
         val intent = Intent(context, ShareActivity::class.java)
         intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
         intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
+        intent.putExtra(KEY_ID_IMAGE_MUSIC, feeds[position].imageFile.toString())
         startActivity(intent)
     }
 
@@ -251,6 +276,10 @@ class FeedFragment : BaseFragment() {
     private fun eventWhenLikeSmallclicked(position: Int) {
         bottomSheetDialogLike.feedId = feeds[position].id
         bottomSheetDialogLike.show(fragmentManager, "LIKE")
+    }
+
+    private fun eventAvatarClicked(position: Int) {
+        startActivity<ProfileAcivity>(ProfileAcivity.KEY_USER_ID to feeds[position].userId)
     }
 
     private fun eventWhenUnLikeclicked(position: Int) {
@@ -284,7 +313,7 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun initProgressDialog() {
-        progressDialog = ProgressDialog(activity as? MainActivity)
+        progressDialog = ProgressDialog(context)
         progressDialog.setCancelable(false)
     }
 
@@ -337,15 +366,6 @@ class FeedFragment : BaseFragment() {
         ui.areaPlay.visibility = View.GONE
         viewModel.getFeeds()
         viewModel.getMeInfor(user.id)
-                .observeOnUiThread()
-                .subscribe({
-                    Glide.with(context)
-                            .load(it.avatar)
-                            .apply(option)
-                            .into(ui.circleImgAvatarStatus)
-                }, {
-                    //Todo: handle later
-                })
     }
 
     private fun handleUpdateLikeSuccess(notification: Notification<Feed>) {
@@ -379,6 +399,10 @@ class FeedFragment : BaseFragment() {
                 val currentPosition = intent.getIntExtra(Action.AUTO_NEXT.value, 0)
                 ui.usernamePlay.text = mSongs[currentPosition].artist
                 ui.filePlay.text = mSongs[currentPosition].name
+                Glide.with(context)
+                        .load(feeds[currentPosition].avatar)
+                        .apply(option)
+                        .into(ui.avatarPlay)
             }
         }
     }

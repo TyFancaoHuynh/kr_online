@@ -154,15 +154,6 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 }
             }
 
-            view {
-                id = R.id.profileFragmenLine
-                backgroundColor = R.color.colorLineFeedScreen
-            }.lparams(matchParent, dip(0.5f)) {
-                horizontalMargin = dip(20)
-                topMargin = dip(10)
-                below(R.id.profileFragmenShare)
-            }
-
             linearLayout {
                 id = R.id.feedFragmentLikeArea
 
@@ -216,6 +207,7 @@ class FeedHolderUI : AnkoComponent<ViewGroup> {
                 visibility = View.INVISIBLE
                 updateFeed = textView("Update") {
                     textSize = px2dip(dimen(R.dimen.textSize15))
+                    visibility=View.GONE
                     typeface = Typeface.DEFAULT_BOLD
                     textColor = ContextCompat.getColor(context, R.color.colorButton)
                     padding = dip(5)

@@ -2,7 +2,9 @@ package com.example.hoavot.karaokeonline.ui.play.record
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.util.Log.d
 import android.view.LayoutInflater
@@ -110,15 +112,16 @@ class RecordFragment : BaseFragment() {
         viewModel.startRecord()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     internal fun eventPauseClicked() {
         recordBottomSheetUI.lnPlay.visibility = View.VISIBLE
         recordBottomSheetUI.lnPause.visibility = View.GONE
-        viewModel.stopRecording(true)
+        viewModel.pauseRecording()
     }
 
     internal fun eventStopClicked() {
         normalVisibleButton()
-        viewModel.stopRecording(false)
+        viewModel.stopRecording(true)
     }
 
     private fun handleLessMemorySuccess(less: Boolean) {

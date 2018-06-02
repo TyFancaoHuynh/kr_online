@@ -28,6 +28,7 @@ import com.example.hoavot.karaokeonline.ui.base.Image
 import com.example.hoavot.karaokeonline.ui.extensions.UriUtil
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
+import com.example.hoavot.karaokeonline.ui.extensions.touchHideKeyboardWithView
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.profile.ProfileFragment
 import com.facebook.FacebookSdk
@@ -64,6 +65,7 @@ class CaptionActivity : BaseActivity() {
         updateStartFromUpdateFeed = intent.getSerializableExtra(KEY_FROM_PROFILE) as? Feed
         ui = CaptionActivityUI()
         ui.setContentView(this)
+        touchHideKeyboardWithView(ui.rlParent){}
         initProgressDialog()
         viewModel = CaptionViewModel(LocalRepository(this))
         val user = viewModel.getUserFromSharePrefrence()

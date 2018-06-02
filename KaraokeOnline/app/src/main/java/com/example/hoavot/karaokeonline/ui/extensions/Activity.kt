@@ -191,3 +191,11 @@ internal fun Context.getWidthScreen(): Int {
     wm?.defaultDisplay?.getMetrics(dimension)
     return dimension.widthPixels
 }
+
+internal fun Activity.touchHideKeyboardWithView(view: View, onTouchKeyBoard: () -> Unit) {
+    view.setOnTouchListener { _, _ ->
+        this.hideKeyboard(view)
+        onTouchKeyBoard.invoke()
+        false
+    }
+}

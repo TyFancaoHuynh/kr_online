@@ -56,10 +56,10 @@ class RegisterActivity : BaseActivity() {
         } else {
             alert {
                 title = "ERROR"
-                message = "Bạn phải nhập đầy đủ thông tin!"
+                message = "Bạn phải nhập chính xác thông tin!"
 
                 yesButton { }
-            }
+            }.show()
         }
     }
 

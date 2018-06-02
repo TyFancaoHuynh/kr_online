@@ -38,7 +38,7 @@ class PlayActivityUI(private val items: MutableList<Item>, private val context: 
             backgroundColor = Color.BLACK
             frameLayout {
                 id = R.id.play_activity_framelayout_play
-            }.lparams(matchParent, dip(200))
+            }.lparams(matchParent, dip(300))
 
             relativeLayout {
                 id = R.id.play_activity_relativeLayout_show_info_video

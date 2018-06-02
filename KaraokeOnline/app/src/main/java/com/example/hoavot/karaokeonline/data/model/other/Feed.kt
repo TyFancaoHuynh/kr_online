@@ -10,21 +10,23 @@ import com.google.gson.annotations.SerializedName
  */
 data class Feed(@SerializedName("id") val id: Int,
                 @SerializedName("caption") val caption: String?,
+                @SerializedName("id_user") val userId:Int,
                 @SerializedName("avatar") val avatar: String?,
                 @SerializedName("username") val username: String,
                 @SerializedName("file_music") var fileMusic: String?,
                 @SerializedName("file_music_user_write") var fileMusicUserWrite: String?,
                 @SerializedName("image_file") var imageFile:String?,
-                @SerializedName("like_count") var likeCount: Long,
+                @SerializedName("like_count") var likeCount: Long=0L,
                 @SerializedName("comment_count") var commentCount: Long,
                 @SerializedName("comments") var comments: MutableList<Comment>,
-                @SerializedName("like_flag") var likeFlag: Int,
+                @SerializedName("like_flag") var likeFlag: Int=0,
                 @SerializedName("time") var time: Long) : Parcelable {
     internal var isRequesting = false
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
             parcel.readString(),
+            parcel.readInt(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -43,6 +45,7 @@ data class Feed(@SerializedName("id") val id: Int,
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(caption)
+        parcel.writeInt(userId)
         parcel.writeString(avatar)
         parcel.writeString(username)
         parcel.writeString(fileMusic)
