@@ -27,11 +27,11 @@ class RecordBottomSheetUI : AnkoComponent<RecordFragment> {
 
             relativeLayout {
                 backgroundColor = Color.WHITE
-                lparams(matchParent, matchParent ){
+                lparams(matchParent, matchParent) {
                     above(R.id.recordBottomSheet)
                 }
                 imageView(R.drawable.ic_fiber_manual_record_red_400_48dp) {
-                }.lparams(dip(150), dip(150)){
+                }.lparams(dip(150), dip(150)) {
                     centerInParent()
                 }
 
@@ -48,6 +48,7 @@ class RecordBottomSheetUI : AnkoComponent<RecordFragment> {
                 backgroundColor = ContextCompat.getColor(context, R.color.colorBlackBold)
                 linearLayout {
                     lnRecordings = linearLayout {
+                        visibility = View.INVISIBLE
                         lparams(matchParent, matchParent)
                         id = R.id.recordBottomSheetPlay
                         backgroundResource = R.color.colorButton

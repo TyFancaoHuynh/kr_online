@@ -39,7 +39,7 @@ class SearchVideoFragmentUI(private val items: MutableList<Item>, private val co
 
                 edtInput = editText {
                     id = R.id.search_video_screen_edt_input
-                    textSize = px2dip(35)
+                    textSize = px2dip(dimen(R.dimen.textSize15))
                     backgroundResource = R.drawable.custom_edittext_search_video
                     leftPadding = dip(10)
                     topPadding = dip(5)

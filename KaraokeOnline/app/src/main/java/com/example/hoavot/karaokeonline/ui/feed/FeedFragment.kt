@@ -27,16 +27,12 @@ import com.example.hoavot.karaokeonline.ui.feed.caption.CaptionActivity
 import com.example.hoavot.karaokeonline.ui.feed.comment.CommentFragment
 import com.example.hoavot.karaokeonline.ui.feed.like.LikeFragment
 import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity
-import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_FILE_MUSIC
-import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_FEED
-import com.example.hoavot.karaokeonline.ui.feed.share.ShareActivity.Companion.KEY_ID_IMAGE_MUSIC
 import com.example.hoavot.karaokeonline.ui.main.MainActivity
 import com.example.hoavot.karaokeonline.ui.playmusic.model.Song
 import com.example.hoavot.karaokeonline.ui.playmusic.service.Action
-import com.example.hoavot.karaokeonline.ui.profile.ProfileAcivity
 import io.reactivex.Notification
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.support.v4.startActivity
 import java.util.*
 
 /**
@@ -63,8 +59,6 @@ class FeedFragment : BaseFragment() {
     private lateinit var user: User
     private val option = RequestOptions()
             .centerCrop()
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-            .placeholder(R.drawable.ic_avatar_feed)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -126,7 +120,7 @@ class FeedFragment : BaseFragment() {
                         .observeOnUiThread()
                         .subscribe(this::handleGetFeedsSuccess),
                 viewModel.progressDilogObserverable
-                        .observeOnUiThread()
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::handleShowProgressDialog),
                 viewModel.commentObserverable
                         .observeOnUiThread()
@@ -188,6 +182,7 @@ class FeedFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
+        (activity as? MainActivity)?.unregisterReceiver(myBroadcastFeed)
         sendIntent(Action.STOP_MEDIA.value)
     }
 
@@ -238,11 +233,11 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun handleShowProgressDialog(show: Boolean) {
-        if (show) {
-            progressDialog.show()
-        } else {
-            progressDialog.hide()
-        }
+            if (show) {
+                progressDialog.show()
+            } else {
+                progressDialog.dismiss()
+            }
     }
 
     private fun eventWhenCommentclicked(position: Int) {
@@ -253,11 +248,22 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun eventWhenShareclicked(position: Int) {
-        val intent = Intent(context, ShareActivity::class.java)
-        intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
-        intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
-        intent.putExtra(KEY_ID_IMAGE_MUSIC, feeds[position].imageFile.toString())
-        startActivity(intent)
+//        val intent = Intent(context, ShareActivity::class.java)
+//        intent.putExtra(KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
+//        intent.putExtra(KEY_ID_FEED, feeds[position].id.toString())
+//        intent.putExtra(KEY_ID_IMAGE_MUSIC, feeds[position].imageFile.toString())
+//        startActivity(intent)
+        shareMusic()
+    }
+
+    private fun shareMusic() {
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        val message = "Enjoy this song !"
+        sharingIntent.type = "text/plain"
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, message)
+        val url = "http://singnowapp.com/share_song/index.html?sid=19954"
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url)
+        startActivityForResult(Intent.createChooser(sharingIntent, "Share via"), ShareActivity.REQUEST_CODE_MUSIC)
     }
 
     private fun initCommentDialog() {
@@ -276,10 +282,11 @@ class FeedFragment : BaseFragment() {
     private fun eventWhenLikeSmallclicked(position: Int) {
         bottomSheetDialogLike.feedId = feeds[position].id
         bottomSheetDialogLike.show(fragmentManager, "LIKE")
+
     }
 
     private fun eventAvatarClicked(position: Int) {
-        startActivity<ProfileAcivity>(ProfileAcivity.KEY_USER_ID to feeds[position].userId)
+//        startActivity<ProfileAcivity>(ProfileAcivity.KEY_USER_ID to feeds[position].userId)
     }
 
     private fun eventWhenUnLikeclicked(position: Int) {
@@ -298,6 +305,8 @@ class FeedFragment : BaseFragment() {
     }
 
     private fun eventWhenFileMusicclicked(position: Int) {
+        val option = RequestOptions()
+                .centerCrop()
         ui.areaPlay.visibility = View.VISIBLE
         Glide.with(context)
                 .load(feeds[position].avatar)
@@ -399,6 +408,8 @@ class FeedFragment : BaseFragment() {
                 val currentPosition = intent.getIntExtra(Action.AUTO_NEXT.value, 0)
                 ui.usernamePlay.text = mSongs[currentPosition].artist
                 ui.filePlay.text = mSongs[currentPosition].name
+                val option = RequestOptions()
+                        .centerCrop()
                 Glide.with(context)
                         .load(feeds[currentPosition].avatar)
                         .apply(option)

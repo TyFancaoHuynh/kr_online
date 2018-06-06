@@ -133,7 +133,7 @@ class RecordFragment : BaseFragment() {
     private fun normalVisibleButton() {
         recordBottomSheetUI.lnPlay.visibility = View.VISIBLE
         recordBottomSheetUI.lnPause.visibility = View.GONE
-        recordBottomSheetUI.lnRecordings.visibility = View.VISIBLE
+        recordBottomSheetUI.lnRecordings.visibility = View.GONE
         recordBottomSheetUI.lnStop.visibility = View.GONE
     }
 }

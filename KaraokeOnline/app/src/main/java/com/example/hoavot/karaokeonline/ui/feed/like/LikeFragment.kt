@@ -2,6 +2,7 @@ package com.example.hoavot.karaokeonline.ui.feed.like
 
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class LikeFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ui.likeAdapter.onAvatarClick = this::handleAvatarItemClicked
+        d("HHHHHHHHH","feedIdLike: ${feedId}")
         viewModel.getListUserLike(feedId)
                 .observeOnUiThread()
                 .subscribe({

@@ -45,7 +45,7 @@ class RecordViewModel(private val localRepository: LocalRepository) {
             d("MMMMMMMMM", "init ")
             mRecorder = MediaRecorder()
             mRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            mRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 mRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)
                 mRecorder?.setAudioEncodingBitRate(48000)

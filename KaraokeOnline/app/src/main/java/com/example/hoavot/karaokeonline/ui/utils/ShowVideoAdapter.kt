@@ -112,7 +112,9 @@ class ShowVideoAdapter(private val context: Context, private val videos: Mutable
 
     inner class ChannelHolder(private val ui: ChannelViewHolderUI, item: View) : RecyclerView.ViewHolder(item) {
         init {
-            onItemClick(videos[layoutPosition], TYPE_CHANNEL)
+            item.onClick {
+                onItemClick(videos[layoutPosition], TYPE_CHANNEL)
+            }
         }
 
         fun onBindChannel() {

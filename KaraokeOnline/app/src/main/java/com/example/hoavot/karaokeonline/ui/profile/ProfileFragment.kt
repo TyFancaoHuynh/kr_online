@@ -31,11 +31,7 @@ import com.example.hoavot.karaokeonline.R
 import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.*
 import com.example.hoavot.karaokeonline.ui.base.BaseFragment
-import com.example.hoavot.karaokeonline.ui.base.Image
-import com.example.hoavot.karaokeonline.ui.extensions.RxBus
-import com.example.hoavot.karaokeonline.ui.extensions.addChildFragment
-import com.example.hoavot.karaokeonline.ui.extensions.animSlideInRightSlideOutRight
-import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
+import com.example.hoavot.karaokeonline.ui.extensions.*
 import com.example.hoavot.karaokeonline.ui.feed.FeedFragment
 import com.example.hoavot.karaokeonline.ui.feed.FeedViewModel
 import com.example.hoavot.karaokeonline.ui.feed.SongFeedService
@@ -102,7 +98,7 @@ class ProfileFragment : BaseFragment() {
 
     val option = RequestOptions()
             .centerCrop()
-            .placeholder(R.drawable.bg_item_place_holder)
+
     internal var isPlaying = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -147,6 +143,7 @@ class ProfileFragment : BaseFragment() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Action.PAUSE.value)
         intentFilter.addAction(Action.AUTO_NEXT.value)
+        (activity as? MainActivity)?.registerReceiver(myBroadcastProfile, intentFilter)
         RxBus.listen(RegisterBRProfileEvent::class.java)
                 .subscribe({
                     toast("vo day ni")
@@ -197,32 +194,31 @@ class ProfileFragment : BaseFragment() {
         startActivityForResult(i2, TYPE_GALLERY)
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        (activity as? MainActivity)?.unregisterReceiver(myBroadcastProfile)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TYPE_GALLERY && resultCode == RESULT_OK && data != null) {
             val uri: Uri = data.data as Uri
+            val file = File(UriUtil.getPath(context, uri))
 
-            getImageBitmap(uri.toString(), 1f)
+            feedViewModel.updateAvatar(file)
                     .observeOnUiThread()
                     .subscribe({
-                        val file = Image.convertBitmapToFile(it, context)
-                        feedViewModel.updateAvatar(file)
-                                .observeOnUiThread()
-                                .subscribe({
-                                    feedViewModel.saveUser(it.user)
-                                    val option = RequestOptions()
-                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
-                                            .placeholder(R.drawable.bg_item_place_holder)
-
-                                    Glide.with(context)
-                                            .load(it.user.avatar)
-                                            .apply(option)
-                                            .into(ui.avatar)
-                                    RxBus.publish(LoadDataFeedMe())
-                                }, {
-                                    d("HHHHHHH", "error update avatar error: ${it.message}")
-                                })
-                    }, {})
+                        feedViewModel.saveUser(it.user)
+                        val option = RequestOptions()
+                                .fitCenter()
+                        Glide.with(this)
+                                .load(uri)
+                                .apply(option)
+                                .into(ui.avatar)
+                        RxBus.publish(LoadDataFeedMe())
+                    }, {
+                        d("HHHHHHH", "error update avatar error: ${it.message}")
+                    })
         }
     }
 
@@ -398,10 +394,12 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun handleShowProgressDialog(show: Boolean) {
-        if (show) {
-            progressDialog.show()
-        } else {
-            progressDialog.hide()
+        if(userVisibleHint) {
+            if (show) {
+                progressDialog.show()
+            } else {
+                progressDialog.dismiss()
+            }
         }
     }
 
@@ -428,11 +426,21 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun eventWhenShareclicked(position: Int) {
-        val intent = Intent(context, ShareActivity::class.java)
-        intent.putExtra(ShareActivity.KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
-        intent.putExtra(ShareActivity.KEY_ID_FEED, feeds[position].id.toString())
+//        val intent = Intent(context, ShareActivity::class.java)
+//        intent.putExtra(ShareActivity.KEY_FILE_MUSIC, feeds[position].fileMusicUserWrite.toString())
+//        intent.putExtra(ShareActivity.KEY_ID_FEED, feeds[position].id.toString())
+//        startActivity(intent)
+        shareMusic()
+    }
 
-        startActivity(intent)
+    private fun shareMusic() {
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        val message = "Enjoy this song !"
+        sharingIntent.type = "text/plain"
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, message)
+        val url = "http://singnowapp.com/share_song/index.html?sid=19954"
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url)
+        startActivityForResult(Intent.createChooser(sharingIntent, "Share via"), ShareActivity.REQUEST_CODE_MUSIC)
     }
 
     private fun eventUpdateClicked(position: Int) {

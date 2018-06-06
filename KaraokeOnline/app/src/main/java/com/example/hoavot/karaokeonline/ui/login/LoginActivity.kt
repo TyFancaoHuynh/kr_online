@@ -144,7 +144,10 @@ class LoginActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        callbackManager!!.onActivityResult(requestCode, resultCode, data)
+//        callbackManager!!.onActivityResult(requestCode, resultCode, data)
+        if(callbackManager!!.onActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
     }
 
     internal fun eventLoginBtnClicked() {

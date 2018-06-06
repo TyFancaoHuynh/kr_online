@@ -24,7 +24,6 @@ import com.example.hoavot.karaokeonline.data.LocalRepository
 import com.example.hoavot.karaokeonline.data.model.other.Feed
 import com.example.hoavot.karaokeonline.data.source.response.FeedResponse
 import com.example.hoavot.karaokeonline.ui.base.BaseActivity
-import com.example.hoavot.karaokeonline.ui.base.Image
 import com.example.hoavot.karaokeonline.ui.extensions.UriUtil
 import com.example.hoavot.karaokeonline.ui.extensions.observeOnUiThread
 import com.example.hoavot.karaokeonline.ui.extensions.showAlertError
@@ -65,7 +64,7 @@ class CaptionActivity : BaseActivity() {
         updateStartFromUpdateFeed = intent.getSerializableExtra(KEY_FROM_PROFILE) as? Feed
         ui = CaptionActivityUI()
         ui.setContentView(this)
-        touchHideKeyboardWithView(ui.rlParent){}
+        touchHideKeyboardWithView(ui.rlParent) {}
         initProgressDialog()
         viewModel = CaptionViewModel(LocalRepository(this))
         val user = viewModel.getUserFromSharePrefrence()
@@ -123,47 +122,36 @@ class CaptionActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK && data != null && requestCode == ProfileFragment.TYPE_GALLERY) {
             val uri: Uri = data.data as Uri
-            getImageBitmap(uri.toString(), 1f)
-                    .observeOnUiThread()
-                    .subscribe({
-                        imageFile = Image.convertBitmapToFile(it, this)
-                        val option = RequestOptions()
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE) // https://github.com/bumptech/glide/issues/319
+            val option = RequestOptions()
+                    .fitCenter()
 
-                        Glide.with(this)
-                                .load(imageFile)
-                                .apply(option)
-                                .into(ui.imgMusic)
-                    }, {})
+            Glide.with(this)
+                    .load(uri)
+                    .apply(option)
+                    .into(ui.imgMusic)
+            imageFile = File(UriUtil.getPath(this, uri))
+
         }
-    }
-
-    private fun getAudioPath(uri: Uri): String {
-        val data = arrayOf(MediaStore.Audio.Media.DATA)
-        val loader = CursorLoader(applicationContext, uri, data, null, null, null)
-        val cursor = loader.loadInBackground()
-        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(column_index)
     }
 
     private fun getImageBitmap(uri: String, ratio: Float): Single<Bitmap> {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
+        val result: SingleSubject<Bitmap> = SingleSubject.create()
+
         BitmapFactory.decodeFile(File(uri).absolutePath, options)
         val imageWidth = options.outWidth
         val imageHeight = options.outHeight
         val newW = (imageWidth * ratio).toInt()
         val newH = (imageHeight * ratio).toInt()
-        val result: SingleSubject<Bitmap> = SingleSubject.create()
-        val option = RequestOptions
-                .overrideOf(newW, newH)
+        val option = RequestOptions()
+                .override(newW, newH)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
         Glide.with(applicationContext)
                 .asBitmap()
                 .load(uri)
-                .apply(option)
+//                .apply(option)
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         result.onSuccess(resource)

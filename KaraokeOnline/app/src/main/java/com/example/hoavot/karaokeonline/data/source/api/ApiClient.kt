@@ -23,7 +23,7 @@ open class ApiClient private constructor(url: String? = null) {
     internal var token: String? = null
     //    private var baseUrl: String = if (url == null || url.isEmpty()) BuildConfig.BASE_API_URL else url
     private var baseYoutbeUrl: String = "https://www.googleapis.com/"
-    private var baseKaraUrl: String = "http://192.168.1.8:3001"
+    private var baseKaraUrl: String = "http://192.168.43.21:3001"
 
     companion object : SingletonHolder<ApiClient, String>(::ApiClient) {
         private const val API_TIMEOUT = 10L // 10 minutes
